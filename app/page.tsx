@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import SearchBar from '@/components/SearchBar';
 import IslandSelector from '@/components/IslandSelector';
@@ -8,25 +8,103 @@ import BusinessCard from '@/components/BusinessCard';
 import NewsCard from '@/components/NewsCard';
 import BlogCard from '@/components/BlogCard';
 import DiscoverCard from '@/components/DiscoverCard';
-import {
-  Island,
-  categories,
-  sampleBusinesses,
-} from '@/lib/sampleData';
-import {
-  realBusinesses,
-  newsArticles,
-  blogPosts,
-  discoverItems
-} from '@/lib/enhancedData';
+import { Island } from '@/lib/sampleData';
 import { ArrowRight } from 'lucide-react';
+
+interface Business {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  category: string;
+  island: string;
+  city: string;
+  image: string;
+  rating: number;
+  reviewCount: number;
+  featured: boolean;
+  priceRange?: string;
+  phone?: string;
+  website?: string;
+}
+
+interface NewsArticle {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  category: string;
+  author: string;
+  image: string;
+  publishedAt: string;
+  featured: boolean;
+}
+
+interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  category: string;
+  author: string;
+  image: string;
+  publishedAt: string;
+  readTime: number;
+}
+
+interface DiscoverItem {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+  category: string;
+  image: string;
+}
 
 export default function Home() {
   const [selectedIsland, setSelectedIsland] = useState<Island | 'All'>('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
-  const allBusinesses = [...sampleBusinesses, ...realBusinesses];
+  const [allBusinesses, setAllBusinesses] = useState<Business[]>([]);
+  const [newsArticles, setNewsArticles] = useState<NewsArticle[]>([]);
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [discoverItems, setDiscoverItems] = useState<DiscoverItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true);
+        const [businessesRes, newsRes, blogRes, discoverRes] = await Promise.all([
+          fetch('/api/businesses'),
+          fetch('/api/news'),
+          fetch('/api/blog'),
+          fetch('/api/discover'),
+        ]);
+
+        const [businesses, news, blog, discover] = await Promise.all([
+          businessesRes.json(),
+          newsRes.json(),
+          blogRes.json(),
+          discoverRes.json(),
+        ]);
+
+        setAllBusinesses(businesses);
+        setNewsArticles(news);
+        setBlogPosts(blog);
+        setDiscoverItems(discover);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
 
   const filteredBusinesses = useMemo(() => {
     let filtered = [...allBusinesses];
@@ -55,6 +133,17 @@ export default function Home() {
   const featuredBusinesses = allBusinesses.filter(b => b.featured);
   const featuredNews = newsArticles.filter(n => n.featured);
   const latestBlogs = blogPosts.slice(0, 3);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-4xl mb-4">🌺</div>
+          <div className="text-gray-600">Loading...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white">
