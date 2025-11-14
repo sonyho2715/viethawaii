@@ -3,12 +3,13 @@ import { prisma } from '@/lib/prisma';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const { slug } = await params;
     const business = await prisma.business.findUnique({
       where: {
-        slug: params.slug,
+        slug: slug,
       },
       include: {
         reviews: {
@@ -41,14 +42,15 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const { slug } = await params;
     const data = await request.json();
 
     const business = await prisma.business.update({
       where: {
-        slug: params.slug,
+        slug: slug,
       },
       data,
     });
@@ -65,12 +67,13 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
+    const { slug } = await params;
     await prisma.business.delete({
       where: {
-        slug: params.slug,
+        slug: slug,
       },
     });
 
