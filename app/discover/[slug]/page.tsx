@@ -3,6 +3,9 @@ import { notFound } from 'next/navigation';
 import { discoverItems } from '@/lib/enhancedData';
 import { ChevronLeft, MapPin, Calendar, Star, Heart, Users, Utensils, Coffee, ShoppingBag } from 'lucide-react';
 
+export const dynamic = 'force-static';
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   return discoverItems.map((item) => ({
     slug: item.link.split('/').pop() || '',

@@ -4,6 +4,9 @@ import { newsArticles } from '@/lib/enhancedData';
 import { Calendar, User, Tag, ChevronLeft, Share2, Bookmark } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
+export const dynamic = 'force-static';
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   return newsArticles.map((article) => ({
     slug: article.slug,
