@@ -53,11 +53,6 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
             style={{ backgroundImage: `url('${post.image}')` }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-          {post.featured && (
-            <div className="absolute top-8 right-8 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-full text-sm font-bold">
-              Featured Post
-            </div>
-          )}
         </div>
       )}
 
