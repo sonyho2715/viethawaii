@@ -15,7 +15,10 @@ import {
   Filter,
   Download,
   Upload,
-  MoreVertical
+  MoreVertical,
+  Copy,
+  Archive,
+  Share2
 } from 'lucide-react';
 import { sampleBusinesses } from '@/lib/sampleData';
 import { realBusinesses } from '@/lib/enhancedData';
@@ -27,6 +30,7 @@ export default function AdminBusinesses() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   const allBusinesses = [...sampleBusinesses, ...realBusinesses];
 
@@ -66,10 +70,13 @@ export default function AdminBusinesses() {
               <Link href="/admin" className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors font-semibold">
                 ← Dashboard
               </Link>
-              <button className="px-6 py-2.5 bg-gradient-to-r from-rose-500 to-orange-500 text-white rounded-lg font-bold hover:shadow-lg transition-all flex items-center gap-2">
+              <Link
+                href="/admin/businesses/edit/new"
+                className="px-6 py-2.5 bg-gradient-to-r from-rose-500 to-orange-500 text-white rounded-lg font-bold hover:shadow-lg transition-all flex items-center gap-2"
+              >
                 <Plus className="w-5 h-5" />
                 Add Business
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -152,15 +159,45 @@ export default function AdminBusinesses() {
 
           {/* Action Buttons */}
           <div className="flex items-center gap-3 mt-4 pt-4 border-t">
-            <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold text-gray-700 transition-colors">
+            <button
+              onClick={() => {
+                // Generate CSV content
+                const headers = ['Name', 'Name (Vietnamese)', 'Category', 'City', 'Island', 'Phone', 'Email', 'Rating', 'Reviews'];
+                const rows = filteredBusinesses.map(b => [
+                  b.name,
+                  b.nameVi || '',
+                  b.category,
+                  b.city,
+                  b.island,
+                  b.phone || '',
+                  b.email || '',
+                  b.rating,
+                  b.reviewCount
+                ]);
+                const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `viethawaii-businesses-${new Date().toISOString().split('T')[0]}.csv`;
+                a.click();
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold text-gray-700 transition-colors"
+            >
               <Download className="w-4 h-4" />
               Export CSV
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold text-gray-700 transition-colors">
+            <button
+              onClick={() => alert('Import CSV functionality will be implemented with API integration')}
+              className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold text-gray-700 transition-colors"
+            >
               <Upload className="w-4 h-4" />
               Import CSV
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold text-gray-700 transition-colors">
+            <button
+              onClick={() => alert('Advanced filters coming soon!')}
+              className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg font-semibold text-gray-700 transition-colors"
+            >
               <Filter className="w-4 h-4" />
               Advanced Filters
             </button>
@@ -261,24 +298,68 @@ export default function AdminBusinesses() {
                         >
                           <Eye className="w-5 h-5" />
                         </Link>
-                        <button
+                        <Link
+                          href={`/admin/businesses/edit/${business.id}`}
                           className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                           title="Edit"
                         >
                           <Edit className="w-5 h-5" />
-                        </button>
+                        </Link>
                         <button
+                          onClick={() => {
+                            if (confirm(`Are you sure you want to delete ${business.name}?`)) {
+                              alert('Delete functionality will be implemented with API integration');
+                            }
+                          }}
                           className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                           title="Delete"
                         >
                           <Trash2 className="w-5 h-5" />
                         </button>
-                        <button
-                          className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                          title="More"
-                        >
-                          <MoreVertical className="w-5 h-5" />
-                        </button>
+                        <div className="relative">
+                          <button
+                            onClick={() => setOpenDropdown(openDropdown === business.id ? null : business.id)}
+                            className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+                            title="More"
+                          >
+                            <MoreVertical className="w-5 h-5" />
+                          </button>
+                          {openDropdown === business.id && (
+                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border-2 border-gray-200 z-20">
+                              <button
+                                onClick={() => {
+                                  navigator.clipboard.writeText(`${window.location.origin}/business/${business.slug}`);
+                                  alert('Link copied to clipboard!');
+                                  setOpenDropdown(null);
+                                }}
+                                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-left"
+                              >
+                                <Copy className="w-4 h-4" />
+                                Copy Link
+                              </button>
+                              <button
+                                onClick={() => {
+                                  alert('Share functionality coming soon!');
+                                  setOpenDropdown(null);
+                                }}
+                                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-left"
+                              >
+                                <Share2 className="w-4 h-4" />
+                                Share
+                              </button>
+                              <button
+                                onClick={() => {
+                                  alert('Archive functionality coming soon!');
+                                  setOpenDropdown(null);
+                                }}
+                                className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-left border-t"
+                              >
+                                <Archive className="w-4 h-4" />
+                                Archive
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </td>
                   </tr>
