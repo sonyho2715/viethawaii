@@ -134,7 +134,7 @@ export default function BusinessDetailPage({ params }: { params: { slug: string 
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h2 className="text-xl font-semibold mb-4">Features</h2>
               <div className="flex flex-wrap gap-2">
-                {business.features.map((feature) => (
+                {business.features.map((feature: string) => (
                   <span
                     key={feature}
                     className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
