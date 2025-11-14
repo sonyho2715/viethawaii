@@ -87,7 +87,6 @@ export default function BusinessCard({ business }: BusinessCardProps) {
           ))}
         </div>
       </div>
-      </div>
     </Link>
   );
 }
