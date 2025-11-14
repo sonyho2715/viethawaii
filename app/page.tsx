@@ -62,133 +62,153 @@ export default function Home() {
   const latestBlogs = blogPosts.slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
-      {/* Modern Header with Glass Effect */}
-      <header className="bg-white/80 backdrop-blur-lg shadow-sm border-b border-gray-100 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <div className="min-h-screen bg-white">
+      {/* Vibrant Header */}
+      <header className="bg-gradient-to-r from-red-600 via-red-500 to-yellow-500 shadow-xl sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center space-x-3 group">
-              <div className="relative">
-                <span className="text-4xl group-hover:scale-110 transition-transform duration-300">🌺</span>
+              <div className="bg-white rounded-full p-2 shadow-lg group-hover:scale-110 transition-transform duration-300">
+                <span className="text-3xl">🌺</span>
               </div>
               <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
+                <h1 className="text-3xl font-black text-white drop-shadow-lg">
                   VietHawaii
                 </h1>
-                <p className="text-xs text-gray-500">Cộng đồng Việt Nam</p>
+                <p className="text-xs text-yellow-100 font-medium">Your guide to Vietnamese businesses in Hawaii</p>
               </div>
             </Link>
-            <nav className="hidden md:flex items-center space-x-8">
-              <Link href="/#businesses" className="text-gray-600 hover:text-primary-600 transition-colors font-medium">
+            <nav className="hidden md:flex items-center space-x-2">
+              <Link href="/#businesses" className="px-4 py-2 text-white hover:bg-white/20 rounded-lg transition-all font-semibold backdrop-blur-sm">
                 Businesses
               </Link>
-              <Link href="/#news" className="text-gray-600 hover:text-primary-600 transition-colors font-medium">
+              <Link href="/#news" className="px-4 py-2 text-white hover:bg-white/20 rounded-lg transition-all font-semibold backdrop-blur-sm">
                 News
               </Link>
-              <Link href="/#blog" className="text-gray-600 hover:text-primary-600 transition-colors font-medium">
+              <Link href="/#blog" className="px-4 py-2 text-white hover:bg-white/20 rounded-lg transition-all font-semibold backdrop-blur-sm">
                 Blog
               </Link>
-              <Link href="/#discover" className="text-gray-600 hover:text-primary-600 transition-colors font-medium">
+              <Link href="/#discover" className="px-4 py-2 text-white hover:bg-white/20 rounded-lg transition-all font-semibold backdrop-blur-sm">
                 Discover
               </Link>
               <Link
                 href="/submit"
-                className="px-4 py-2 bg-gradient-to-r from-primary-600 to-secondary-600 text-white rounded-lg hover:shadow-lg transition-all duration-300 font-medium"
+                className="ml-4 px-6 py-2.5 bg-white text-red-600 rounded-lg hover:scale-105 hover:shadow-2xl transition-all duration-300 font-bold"
               >
-                Add Business
+                + Add Business
               </Link>
             </nav>
           </div>
         </div>
       </header>
 
-      {/* Hero Section with Background Image */}
-      <section className="relative overflow-hidden">
-        {/* Background Image with Overlay */}
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary-600/95 via-secondary-600/90 to-primary-700/95 z-10"></div>
-          <div className="w-full h-full bg-[url('https://images.unsplash.com/photo-1559827260-dc66d52bef19?q=80&w=2070')] bg-cover bg-center opacity-30"></div>
-        </div>
+      {/* Hero Section with Vibrant Design */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-orange-50 via-red-50 to-yellow-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            {/* Left Content */}
+            <div>
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500 to-yellow-500 text-white rounded-full mb-6 shadow-lg">
+                <span className="text-xl">🌴</span>
+                <span className="font-bold text-sm">Aloha! Welcome to VietHawaii</span>
+              </div>
+              <h2 className="text-5xl md:text-6xl font-black text-gray-900 mb-6 leading-tight">
+                Discover
+                <br />
+                <span className="bg-gradient-to-r from-red-600 via-orange-500 to-yellow-500 bg-clip-text text-transparent">
+                  Vietnamese
+                </span>
+                <br />
+                Businesses
+              </h2>
+              <p className="text-2xl text-gray-700 mb-3 font-medium">
+                From authentic phở to professional services 🍜
+              </p>
+              <p className="text-lg text-gray-600 italic mb-8">
+                Khám phá cộng đồng Việt Nam tại Hawaii
+              </p>
 
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
-          <div className="text-center mb-10">
-            <div className="inline-block mb-4">
-              <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-white text-sm font-medium">
-                🌴 Aloha! Welcome to VietHawaii
-              </span>
+              {/* Search Bar */}
+              <div className="mb-6">
+                <SearchBar onSearch={setSearchQuery} />
+              </div>
+
+              {/* Island Selector */}
+              <IslandSelector
+                selectedIsland={selectedIsland}
+                onSelectIsland={setSelectedIsland}
+              />
             </div>
-            <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
-              Discover Vietnamese
-              <br />
-              <span className="bg-gradient-to-r from-yellow-300 to-yellow-100 bg-clip-text text-transparent">
-                Businesses in Hawaii
-              </span>
-            </h2>
-            <p className="text-xl md:text-2xl text-white/90 mb-2 max-w-3xl mx-auto">
-              From authentic phở to professional services, find it all here
-            </p>
-            <p className="text-lg text-white/75 italic">
-              Khám phá cộng đồng Việt Nam tại Hawaii
-            </p>
-          </div>
 
-          {/* Search Bar with Modern Design */}
-          <div className="max-w-3xl mx-auto mb-8">
-            <SearchBar onSearch={setSearchQuery} />
+            {/* Right Image Collage */}
+            <div className="relative hidden md:block">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4">
+                  <div className="bg-gradient-to-br from-red-400 to-red-600 rounded-2xl h-48 flex items-center justify-center text-white text-7xl shadow-xl transform hover:scale-105 transition-transform">
+                    🍜
+                  </div>
+                  <div className="bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl h-64 flex items-center justify-center text-white text-7xl shadow-xl transform hover:scale-105 transition-transform">
+                    ☕
+                  </div>
+                </div>
+                <div className="space-y-4 pt-8">
+                  <div className="bg-gradient-to-br from-green-400 to-teal-600 rounded-2xl h-64 flex items-center justify-center text-white text-7xl shadow-xl transform hover:scale-105 transition-transform">
+                    🥖
+                  </div>
+                  <div className="bg-gradient-to-br from-purple-400 to-pink-600 rounded-2xl h-48 flex items-center justify-center text-white text-7xl shadow-xl transform hover:scale-105 transition-transform">
+                    🌸
+                  </div>
+                </div>
+              </div>
+              {/* Floating Badge */}
+              <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-2xl p-6 transform rotate-3 hover:rotate-0 transition-transform">
+                <div className="text-center">
+                  <div className="text-4xl font-black text-red-600">{allBusinesses.length}+</div>
+                  <div className="text-sm font-bold text-gray-700">Businesses</div>
+                </div>
+              </div>
+            </div>
           </div>
-
-          {/* Island Selector */}
-          <div className="flex justify-center">
-            <IslandSelector
-              selectedIsland={selectedIsland}
-              onSelectIsland={setSelectedIsland}
-            />
-          </div>
-        </div>
-
-        {/* Wave Divider */}
-        <div className="absolute bottom-0 left-0 right-0 z-20">
-          <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
-            <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="white"/>
-          </svg>
         </div>
       </section>
 
-      {/* Stats Section with Cards */}
-      <section className="relative -mt-16 z-30 mb-16">
+      {/* Stats Section with Vibrant Cards */}
+      <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
-              { icon: <Users className="w-8 h-8" />, value: `${allBusinesses.length}+`, label: 'Businesses', color: 'from-blue-500 to-blue-600' },
-              { icon: <MapPin className="w-8 h-8" />, value: '6', label: 'Islands', color: 'from-green-500 to-green-600' },
-              { icon: <Award className="w-8 h-8" />, value: '10+', label: 'Categories', color: 'from-purple-500 to-purple-600' },
-              { icon: <TrendingUp className="w-8 h-8" />, value: '1000+', label: 'Reviews', color: 'from-orange-500 to-orange-600' }
+              { icon: '🏪', value: `${allBusinesses.length}+`, label: 'Businesses', gradient: 'from-red-500 via-orange-500 to-yellow-500' },
+              { icon: '🏝️', value: '6', label: 'Islands', gradient: 'from-blue-500 via-cyan-500 to-teal-500' },
+              { icon: '🎯', value: '10+', label: 'Categories', gradient: 'from-purple-500 via-pink-500 to-red-500' },
+              { icon: '⭐', value: '1000+', label: 'Reviews', gradient: 'from-yellow-500 via-orange-500 to-red-500' }
             ].map((stat, idx) => (
-              <div key={idx} className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${stat.color} text-white mb-3`}>
-                  {stat.icon}
+              <div key={idx} className={`bg-gradient-to-br ${stat.gradient} rounded-3xl shadow-2xl p-8 transform hover:scale-110 hover:rotate-2 transition-all duration-300 cursor-pointer`}>
+                <div className="text-center text-white">
+                  <div className="text-5xl mb-3">{stat.icon}</div>
+                  <div className="text-4xl font-black mb-2 drop-shadow-lg">{stat.value}</div>
+                  <div className="text-sm font-bold uppercase tracking-wider">{stat.label}</div>
                 </div>
-                <div className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</div>
-                <div className="text-sm text-gray-600 font-medium">{stat.label}</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Discover Section with Images */}
-      <section id="discover" className="py-16 bg-white">
+      {/* Discover Section with Vibrant Cards */}
+      <section id="discover" className="py-20 bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 rounded-full mb-4">
-              <Compass className="w-5 h-5 text-primary-600" />
-              <span className="text-sm font-semibold text-primary-600 uppercase tracking-wide">Explore</span>
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full mb-6 shadow-lg">
+              <Compass className="w-6 h-6" />
+              <span className="text-base font-black uppercase tracking-wide">Discover</span>
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Discover Vietnamese Culture
+            <h2 className="text-5xl md:text-6xl font-black text-gray-900 mb-6">
+              <span className="bg-gradient-to-r from-red-600 to-yellow-600 bg-clip-text text-transparent">
+                Vietnamese Culture
+              </span>
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Immerse yourself in the rich traditions and flavors of Vietnam in Hawaii
+            <p className="text-2xl text-gray-700 max-w-3xl mx-auto font-medium">
+              Immerse yourself in the rich traditions and flavors 🎭
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -199,32 +219,34 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Categories with Modern Cards */}
-      <section id="businesses" className="py-12 bg-gray-50">
+      {/* Categories with Vibrant Buttons */}
+      <section id="businesses" className="py-16 bg-white border-t-4 border-red-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h3 className="text-2xl font-bold text-gray-900 mb-6">Browse by Category</h3>
-          <div className="flex flex-wrap gap-3">
+          <h3 className="text-4xl font-black text-gray-900 mb-8 text-center">
+            Browse by <span className="bg-gradient-to-r from-red-600 to-yellow-600 bg-clip-text text-transparent">Category</span>
+          </h3>
+          <div className="flex flex-wrap gap-4 justify-center">
             <button
               onClick={() => setSelectedCategory('All')}
-              className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
+              className={`px-8 py-4 rounded-2xl font-bold transition-all duration-300 text-lg ${
                 selectedCategory === 'All'
-                  ? 'bg-gradient-to-r from-primary-600 to-secondary-600 text-white shadow-lg scale-105'
-                  : 'bg-white hover:bg-gray-50 text-gray-700 shadow-md hover:shadow-lg'
+                  ? 'bg-gradient-to-r from-red-600 to-yellow-600 text-white shadow-2xl scale-110'
+                  : 'bg-gray-100 hover:bg-gradient-to-r hover:from-red-100 hover:to-yellow-100 text-gray-700 shadow-lg hover:shadow-xl hover:scale-105'
               }`}
             >
-              All Categories
+              ⭐ All Categories
             </button>
             {categories.map((category) => (
               <button
                 key={category.name}
                 onClick={() => setSelectedCategory(category.name)}
-                className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 flex items-center gap-2 ${
+                className={`px-8 py-4 rounded-2xl font-bold transition-all duration-300 flex items-center gap-3 text-lg ${
                   selectedCategory === category.name
-                    ? 'bg-gradient-to-r from-primary-600 to-secondary-600 text-white shadow-lg scale-105'
-                    : 'bg-white hover:bg-gray-50 text-gray-700 shadow-md hover:shadow-lg'
+                    ? 'bg-gradient-to-r from-red-600 to-yellow-600 text-white shadow-2xl scale-110'
+                    : 'bg-gray-100 hover:bg-gradient-to-r hover:from-red-100 hover:to-yellow-100 text-gray-700 shadow-lg hover:shadow-xl hover:scale-105'
                 }`}
               >
-                <span>{category.icon}</span>
+                <span className="text-2xl">{category.icon}</span>
                 <span>{category.name}</span>
               </button>
             ))}
@@ -287,15 +309,19 @@ export default function Home() {
             </section>
 
             {/* News Section */}
-            <section id="news" className="mb-16 bg-gradient-to-br from-blue-50 to-purple-50 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-16 rounded-3xl">
-              <div className="max-w-7xl mx-auto">
+            <section id="news" className="mb-16 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-20 relative overflow-hidden">
+              {/* Decorative Elements */}
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+              <div className="absolute bottom-0 left-0 w-96 h-96 bg-yellow-500/10 rounded-full blur-3xl"></div>
+
+              <div className="max-w-7xl mx-auto relative z-10">
                 <div className="text-center mb-12">
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 backdrop-blur-sm rounded-full mb-4">
-                    <Newspaper className="w-5 h-5 text-primary-600" />
-                    <span className="text-sm font-semibold text-primary-600 uppercase tracking-wide">Latest Updates</span>
+                  <div className="inline-flex items-center gap-2 px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full mb-6">
+                    <Newspaper className="w-6 h-6 text-white" />
+                    <span className="text-base font-black text-white uppercase tracking-wide">Latest Updates</span>
                   </div>
-                  <h3 className="text-4xl font-bold text-gray-900 mb-4">Community News</h3>
-                  <p className="text-xl text-gray-600">Stay connected with the Vietnamese community in Hawaii</p>
+                  <h3 className="text-5xl md:text-6xl font-black text-white mb-6 drop-shadow-lg">Community News 📰</h3>
+                  <p className="text-2xl text-white/90 font-medium">Stay connected with the Vietnamese community</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {featuredNews.map((article, idx) => (
@@ -306,37 +332,43 @@ export default function Home() {
             </section>
 
             {/* Blog Section */}
-            <section id="blog" className="mb-16">
-              <div className="text-center mb-12">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-50 rounded-full mb-4">
-                  <BookOpen className="w-5 h-5 text-orange-600" />
-                  <span className="text-sm font-semibold text-orange-600 uppercase tracking-wide">Insights</span>
+            <section id="blog" className="mb-16 bg-gradient-to-br from-green-50 via-teal-50 to-cyan-50 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-20 rounded-3xl">
+              <div className="max-w-7xl mx-auto">
+                <div className="text-center mb-12">
+                  <div className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-full mb-6 shadow-lg">
+                    <BookOpen className="w-6 h-6" />
+                    <span className="text-base font-black uppercase tracking-wide">Insights & Stories</span>
+                  </div>
+                  <h3 className="text-5xl md:text-6xl font-black text-gray-900 mb-6">
+                    Latest <span className="bg-gradient-to-r from-green-600 to-teal-600 bg-clip-text text-transparent">Articles</span> 📚
+                  </h3>
+                  <p className="text-2xl text-gray-700 font-medium">Explore Vietnamese culture, food, and traditions</p>
                 </div>
-                <h3 className="text-4xl font-bold text-gray-900 mb-4">Latest Articles</h3>
-                <p className="text-xl text-gray-600">Explore Vietnamese culture, food, and traditions</p>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {latestBlogs.map((post) => (
-                  <BlogCard key={post.id} post={post} />
-                ))}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {latestBlogs.map((post) => (
+                    <BlogCard key={post.id} post={post} />
+                  ))}
+                </div>
               </div>
             </section>
 
             {/* All Businesses */}
-            <section>
-              <h3 className="text-3xl font-bold text-gray-900 mb-8">All Businesses</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <section className="bg-gray-50 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-16 rounded-3xl">
+              <h3 className="text-4xl font-black text-gray-900 mb-8 text-center">
+                All <span className="bg-gradient-to-r from-red-600 to-yellow-600 bg-clip-text text-transparent">Businesses</span> 🏪
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
                 {allBusinesses.slice(0, 9).map((business) => (
                   <BusinessCard key={business.id} business={business} />
                 ))}
               </div>
-              <div className="text-center mt-10">
+              <div className="text-center">
                 <Link
                   href="/businesses"
-                  className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-primary-600 to-secondary-600 text-white rounded-xl hover:shadow-xl transition-all duration-300 font-semibold text-lg transform hover:scale-105"
+                  className="inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-red-600 via-orange-500 to-yellow-600 text-white rounded-2xl hover:shadow-2xl transition-all duration-300 font-black text-xl transform hover:scale-110 hover:rotate-1"
                 >
                   View All {allBusinesses.length} Businesses
-                  <ChevronRight className="w-5 h-5" />
+                  <ChevronRight className="w-6 h-6" />
                 </Link>
               </div>
             </section>
@@ -344,55 +376,61 @@ export default function Home() {
         )}
       </main>
 
-      {/* Modern Footer */}
-      <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-16 mt-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Vibrant Footer */}
+      <footer className="bg-gradient-to-br from-gray-900 via-red-900 to-orange-900 text-white py-20 mt-20 relative overflow-hidden">
+        {/* Decorative Elements */}
+        <div className="absolute top-0 left-0 w-96 h-96 bg-red-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-yellow-500/10 rounded-full blur-3xl"></div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
             <div className="md:col-span-1">
-              <div className="flex items-center space-x-2 mb-4">
-                <span className="text-4xl">🌺</span>
-                <h4 className="text-2xl font-bold">VietHawaii</h4>
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="bg-white rounded-full p-2">
+                  <span className="text-3xl">🌺</span>
+                </div>
+                <h4 className="text-3xl font-black">VietHawaii</h4>
               </div>
-              <p className="text-gray-400 mb-4">
+              <p className="text-gray-300 mb-4 text-lg">
                 Connecting the Vietnamese community across the Hawaiian Islands
               </p>
-              <p className="text-sm text-gray-500 italic">
+              <p className="text-base text-yellow-300 italic font-medium">
                 Cộng đồng Việt Nam tại Hawaii
               </p>
             </div>
             <div>
-              <h5 className="font-bold text-lg mb-4">Explore</h5>
-              <ul className="space-y-3 text-gray-400">
-                <li><Link href="/businesses" className="hover:text-white transition-colors">Businesses</Link></li>
-                <li><Link href="/news" className="hover:text-white transition-colors">News</Link></li>
-                <li><Link href="/blog" className="hover:text-white transition-colors">Blog</Link></li>
-                <li><Link href="/discover" className="hover:text-white transition-colors">Discover</Link></li>
+              <h5 className="font-black text-xl mb-6 text-yellow-300">Explore</h5>
+              <ul className="space-y-3 text-gray-300">
+                <li><Link href="/businesses" className="hover:text-yellow-300 transition-colors text-lg font-medium">Businesses</Link></li>
+                <li><Link href="/news" className="hover:text-yellow-300 transition-colors text-lg font-medium">News</Link></li>
+                <li><Link href="/blog" className="hover:text-yellow-300 transition-colors text-lg font-medium">Blog</Link></li>
+                <li><Link href="/discover" className="hover:text-yellow-300 transition-colors text-lg font-medium">Discover</Link></li>
               </ul>
             </div>
             <div>
-              <h5 className="font-bold text-lg mb-4">Categories</h5>
-              <ul className="space-y-3 text-gray-400">
-                <li><Link href="/category/restaurants" className="hover:text-white transition-colors">Restaurants</Link></li>
-                <li><Link href="/category/markets" className="hover:text-white transition-colors">Markets</Link></li>
-                <li><Link href="/category/services" className="hover:text-white transition-colors">Services</Link></li>
-                <li><Link href="/category/healthcare" className="hover:text-white transition-colors">Healthcare</Link></li>
+              <h5 className="font-black text-xl mb-6 text-yellow-300">Categories</h5>
+              <ul className="space-y-3 text-gray-300">
+                <li><Link href="/category/restaurants" className="hover:text-yellow-300 transition-colors text-lg font-medium">Restaurants</Link></li>
+                <li><Link href="/category/markets" className="hover:text-yellow-300 transition-colors text-lg font-medium">Markets</Link></li>
+                <li><Link href="/category/services" className="hover:text-yellow-300 transition-colors text-lg font-medium">Services</Link></li>
+                <li><Link href="/category/healthcare" className="hover:text-yellow-300 transition-colors text-lg font-medium">Healthcare</Link></li>
               </ul>
             </div>
             <div>
-              <h5 className="font-bold text-lg mb-4">Community</h5>
-              <ul className="space-y-3 text-gray-400">
-                <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
-                <li><Link href="/submit" className="hover:text-white transition-colors">Add Business</Link></li>
-                <li><Link href="/contact" className="hover:text-white transition-colors">Contact</Link></li>
-                <li><Link href="/support" className="hover:text-white transition-colors">Support</Link></li>
+              <h5 className="font-black text-xl mb-6 text-yellow-300">Community</h5>
+              <ul className="space-y-3 text-gray-300">
+                <li><Link href="/about" className="hover:text-yellow-300 transition-colors text-lg font-medium">About Us</Link></li>
+                <li><Link href="/submit" className="hover:text-yellow-300 transition-colors text-lg font-medium">Add Business</Link></li>
+                <li><Link href="/contact" className="hover:text-yellow-300 transition-colors text-lg font-medium">Contact</Link></li>
+                <li><Link href="/support" className="hover:text-yellow-300 transition-colors text-lg font-medium">Support</Link></li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 text-sm">
+          <div className="border-t border-white/20 pt-8 flex flex-col md:flex-row justify-between items-center">
+            <p className="text-gray-300 text-base font-medium">
               © 2025 VietHawaii. A community project connecting Vietnamese businesses in Hawaii.
             </p>
-            <p className="text-gray-500 text-sm mt-2 md:mt-0">
+            <p className="text-yellow-300 text-base mt-2 md:mt-0 font-semibold">
               Made with ❤️ for the Vietnamese community
             </p>
           </div>
