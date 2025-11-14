@@ -1,0 +1,113 @@
+═══════════════════════════════════════════════════════════════════════════
+  🌺 VIETHAWAII - RAILWAY DATABASE SETUP INSTRUCTIONS
+═══════════════════════════════════════════════════════════════════════════
+
+The Railway dashboard should be open in your browser (https://railway.app/new)
+
+Follow these steps EXACTLY:
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ STEP 1: CREATE PROJECT (In Railway Dashboard)                          │
+└─────────────────────────────────────────────────────────────────────────┘
+
+  1. Click "Empty Project" button
+  2. The project will be created automatically
+  3. You'll see a canvas with a "+" button
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ STEP 2: ADD POSTGRESQL DATABASE                                        │
+└─────────────────────────────────────────────────────────────────────────┘
+
+  1. Click the "+ New" button
+  2. Select "Database"
+  3. Choose "Add PostgreSQL"
+  4. Wait 20-30 seconds for the database to provision
+  5. You'll see a purple "Postgres" box appear
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ STEP 3: GET DATABASE CONNECTION STRING                                 │
+└─────────────────────────────────────────────────────────────────────────┘
+
+  1. Click on the "Postgres" service box
+  2. Click the "Variables" tab
+  3. Find "DATABASE_URL" in the list
+  4. Click the COPY icon (📋) next to DATABASE_URL
+  5. The URL will be copied to your clipboard
+
+  It should look like:
+  postgresql://postgres:PASSWORD@HOST:5432/railway
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ STEP 4: RUN SETUP COMMANDS                                             │
+└─────────────────────────────────────────────────────────────────────────┘
+
+  Now run these commands in your terminal:
+
+  1. Create .env file with your DATABASE_URL:
+
+     echo 'DATABASE_URL="paste_your_url_here"' > .env
+
+  2. Generate Prisma Client:
+
+     npm run db:generate
+
+  3. Push database schema to Railway:
+
+     npm run db:push
+
+  4. Seed database with sample data:
+
+     npm run db:seed
+
+  5. Verify your data (opens Prisma Studio):
+
+     npm run db:studio
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ STEP 5: VERIFY DATABASE                                                │
+└─────────────────────────────────────────────────────────────────────────┘
+
+  In Prisma Studio (opens in browser), you should see:
+
+  ✅ Business       (~30+ records)
+  ✅ NewsArticle    (~10 records)
+  ✅ BlogPost       (~10 records)
+  ✅ DiscoverItem   (~12 records)
+  ✅ User           (1 admin user)
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ STEP 6: START DEVELOPMENT SERVER                                       │
+└─────────────────────────────────────────────────────────────────────────┘
+
+  npm run dev
+
+  Then visit: http://localhost:3000
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ 🎉 YOU'RE DONE!                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+
+Your VietHawaii app is now connected to Railway PostgreSQL!
+
+Admin Login:
+  URL:      http://localhost:3000/admin/login
+  Email:    admin@viethawaii.com
+  Password: admin123
+
+═══════════════════════════════════════════════════════════════════════════
+  TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════════════
+
+Problem: "Can't reach database server"
+Solution: Check your DATABASE_URL in .env file is correct
+
+Problem: "Table does not exist"
+Solution: Run: npm run db:push
+
+Problem: "No data in database"
+Solution: Run: npm run db:seed
+
+Problem: Need help?
+Solution: Check RAILWAY_SETUP.md or QUICK_START.md
+
+═══════════════════════════════════════════════════════════════════════════
