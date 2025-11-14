@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   BarChart3,
@@ -23,8 +24,42 @@ import { sampleBusinesses } from '@/lib/sampleData';
 import { newsArticles, blogPosts, realBusinesses } from '@/lib/enhancedData';
 
 export default function AdminDashboard() {
+  const router = useRouter();
   const [timeRange, setTimeRange] = useState('7d');
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
   const allBusinesses = [...sampleBusinesses, ...realBusinesses];
+
+  useEffect(() => {
+    // Check authentication
+    const auth = localStorage.getItem('adminAuth');
+    if (auth === 'true') {
+      setIsAuthenticated(true);
+      setLoading(false);
+    } else {
+      router.push('/admin/login');
+    }
+  }, [router]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('adminAuth');
+    router.push('/admin/login');
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-rose-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600 font-semibold">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   // Mock stats data
   const stats = {
@@ -97,7 +132,10 @@ export default function AdminDashboard() {
           </nav>
 
           <div className="absolute bottom-6 left-6 right-6">
-            <button className="flex items-center gap-3 px-4 py-3 hover:bg-white/10 rounded-lg transition-colors w-full text-left">
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-3 px-4 py-3 hover:bg-white/10 rounded-lg transition-colors w-full text-left"
+            >
               <LogOut className="w-5 h-5" />
               Logout
             </button>

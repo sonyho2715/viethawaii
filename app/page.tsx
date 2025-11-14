@@ -62,38 +62,38 @@ export default function Home() {
   const latestBlogs = blogPosts.slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Vibrant Header */}
-      <header className="bg-gradient-to-r from-red-600 via-red-500 to-yellow-500 shadow-xl sticky top-0 z-50">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-rose-50 to-amber-50">
+      {/* Soft Pastel Header */}
+      <header className="bg-white/90 backdrop-blur-md shadow-md sticky top-0 z-50 border-b border-orange-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center space-x-3 group">
-              <div className="bg-white rounded-full p-2 shadow-lg group-hover:scale-110 transition-transform duration-300">
+              <div className="bg-gradient-to-br from-rose-100 to-orange-100 rounded-full p-2 shadow-md group-hover:scale-110 transition-transform duration-300">
                 <span className="text-3xl">🌺</span>
               </div>
               <div>
-                <h1 className="text-3xl font-black text-white drop-shadow-lg">
+                <h1 className="text-3xl font-black bg-gradient-to-r from-rose-600 to-orange-600 bg-clip-text text-transparent">
                   VietHawaii
                 </h1>
-                <p className="text-xs text-yellow-100 font-medium">Your guide to Vietnamese businesses in Hawaii</p>
+                <p className="text-xs text-gray-600 font-medium">Your guide to Vietnamese businesses in Hawaii</p>
               </div>
             </Link>
             <nav className="hidden md:flex items-center space-x-2">
-              <Link href="/#businesses" className="px-4 py-2 text-white hover:bg-white/20 rounded-lg transition-all font-semibold backdrop-blur-sm">
+              <Link href="/#businesses" className="px-4 py-2 text-gray-700 hover:bg-rose-50 rounded-lg transition-all font-semibold">
                 Businesses
               </Link>
-              <Link href="/#news" className="px-4 py-2 text-white hover:bg-white/20 rounded-lg transition-all font-semibold backdrop-blur-sm">
+              <Link href="/#news" className="px-4 py-2 text-gray-700 hover:bg-rose-50 rounded-lg transition-all font-semibold">
                 News
               </Link>
-              <Link href="/#blog" className="px-4 py-2 text-white hover:bg-white/20 rounded-lg transition-all font-semibold backdrop-blur-sm">
+              <Link href="/#blog" className="px-4 py-2 text-gray-700 hover:bg-rose-50 rounded-lg transition-all font-semibold">
                 Blog
               </Link>
-              <Link href="/#discover" className="px-4 py-2 text-white hover:bg-white/20 rounded-lg transition-all font-semibold backdrop-blur-sm">
+              <Link href="/#discover" className="px-4 py-2 text-gray-700 hover:bg-rose-50 rounded-lg transition-all font-semibold">
                 Discover
               </Link>
               <Link
                 href="/submit"
-                className="ml-4 px-6 py-2.5 bg-white text-red-600 rounded-lg hover:scale-105 hover:shadow-2xl transition-all duration-300 font-bold"
+                className="ml-4 px-6 py-2.5 bg-gradient-to-r from-rose-500 to-orange-500 text-white rounded-lg hover:shadow-lg transition-all duration-300 font-bold"
               >
                 + Add Business
               </Link>
@@ -102,20 +102,20 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Hero Section with Vibrant Design */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-orange-50 via-red-50 to-yellow-50">
+      {/* Hero Section with Soft Pastel Design */}
+      <section className="relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
             <div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500 to-yellow-500 text-white rounded-full mb-6 shadow-lg">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 border-2 border-rose-200 text-rose-700 rounded-full mb-6 shadow-sm">
                 <span className="text-xl">🌴</span>
                 <span className="font-bold text-sm">Aloha! Welcome to VietHawaii</span>
               </div>
-              <h2 className="text-5xl md:text-6xl font-black text-gray-900 mb-6 leading-tight">
+              <h2 className="text-5xl md:text-6xl font-black text-gray-800 mb-6 leading-tight">
                 Discover
                 <br />
-                <span className="bg-gradient-to-r from-red-600 via-orange-500 to-yellow-500 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-rose-500 to-orange-400 bg-clip-text text-transparent">
                   Vietnamese
                 </span>
                 <br />
@@ -140,30 +140,50 @@ export default function Home() {
               />
             </div>
 
-            {/* Right Image Collage */}
+            {/* Right Image Collage with Real Photos */}
             <div className="relative hidden md:block">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-4">
-                  <div className="bg-gradient-to-br from-red-400 to-red-600 rounded-2xl h-48 flex items-center justify-center text-white text-7xl shadow-xl transform hover:scale-105 transition-transform">
-                    🍜
+                  <div className="rounded-3xl h-48 overflow-hidden shadow-lg transform hover:scale-105 transition-transform relative group">
+                    <div
+                      className="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-300"
+                      style={{ backgroundImage: "url('https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?w=600&h=400&fit=crop')" }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-rose-500/40 to-transparent" />
+                    <div className="absolute bottom-3 left-3 text-5xl drop-shadow-lg">🍜</div>
                   </div>
-                  <div className="bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl h-64 flex items-center justify-center text-white text-7xl shadow-xl transform hover:scale-105 transition-transform">
-                    ☕
+                  <div className="rounded-3xl h-64 overflow-hidden shadow-lg transform hover:scale-105 transition-transform relative group">
+                    <div
+                      className="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-300"
+                      style={{ backgroundImage: "url('https://images.unsplash.com/photo-1511920170033-f8396924c348?w=600&h=500&fit=crop')" }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-amber-500/40 to-transparent" />
+                    <div className="absolute bottom-3 left-3 text-5xl drop-shadow-lg">☕</div>
                   </div>
                 </div>
                 <div className="space-y-4 pt-8">
-                  <div className="bg-gradient-to-br from-green-400 to-teal-600 rounded-2xl h-64 flex items-center justify-center text-white text-7xl shadow-xl transform hover:scale-105 transition-transform">
-                    🥖
+                  <div className="rounded-3xl h-64 overflow-hidden shadow-lg transform hover:scale-105 transition-transform relative group">
+                    <div
+                      className="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-300"
+                      style={{ backgroundImage: "url('https://images.unsplash.com/photo-1608198093002-ad4e005484ec?w=600&h=500&fit=crop')" }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-orange-500/40 to-transparent" />
+                    <div className="absolute bottom-3 left-3 text-5xl drop-shadow-lg">🥖</div>
                   </div>
-                  <div className="bg-gradient-to-br from-purple-400 to-pink-600 rounded-2xl h-48 flex items-center justify-center text-white text-7xl shadow-xl transform hover:scale-105 transition-transform">
-                    🌸
+                  <div className="rounded-3xl h-48 overflow-hidden shadow-lg transform hover:scale-105 transition-transform relative group">
+                    <div
+                      className="absolute inset-0 bg-cover bg-center group-hover:scale-110 transition-transform duration-300"
+                      style={{ backgroundImage: "url('https://images.unsplash.com/photo-1525824617522-eabe8892e312?w=600&h=400&fit=crop')" }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-pink-500/40 to-transparent" />
+                    <div className="absolute bottom-3 left-3 text-5xl drop-shadow-lg">🌸</div>
                   </div>
                 </div>
               </div>
               {/* Floating Badge */}
-              <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-2xl p-6 transform rotate-3 hover:rotate-0 transition-transform">
+              <div className="absolute -bottom-6 -left-6 bg-white rounded-2xl shadow-xl p-6 transform rotate-3 hover:rotate-0 transition-transform border-2 border-rose-100">
                 <div className="text-center">
-                  <div className="text-4xl font-black text-red-600">{allBusinesses.length}+</div>
+                  <div className="text-4xl font-black bg-gradient-to-r from-rose-600 to-orange-600 bg-clip-text text-transparent">{allBusinesses.length}+</div>
                   <div className="text-sm font-bold text-gray-700">Businesses</div>
                 </div>
               </div>
@@ -172,21 +192,21 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Stats Section with Vibrant Cards */}
-      <section className="py-16 bg-white">
+      {/* Stats Section with Soft Pastel Cards */}
+      <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
-              { icon: '🏪', value: `${allBusinesses.length}+`, label: 'Businesses', gradient: 'from-red-500 via-orange-500 to-yellow-500' },
-              { icon: '🏝️', value: '6', label: 'Islands', gradient: 'from-blue-500 via-cyan-500 to-teal-500' },
-              { icon: '🎯', value: '10+', label: 'Categories', gradient: 'from-purple-500 via-pink-500 to-red-500' },
-              { icon: '⭐', value: '1000+', label: 'Reviews', gradient: 'from-yellow-500 via-orange-500 to-red-500' }
+              { icon: '🏪', value: `${allBusinesses.length}+`, label: 'Businesses', bg: 'bg-rose-100', text: 'text-rose-700', border: 'border-rose-200' },
+              { icon: '🏝️', value: '6', label: 'Islands', bg: 'bg-blue-100', text: 'text-blue-700', border: 'border-blue-200' },
+              { icon: '🎯', value: '10+', label: 'Categories', bg: 'bg-purple-100', text: 'text-purple-700', border: 'border-purple-200' },
+              { icon: '⭐', value: '1000+', label: 'Reviews', bg: 'bg-amber-100', text: 'text-amber-700', border: 'border-amber-200' }
             ].map((stat, idx) => (
-              <div key={idx} className={`bg-gradient-to-br ${stat.gradient} rounded-3xl shadow-2xl p-8 transform hover:scale-110 hover:rotate-2 transition-all duration-300 cursor-pointer`}>
-                <div className="text-center text-white">
+              <div key={idx} className={`${stat.bg} border-2 ${stat.border} rounded-2xl shadow-md p-8 transform hover:scale-105 hover:shadow-lg transition-all duration-300 cursor-pointer`}>
+                <div className="text-center">
                   <div className="text-5xl mb-3">{stat.icon}</div>
-                  <div className="text-4xl font-black mb-2 drop-shadow-lg">{stat.value}</div>
-                  <div className="text-sm font-bold uppercase tracking-wider">{stat.label}</div>
+                  <div className={`text-4xl font-black mb-2 ${stat.text}`}>{stat.value}</div>
+                  <div className={`text-sm font-bold uppercase tracking-wider ${stat.text}`}>{stat.label}</div>
                 </div>
               </div>
             ))}
