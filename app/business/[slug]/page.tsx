@@ -193,6 +193,34 @@ export default function BusinessDetailPage({ params }: { params: { slug: string 
               </div>
             </div>
 
+            {/* Google Maps */}
+            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+              <h3 className="text-lg font-semibold mb-4 flex items-center">
+                <MapPin className="w-5 h-5 mr-2" />
+                Location
+              </h3>
+              <div className="aspect-video rounded-lg overflow-hidden border-2 border-gray-200">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  loading="lazy"
+                  allowFullScreen
+                  referrerPolicy="no-referrer-when-downgrade"
+                  src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=${encodeURIComponent(business.address)}&zoom=15`}
+                ></iframe>
+              </div>
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(business.address)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-3 inline-flex items-center text-sm font-semibold text-rose-600 hover:text-rose-700"
+              >
+                Open in Google Maps
+                <ExternalLink className="w-4 h-4 ml-1" />
+              </a>
+            </div>
+
             {/* Business Hours */}
             <div className="bg-white rounded-lg shadow-sm p-6">
               <h3 className="text-lg font-semibold mb-4 flex items-center">
