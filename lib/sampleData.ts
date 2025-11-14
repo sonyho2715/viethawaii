@@ -6,7 +6,7 @@ export type Category = 'Restaurant' | 'Market' | 'Services' | 'Healthcare' | 'Be
 // Re-export the shared Business type for compatibility
 export type { DBBusiness as Business };
 
-// For local sample data only
+// Legacy interface for sample data (will be migrated to use API)
 interface LegacyBusiness {
   id: string;
   name: string;
@@ -38,7 +38,7 @@ interface LegacyBusiness {
   };
 }
 
-export const sampleBusinesses: LegacyBusiness[] = [
+const legacyBusinessData: LegacyBusiness[] = [
   {
     id: '1',
     name: 'Phở Saigon',
@@ -342,6 +342,9 @@ export const sampleBusinesses: LegacyBusiness[] = [
     coordinates: { lat: 21.9747, lng: -159.3668 }
   }
 ];
+
+// Export as Business type with type cast (temporary until all pages use API)
+export const sampleBusinesses: Business[] = legacyBusinessData as any;
 
 // Helper functions for data
 export const getBusinessesByIsland = (island: Island): Business[] => {
