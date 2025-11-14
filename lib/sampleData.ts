@@ -1,7 +1,13 @@
+import type { Business as DBBusiness } from '@/types';
+
 export type Island = 'Oahu' | 'Maui' | 'Big Island' | 'Kauai' | 'Molokai' | 'Lanai';
 export type Category = 'Restaurant' | 'Market' | 'Services' | 'Healthcare' | 'Beauty' | 'Professional';
 
-export interface Business {
+// Re-export the shared Business type for compatibility
+export type { DBBusiness as Business };
+
+// For local sample data only
+interface LegacyBusiness {
   id: string;
   name: string;
   nameVi?: string;
@@ -32,7 +38,7 @@ export interface Business {
   };
 }
 
-export const sampleBusinesses: Business[] = [
+export const sampleBusinesses: LegacyBusiness[] = [
   {
     id: '1',
     name: 'Phở Saigon',
