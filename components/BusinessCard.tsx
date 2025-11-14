@@ -1,28 +1,6 @@
 import Link from 'next/link';
 import { Star, MapPin, DollarSign, CheckCircle } from 'lucide-react';
-
-interface Business {
-  id: string;
-  name: string;
-  nameVi?: string | null;
-  slug: string;
-  description: string;
-  category: string;
-  subcategory: string | null;
-  island: string;
-  city: string;
-  address: string;
-  phone?: string | null;
-  image: string | null;
-  images: string[];
-  rating: number;
-  reviewCount: number;
-  featured: boolean;
-  verified: boolean;
-  priceRange?: string | null;
-  hours: any;
-  features: string[];
-}
+import type { Business } from '@/types';
 
 interface BusinessCardProps {
   business: Business;
