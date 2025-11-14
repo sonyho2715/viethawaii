@@ -235,7 +235,7 @@ export default function BusinessDetailPage({ params }: { params: { slug: string 
                 {Object.entries(business.hours).map(([day, hours]) => (
                   <div key={day} className="flex justify-between text-sm">
                     <span className="font-medium text-gray-700">{day}</span>
-                    <span className="text-gray-600">{hours}</span>
+                    <span className="text-gray-600">{String(hours)}</span>
                   </div>
                 ))}
               </div>
