@@ -103,28 +103,48 @@ export default function Home() {
       </header>
 
       {/* Hero Section with Soft Pastel Design */}
-      <section className="relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <section className="relative overflow-hidden bg-gradient-to-br from-rose-50 via-orange-50 to-amber-50">
+        {/* Background Image with Soft Overlay */}
+        <div className="absolute inset-0 z-0">
+          <div
+            className="absolute inset-0 bg-cover bg-center opacity-20"
+            style={{
+              backgroundImage: "url('https://images.unsplash.com/photo-1544376798-89aa6b82c6cd?w=1920&h=1080&fit=crop')",
+              filter: 'blur(2px)'
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-rose-100/90 via-orange-100/80 to-amber-100/90" />
+        </div>
+
+        {/* Animated Floating Elements */}
+        <div className="absolute inset-0 overflow-hidden z-0">
+          <div className="absolute top-20 left-10 text-6xl opacity-30 animate-pulse">🌺</div>
+          <div className="absolute top-40 right-20 text-5xl opacity-30 animate-pulse animation-delay-2000">🍜</div>
+          <div className="absolute bottom-20 left-1/3 text-6xl opacity-30 animate-pulse animation-delay-4000">🏝️</div>
+          <div className="absolute bottom-40 right-1/4 text-5xl opacity-30 animate-pulse animation-delay-3000">🥥</div>
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
-            <div>
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/80 border-2 border-rose-200 text-rose-700 rounded-full mb-6 shadow-sm">
+            <div className="animate-fade-in-up">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/90 backdrop-blur-md border-2 border-rose-200 text-rose-700 rounded-full mb-6 shadow-lg animate-float">
                 <span className="text-xl">🌴</span>
                 <span className="font-bold text-sm">Aloha! Welcome to VietHawaii</span>
               </div>
-              <h2 className="text-5xl md:text-6xl font-black text-gray-800 mb-6 leading-tight">
+              <h2 className="text-5xl md:text-7xl font-black text-gray-800 mb-6 leading-tight">
                 Discover
                 <br />
-                <span className="bg-gradient-to-r from-rose-500 to-orange-400 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-rose-500 to-orange-400 bg-clip-text text-transparent gradient-shimmer">
                   Vietnamese
                 </span>
                 <br />
                 Businesses
               </h2>
-              <p className="text-2xl text-gray-700 mb-3 font-medium">
+              <p className="text-2xl text-gray-700 mb-3 font-medium animate-slide-in-left">
                 From authentic phở to professional services 🍜
               </p>
-              <p className="text-lg text-gray-600 italic mb-8">
+              <p className="text-lg text-gray-600 italic mb-8 animate-slide-in-left animation-delay-2000">
                 Khám phá cộng đồng Việt Nam tại Hawaii
               </p>
 

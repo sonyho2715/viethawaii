@@ -76,22 +76,59 @@ export default function BusinessesPage() {
       </header>
 
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-rose-500 via-orange-500 to-amber-500 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="flex justify-center mb-4">
-              <div className="p-4 bg-white/20 rounded-2xl backdrop-blur-sm">
-                <span className="text-6xl">🏪</span>
+      <div className="relative bg-gradient-to-r from-rose-500 via-orange-500 to-amber-500 text-white py-24 overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <div
+            className="absolute inset-0 bg-cover bg-center opacity-30"
+            style={{
+              backgroundImage: "url('https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1920&h=600&fit=crop')",
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-rose-500/85 via-orange-500/85 to-amber-500/85" />
+        </div>
+
+        {/* Floating Business Icons */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-10 left-10 text-7xl opacity-20 animate-float">🏪</div>
+          <div className="absolute bottom-10 right-20 text-6xl opacity-20 animate-float animation-delay-2000">🍜</div>
+          <div className="absolute top-1/3 right-1/3 text-5xl opacity-20 animate-float animation-delay-3000">☕</div>
+          <div className="absolute bottom-1/3 left-1/4 text-6xl opacity-20 animate-float animation-delay-4000">🥖</div>
+          <div className="absolute top-20 right-40 text-5xl opacity-20 animate-float animation-delay-2000">💇</div>
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center animate-fade-in-up">
+            <div className="flex justify-center mb-6">
+              <div className="p-5 bg-white/25 rounded-3xl backdrop-blur-md shadow-2xl animate-float">
+                <span className="text-7xl">🏪</span>
               </div>
             </div>
-            <h1 className="text-5xl font-black mb-4">Vietnamese Businesses</h1>
-            <p className="text-xl text-orange-100 max-w-2xl mx-auto">
+            <h1 className="text-6xl md:text-7xl font-black mb-6 drop-shadow-lg">Vietnamese Businesses</h1>
+            <p className="text-2xl text-orange-100 max-w-3xl mx-auto mb-4 drop-shadow animate-slide-in-left">
               Discover {allBusinesses.length}+ authentic Vietnamese businesses across the Hawaiian Islands
             </p>
-            <div className="mt-8 flex justify-center gap-4">
+
+            {/* Stats Bar */}
+            <div className="flex justify-center gap-6 mb-8 animate-fade-in-up animation-delay-2000">
+              <div className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-2">
+                <span className="text-3xl font-black">{allBusinesses.filter(b => b.category === 'Restaurant').length}+</span>
+                <p className="text-sm">Restaurants</p>
+              </div>
+              <div className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-2">
+                <span className="text-3xl font-black">6</span>
+                <p className="text-sm">Islands</p>
+              </div>
+              <div className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-2">
+                <span className="text-3xl font-black">1000+</span>
+                <p className="text-sm">Reviews</p>
+              </div>
+            </div>
+
+            <div className="flex justify-center gap-4 animate-fade-in-up animation-delay-3000">
               <Link
                 href="/submit"
-                className="px-6 py-3 bg-white text-rose-600 rounded-lg font-bold hover:bg-orange-50 transition-all"
+                className="px-8 py-4 bg-white text-rose-600 rounded-xl font-bold text-lg hover:bg-orange-50 hover:scale-105 transition-all shadow-xl"
               >
                 + Add Your Business
               </Link>

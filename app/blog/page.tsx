@@ -39,18 +39,48 @@ export default function BlogPage() {
       </header>
 
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <div className="flex justify-center mb-4">
-              <div className="p-4 bg-white/20 rounded-2xl backdrop-blur-sm">
-                <BookOpen className="w-16 h-16" />
+      <div className="relative bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 text-white py-24 overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <div
+            className="absolute inset-0 bg-cover bg-center opacity-25"
+            style={{
+              backgroundImage: "url('https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=1920&h=600&fit=crop')",
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/90 via-pink-500/85 to-rose-500/90" />
+        </div>
+
+        {/* Animated Decorations */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-20 right-10 text-8xl opacity-20 animate-float">📚</div>
+          <div className="absolute bottom-20 left-20 text-6xl opacity-20 animate-float animation-delay-2000">✨</div>
+          <div className="absolute top-1/3 left-1/3 text-7xl opacity-15 animate-float animation-delay-3000">🌸</div>
+          <div className="absolute bottom-1/4 right-1/4 text-6xl opacity-20 animate-float animation-delay-4000">🍜</div>
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center animate-fade-in-up">
+            <div className="flex justify-center mb-6">
+              <div className="p-5 bg-white/25 rounded-3xl backdrop-blur-md shadow-2xl animate-float">
+                <BookOpen className="w-20 h-20" />
               </div>
             </div>
-            <h1 className="text-5xl font-black mb-4">VietHawaii Blog</h1>
-            <p className="text-xl text-pink-100 max-w-2xl mx-auto">
+            <h1 className="text-6xl md:text-7xl font-black mb-6 drop-shadow-lg">VietHawaii Blog</h1>
+            <p className="text-2xl text-pink-100 max-w-3xl mx-auto drop-shadow-md animate-slide-in-left">
               Guides, stories, and insights about Vietnamese culture, food, and life in Hawaii
             </p>
+            <div className="mt-8 flex justify-center gap-4 animate-fade-in-up animation-delay-2000">
+              <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-bold">
+                📖 100+ Articles
+              </span>
+              <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-bold">
+                🍜 Food Guides
+              </span>
+              <span className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-bold">
+                🌺 Culture Stories
+              </span>
+            </div>
           </div>
         </div>
       </div>

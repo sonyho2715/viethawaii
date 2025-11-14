@@ -39,16 +39,34 @@ export default function NewsPage() {
       </header>
 
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-rose-500 via-orange-500 to-amber-500 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
+      <div className="relative bg-gradient-to-r from-rose-500 via-orange-500 to-amber-500 text-white py-20 overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <div
+            className="absolute inset-0 bg-cover bg-center opacity-30"
+            style={{
+              backgroundImage: "url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1920&h=600&fit=crop')",
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-rose-500/80 via-orange-500/80 to-amber-500/80" />
+        </div>
+
+        {/* Floating Elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-10 left-20 text-7xl opacity-20 animate-float">📰</div>
+          <div className="absolute bottom-10 right-40 text-6xl opacity-20 animate-float animation-delay-2000">🌺</div>
+          <div className="absolute top-1/2 right-20 text-5xl opacity-20 animate-float animation-delay-3000">🏝️</div>
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center animate-fade-in-up">
             <div className="flex justify-center mb-4">
-              <div className="p-4 bg-white/20 rounded-2xl backdrop-blur-sm">
+              <div className="p-4 bg-white/30 rounded-2xl backdrop-blur-md shadow-xl animate-float">
                 <span className="text-6xl">📰</span>
               </div>
             </div>
-            <h1 className="text-5xl font-black mb-4">Community News</h1>
-            <p className="text-xl text-orange-100 max-w-2xl mx-auto">
+            <h1 className="text-6xl font-black mb-4 drop-shadow-lg">Community News</h1>
+            <p className="text-2xl text-orange-100 max-w-2xl mx-auto drop-shadow animate-slide-in-left">
               Stay updated with the latest news, events, and stories from Hawaii's Vietnamese community
             </p>
           </div>
