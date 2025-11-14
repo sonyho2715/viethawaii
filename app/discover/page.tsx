@@ -7,25 +7,18 @@ import { discoverItems } from '@/lib/enhancedData';
 
 export default function DiscoverPage() {
   // Group discover items by type
-  const foodTours = discoverItems.filter(item => item.type === 'collection' && item.title.includes('Food'));
-  const guides = discoverItems.filter(item => item.type === 'guide');
+  const places = discoverItems.filter(item => item.type === 'place');
   const events = discoverItems.filter(item => item.type === 'event');
   const features = discoverItems.filter(item => item.type === 'feature');
+  const traditions = discoverItems.filter(item => item.type === 'tradition');
 
   const categories = [
     {
-      title: 'Food Tours & Collections',
-      icon: Utensils,
-      color: 'from-red-500 to-orange-500',
-      items: foodTours,
-      description: 'Culinary journeys through Vietnamese flavors'
-    },
-    {
-      title: 'Local Guides',
+      title: 'Featured Places',
       icon: MapPin,
-      color: 'from-blue-500 to-cyan-500',
-      items: guides,
-      description: 'Expert guides to Vietnamese culture and locations'
+      color: 'from-red-500 to-orange-500',
+      items: places,
+      description: 'Must-visit Vietnamese spots across Hawaii'
     },
     {
       title: 'Community Events',
@@ -40,6 +33,13 @@ export default function DiscoverPage() {
       color: 'from-green-500 to-teal-500',
       items: features,
       description: 'Inspiring stories from our community'
+    },
+    {
+      title: 'Cultural Traditions',
+      icon: Users,
+      color: 'from-blue-500 to-cyan-500',
+      items: traditions,
+      description: 'Learn about Vietnamese customs and heritage'
     }
   ];
 
