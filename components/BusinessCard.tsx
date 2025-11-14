@@ -7,13 +7,43 @@ interface BusinessCardProps {
 }
 
 export default function BusinessCard({ business }: BusinessCardProps) {
+  // Map categories to stock images
+  const getImageUrl = () => {
+    switch(business.category) {
+      case 'Restaurant':
+        return 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800&h=600&fit=crop';
+      case 'Market':
+        return 'https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=800&h=600&fit=crop';
+      case 'Beauty':
+        return 'https://images.unsplash.com/photo-1560066984-138dadb4c035?w=800&h=600&fit=crop';
+      case 'Healthcare':
+        return 'https://images.unsplash.com/photo-1631217868264-e5b90bb7e133?w=800&h=600&fit=crop';
+      case 'Professional':
+        return 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&h=600&fit=crop';
+      case 'Services':
+        return 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&h=600&fit=crop';
+      default:
+        return 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=600&fit=crop';
+    }
+  };
+
   return (
     <Link href={`/business/${business.slug}`} className="block">
       <div className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden cursor-pointer">
-      {/* Image placeholder */}
-      <div className="h-48 bg-gradient-to-br from-primary-100 to-secondary-100 relative">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-6xl opacity-50">
+      {/* Image with overlay */}
+      <div className="h-48 relative overflow-hidden group">
+        <div
+          className="absolute inset-0 bg-cover bg-center transition-transform duration-300 group-hover:scale-110"
+          style={{ backgroundImage: `url('${getImageUrl()}')` }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+        {business.featured && (
+          <div className="absolute top-3 right-3 bg-gradient-to-r from-red-600 to-yellow-600 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg">
+            ⭐ Featured
+          </div>
+        )}
+        <div className="absolute bottom-3 left-3">
+          <span className="text-4xl drop-shadow-lg">
             {business.category === 'Restaurant' && '🍜'}
             {business.category === 'Market' && '🛒'}
             {business.category === 'Beauty' && '💅'}
@@ -22,11 +52,6 @@ export default function BusinessCard({ business }: BusinessCardProps) {
             {business.category === 'Services' && '🛠️'}
           </span>
         </div>
-        {business.featured && (
-          <div className="absolute top-2 right-2 bg-primary-500 text-white px-2 py-1 rounded text-xs font-semibold">
-            Featured
-          </div>
-        )}
       </div>
 
       {/* Content */}
