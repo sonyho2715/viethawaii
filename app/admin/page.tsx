@@ -19,8 +19,8 @@ import {
   ArrowUp,
   ArrowDown
 } from 'lucide-react';
-import { sampleBusinesses, realBusinesses } from '@/lib/sampleData';
-import { newsArticles, blogPosts } from '@/lib/enhancedData';
+import { sampleBusinesses } from '@/lib/sampleData';
+import { newsArticles, blogPosts, realBusinesses } from '@/lib/enhancedData';
 
 export default function AdminDashboard() {
   const [timeRange, setTimeRange] = useState('7d');
