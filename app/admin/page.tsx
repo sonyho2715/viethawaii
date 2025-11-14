@@ -109,6 +109,10 @@ export default function AdminDashboard() {
               <MapPin className="w-5 h-5" />
               Businesses
             </Link>
+            <Link href="/admin/pending-businesses" className="flex items-center gap-3 px-4 py-3 hover:bg-white/10 rounded-lg transition-colors">
+              <Calendar className="w-5 h-5" />
+              Pending Approvals
+            </Link>
             <Link href="/admin/reviews" className="flex items-center gap-3 px-4 py-3 hover:bg-white/10 rounded-lg transition-colors">
               <Star className="w-5 h-5" />
               Reviews
