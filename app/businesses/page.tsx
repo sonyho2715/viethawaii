@@ -335,9 +335,10 @@ export default function BusinessesPage() {
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all font-semibold text-black"
+                style={{ color: '#000000' }}
               >
                 {categories.map(cat => (
-                  <option key={cat} value={cat} className="text-black">{cat}</option>
+                  <option key={cat} value={cat} className="text-black" style={{ color: '#000000' }}>{cat}</option>
                 ))}
               </select>
             </div>
@@ -349,9 +350,10 @@ export default function BusinessesPage() {
                 value={selectedIsland}
                 onChange={(e) => setSelectedIsland(e.target.value)}
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all font-semibold text-black"
+                style={{ color: '#000000' }}
               >
                 {islands.map(island => (
-                  <option key={island} value={island} className="text-black">{island}</option>
+                  <option key={island} value={island} className="text-black" style={{ color: '#000000' }}>{island}</option>
                 ))}
               </select>
             </div>
