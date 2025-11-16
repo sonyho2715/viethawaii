@@ -13,6 +13,8 @@ import {
   ChevronLeft,
   ExternalLink
 } from 'lucide-react';
+import StructuredData from '@/components/StructuredData';
+import SocialShare from '@/components/SocialShare';
 
 export const dynamic = 'force-static';
 export const dynamicParams = false;
@@ -32,6 +34,7 @@ export default function BusinessDetailPage({ params }: { params: { slug: string 
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <StructuredData business={business} type="business" />
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -128,6 +131,14 @@ export default function BusinessDetailPage({ params }: { params: { slug: string 
                   {business.descriptionVi}
                 </p>
               )}
+
+              {/* Social Share */}
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <SocialShare
+                  title={`${business.name} - VietHawaii`}
+                  description={business.description}
+                />
+              </div>
             </div>
 
             {/* Features */}

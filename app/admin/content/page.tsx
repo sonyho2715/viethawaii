@@ -18,7 +18,20 @@ import {
   Tag,
   User
 } from 'lucide-react';
-import { blogPosts, newsArticles } from '@/lib/enhancedData';
+
+interface ContentItem {
+  id: string;
+  title: string;
+  excerpt?: string;
+  description?: string;
+  image: string | null;
+  category: string;
+  author?: string;
+  date?: string;
+  slug: string;
+  type: 'Blog' | 'News' | 'Discover';
+  createdAt: string;
+}
 
 export default function AdminContent() {
   const router = useRouter();
@@ -27,32 +40,97 @@ export default function AdminContent() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [allContent, setAllContent] = useState<ContentItem[]>([]);
 
   useEffect(() => {
     const auth = localStorage.getItem('adminAuth');
     if (auth === 'true') {
       setIsAuthenticated(true);
-      setLoading(false);
+      fetchContent();
     } else {
       router.push('/admin/login');
     }
   }, [router]);
 
-  // Combine blog posts and news articles
-  const allContent = [
-    ...blogPosts.map(post => ({ ...post, type: 'Blog' as const })),
-    ...newsArticles.map(article => ({ ...article, type: 'News' as const }))
-  ];
+  const fetchContent = async () => {
+    try {
+      setLoading(true);
+      const [newsResponse, blogResponse, discoverResponse] = await Promise.all([
+        fetch('/api/admin/content?type=news'),
+        fetch('/api/admin/content?type=blog'),
+        fetch('/api/admin/content?type=discover'),
+      ]);
+
+      const newsData = newsResponse.ok ? await newsResponse.json() : [];
+      const blogData = blogResponse.ok ? await blogResponse.json() : [];
+      const discoverData = discoverResponse.ok ? await discoverResponse.json() : [];
+
+      const combined: ContentItem[] = [
+        ...newsData.map((item: any) => ({
+          ...item,
+          type: 'News' as const,
+          excerpt: item.content?.substring(0, 150) || '',
+          date: new Date(item.publishedAt || item.createdAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          }),
+        })),
+        ...blogData.map((item: any) => ({
+          ...item,
+          type: 'Blog' as const,
+          date: new Date(item.publishedAt || item.createdAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          }),
+        })),
+        ...discoverData.map((item: any) => ({
+          ...item,
+          type: 'Discover' as const,
+          excerpt: item.description || item.content?.substring(0, 150) || '',
+          author: 'VietHawaii',
+          date: new Date(item.createdAt).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          }),
+        })),
+      ];
+
+      setAllContent(combined);
+    } catch (error) {
+      console.error('Error fetching content:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const filteredContent = allContent.filter(item => {
+    const excerpt = item.excerpt || item.description || '';
     const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         item.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+                         excerpt.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = selectedType === 'All' || item.type === selectedType;
     const matchesCategory = selectedCategory === 'All' || item.category === selectedCategory;
     return matchesSearch && matchesType && matchesCategory;
   });
 
-  if (loading || !isAuthenticated) {
+  const blogCount = allContent.filter(item => item.type === 'Blog').length;
+  const newsCount = allContent.filter(item => item.type === 'News').length;
+  const discoverCount = allContent.filter(item => item.type === 'Discover').length;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-rose-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600 font-semibold">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
     return null;
   }
 
@@ -70,10 +148,10 @@ export default function AdminContent() {
               <Link href="/admin" className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors font-semibold">
                 ← Dashboard
               </Link>
-              <button className="px-6 py-2.5 bg-gradient-to-r from-rose-500 to-orange-500 text-white rounded-lg font-bold hover:shadow-lg transition-all flex items-center gap-2">
+              <Link href="/admin/content/new" className="px-6 py-2.5 bg-gradient-to-r from-rose-500 to-orange-500 text-white rounded-lg font-bold hover:shadow-lg transition-all flex items-center gap-2">
                 <Plus className="w-5 h-5" />
                 New Content
-              </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -88,15 +166,15 @@ export default function AdminContent() {
           </div>
           <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-green-500">
             <div className="text-sm font-semibold text-gray-600 mb-1">Blog Posts</div>
-            <div className="text-3xl font-black text-gray-900">{blogPosts.length}</div>
+            <div className="text-3xl font-black text-gray-900">{blogCount}</div>
           </div>
           <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-purple-500">
             <div className="text-sm font-semibold text-gray-600 mb-1">News Articles</div>
-            <div className="text-3xl font-black text-gray-900">{newsArticles.length}</div>
+            <div className="text-3xl font-black text-gray-900">{newsCount}</div>
           </div>
           <div className="bg-white rounded-xl shadow-md p-6 border-l-4 border-orange-500">
-            <div className="text-sm font-semibold text-gray-600 mb-1">Draft Items</div>
-            <div className="text-3xl font-black text-gray-900">0</div>
+            <div className="text-sm font-semibold text-gray-600 mb-1">Discover Items</div>
+            <div className="text-3xl font-black text-gray-900">{discoverCount}</div>
           </div>
         </div>
 
@@ -127,6 +205,7 @@ export default function AdminContent() {
                 <option value="All">All Types</option>
                 <option value="Blog">Blog Posts</option>
                 <option value="News">News Articles</option>
+                <option value="Discover">Discover Items</option>
               </select>
             </div>
 
@@ -216,7 +295,9 @@ export default function AdminContent() {
                       <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
                         item.type === 'Blog'
                           ? 'bg-blue-100 text-blue-700'
-                          : 'bg-purple-100 text-purple-700'
+                          : item.type === 'News'
+                          ? 'bg-purple-100 text-purple-700'
+                          : 'bg-orange-100 text-orange-700'
                       }`}>
                         {item.type}
                       </span>
@@ -242,18 +323,19 @@ export default function AdminContent() {
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <Link
-                          href={item.type === 'Blog' ? `/blog/${item.slug}` : `/news/${item.slug}`}
+                          href={item.type === 'Blog' ? `/blog/${item.slug}` : item.type === 'News' ? `/news/${item.slug}` : `/discover/${item.slug}`}
                           className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                           title="View"
                         >
                           <Eye className="w-5 h-5" />
                         </Link>
-                        <button
+                        <Link
+                          href={`/admin/content/edit/${item.id}?type=${item.type.toLowerCase()}`}
                           className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                           title="Edit"
                         >
                           <Edit className="w-5 h-5" />
-                        </button>
+                        </Link>
                         <button
                           className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                           title="Delete"

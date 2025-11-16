@@ -47,53 +47,83 @@ export default function EditBusinessPage({ params }: { params: { id: string } })
     const auth = localStorage.getItem('adminAuth');
     if (auth === 'true') {
       setIsAuthenticated(true);
-      // TODO: Load business data from API/database
-      // For now, using sample data
-      setFormData({
-        name: 'Sample Business',
-        nameVi: 'Tên Tiếng Việt',
-        description: 'This is a sample business description.',
-        descriptionVi: 'Đây là mô tả mẫu.',
-        category: 'Restaurant',
-        subcategory: 'Vietnamese Cuisine',
-        address: '123 Main St',
-        city: 'Honolulu',
-        island: 'Oahu',
-        phone: '(808) 555-0123',
-        email: 'info@business.com',
-        website: 'https://business.com',
-        priceRange: '$$',
-        rating: 4.5,
-        reviewCount: 125,
-        featured: true,
-        verified: true,
-        features: ['Vietnamese Spoken', 'Outdoor Seating', 'Takeout Available'],
-        hours: {
-          Monday: '9:00 AM - 6:00 PM',
-          Tuesday: '9:00 AM - 6:00 PM',
-          Wednesday: '9:00 AM - 6:00 PM',
-          Thursday: '9:00 AM - 6:00 PM',
-          Friday: '9:00 AM - 6:00 PM',
-          Saturday: '10:00 AM - 4:00 PM',
-          Sunday: 'Closed'
-        }
-      });
-      setLoading(false);
+      fetchBusinessData();
     } else {
       router.push('/admin/login');
     }
   }, [router, params.id]);
 
+  const fetchBusinessData = async () => {
+    try {
+      const response = await fetch(`/api/admin/businesses/${params.id}`);
+      if (response.ok) {
+        const data = await response.json();
+        setFormData({
+          name: data.name || '',
+          nameVi: data.nameVi || '',
+          description: data.description || '',
+          descriptionVi: data.descriptionVi || '',
+          category: data.category || 'Restaurant',
+          subcategory: data.subcategory || '',
+          address: data.address || '',
+          city: data.city || '',
+          island: data.island || 'Oahu',
+          phone: data.phone || '',
+          email: data.email || '',
+          website: data.website || '',
+          priceRange: data.priceRange || '$$',
+          rating: data.rating || 0,
+          reviewCount: data.reviewCount || 0,
+          featured: data.featured || false,
+          verified: data.verified || false,
+          features: data.features || [],
+          hours: data.hours || {
+            Monday: '9:00 AM - 6:00 PM',
+            Tuesday: '9:00 AM - 6:00 PM',
+            Wednesday: '9:00 AM - 6:00 PM',
+            Thursday: '9:00 AM - 6:00 PM',
+            Friday: '9:00 AM - 6:00 PM',
+            Saturday: '10:00 AM - 4:00 PM',
+            Sunday: 'Closed'
+          }
+        });
+      } else {
+        alert('Failed to load business data');
+        router.push('/admin/businesses');
+      }
+    } catch (error) {
+      console.error('Error fetching business:', error);
+      alert('Failed to load business data');
+      router.push('/admin/businesses');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
 
-    // TODO: Save to API/database
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      const response = await fetch(`/api/admin/businesses/${params.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
 
-    alert('Business updated successfully!');
-    setSaving(false);
-    router.push('/admin/businesses');
+      if (response.ok) {
+        alert('Business updated successfully!');
+        router.push('/admin/businesses');
+      } else {
+        const error = await response.json();
+        alert(`Failed to update business: ${error.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Error updating business:', error);
+      alert('Failed to update business');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {

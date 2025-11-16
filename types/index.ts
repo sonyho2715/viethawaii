@@ -65,6 +65,7 @@ export interface DiscoverItem {
   titleVi?: string | null;
   slug: string;
   description: string;
+  type: 'place' | 'event' | 'feature' | 'tradition';
   category: string;
   image: string | null;
 }

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { DiscoverItem } from '@/lib/enhancedData';
+import type { DiscoverItem } from '@/types';
 import { MapPin, Calendar, Star, Coffee } from 'lucide-react';
 
 interface DiscoverCardProps {
@@ -45,7 +45,7 @@ export default function DiscoverCard({ item }: DiscoverCardProps) {
   };
 
   return (
-    <Link href={item.link} className="block group">
+    <Link href={`/discover/${item.slug}`} className="block group">
       <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer h-full">
         <div className="h-40 relative overflow-hidden">
           <div

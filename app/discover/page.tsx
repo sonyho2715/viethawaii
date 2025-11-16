@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { ChevronLeft, Compass, MapPin, Utensils, Coffee, ShoppingBag, Heart, Users, Calendar, TrendingUp } from 'lucide-react';
 import DiscoverCard from '@/components/DiscoverCard';
 import { discoverItems } from '@/lib/enhancedData';
+import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer';
 
 export default function DiscoverPage() {
   // Group discover items by type
@@ -45,23 +47,7 @@ export default function DiscoverPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-rose-50 to-amber-50">
-      {/* Header */}
-      <header className="bg-white/90 backdrop-blur-md shadow-md sticky top-0 z-50 border-b border-orange-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2 text-gray-600 hover:text-rose-600 transition-colors">
-              <ChevronLeft className="w-5 h-5" />
-              <span className="font-semibold">Back to Home</span>
-            </Link>
-            <Link href="/" className="flex items-center space-x-2">
-              <span className="text-2xl">🌺</span>
-              <h1 className="text-3xl font-black bg-gradient-to-r from-rose-600 to-orange-600 bg-clip-text text-transparent">
-                VietHawaii
-              </h1>
-            </Link>
-          </div>
-        </div>
-      </header>
+      <Navigation />
 
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 text-white py-20">
@@ -245,6 +231,7 @@ export default function DiscoverPage() {
           </div>
         </section>
       </div>
+      <Footer />
     </div>
   );
 }

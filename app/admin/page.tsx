@@ -3,47 +3,91 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import AdminLayout from '@/components/admin/AdminLayout';
+import StatCard from '@/components/admin/StatCard';
 import {
-  BarChart3,
+  Store,
+  MessageSquare,
   Users,
-  MapPin,
+  FileText,
   Star,
   TrendingUp,
-  Calendar,
-  FileText,
-  Settings,
-  LogOut,
-  Eye,
-  Heart,
-  MessageSquare,
-  DollarSign,
-  ArrowUp,
-  ArrowDown
+  Clock,
+  CheckCircle,
+  AlertCircle,
+  ArrowRight,
 } from 'lucide-react';
-import { sampleBusinesses } from '@/lib/sampleData';
-import { newsArticles, blogPosts, realBusinesses } from '@/lib/enhancedData';
+
+interface Stats {
+  totalBusinesses: number;
+  activeBusinesses: number;
+  pendingBusinesses: number;
+  totalReviews: number;
+  pendingReviews: number;
+  totalUsers: number;
+  totalNews: number;
+  totalBlogs: number;
+  totalDiscover: number;
+  recentReviews: Array<{
+    id: string;
+    userName: string;
+    rating: number;
+    comment: string;
+    businessName: string;
+    businessSlug: string;
+    createdAt: string;
+    status: string;
+  }>;
+}
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const [timeRange, setTimeRange] = useState('7d');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
-  const allBusinesses = [...sampleBusinesses, ...realBusinesses];
+  const [stats, setStats] = useState<Stats | null>(null);
 
   useEffect(() => {
-    // Check authentication
-    const auth = localStorage.getItem('adminAuth');
-    if (auth === 'true') {
-      setIsAuthenticated(true);
-      setLoading(false);
-    } else {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    try {
+      const response = await fetch('/api/auth/me');
+      const result = await response.json();
+
+      if (result.success && result.data.role === 'admin') {
+        await fetchStats();
+      } else {
+        router.push('/admin/login');
+      }
+    } catch (error) {
+      console.error('Auth check failed:', error);
       router.push('/admin/login');
     }
-  }, [router]);
+  };
 
-  const handleLogout = () => {
-    localStorage.removeItem('adminAuth');
-    router.push('/admin/login');
+  const fetchStats = async () => {
+    try {
+      const response = await fetch('/api/admin/stats');
+      if (response.ok) {
+        const data = await response.json();
+        setStats(data);
+      }
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getTimeAgo = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (seconds < 60) return 'just now';
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+    return `${Math.floor(seconds / 86400)}d ago`;
   };
 
   if (loading) {
@@ -51,262 +95,229 @@ export default function AdminDashboard() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-rose-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-gray-600 font-semibold">Loading...</p>
+          <p className="text-gray-600 font-semibold">Loading dashboard...</p>
         </div>
       </div>
     );
   }
 
-  if (!isAuthenticated) {
-    return null;
-  }
-
-  // Mock stats data
-  const stats = {
-    totalBusinesses: allBusinesses.length,
-    totalViews: 12543,
-    totalReviews: 1247,
-    totalRevenue: 2859,
-    viewsChange: 12.5,
-    reviewsChange: -3.2,
-    businessesChange: 8.1,
-    revenueChange: 15.3
-  };
-
-  const recentActivity = [
-    { id: 1, type: 'business', action: 'New business added', name: 'Pho Saigon', time: '2 hours ago', icon: '🍜' },
-    { id: 2, type: 'review', action: 'New review posted', name: 'The Pig and The Lady', time: '5 hours ago', icon: '⭐' },
-    { id: 3, type: 'user', action: 'New user registered', name: 'John Doe', time: '1 day ago', icon: '👤' },
-    { id: 4, type: 'blog', action: 'Blog post published', name: 'Ultimate Pho Guide', time: '2 days ago', icon: '📝' },
-    { id: 5, type: 'news', action: 'News article published', name: 'Tet Festival 2025', time: '3 days ago', icon: '📰' },
-  ];
-
-  const topBusinesses = allBusinesses
-    .sort((a, b) => b.rating - a.rating)
-    .slice(0, 5);
-
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Sidebar */}
-      <div className="fixed left-0 top-0 h-full w-64 bg-gradient-to-b from-red-600 to-orange-600 text-white shadow-xl z-50">
-        <div className="p-6">
-          <div className="flex items-center gap-3 mb-8">
-            <div className="bg-white rounded-full p-2">
-              <span className="text-2xl">🌺</span>
-            </div>
-            <div>
-              <h1 className="text-xl font-black">VietHawaii</h1>
-              <p className="text-xs text-yellow-200">Admin Dashboard</p>
-            </div>
-          </div>
-
-          <nav className="space-y-2">
-            <Link href="/admin" className="flex items-center gap-3 px-4 py-3 bg-white/20 rounded-lg font-semibold">
-              <BarChart3 className="w-5 h-5" />
-              Dashboard
-            </Link>
-            <Link href="/admin/businesses" className="flex items-center gap-3 px-4 py-3 hover:bg-white/10 rounded-lg transition-colors">
-              <MapPin className="w-5 h-5" />
-              Businesses
-            </Link>
-            <Link href="/admin/pending-businesses" className="flex items-center gap-3 px-4 py-3 hover:bg-white/10 rounded-lg transition-colors">
-              <Calendar className="w-5 h-5" />
-              Pending Approvals
-            </Link>
-            <Link href="/admin/reviews" className="flex items-center gap-3 px-4 py-3 hover:bg-white/10 rounded-lg transition-colors">
-              <Star className="w-5 h-5" />
-              Reviews
-            </Link>
-            <Link href="/admin/users" className="flex items-center gap-3 px-4 py-3 hover:bg-white/10 rounded-lg transition-colors">
-              <Users className="w-5 h-5" />
-              Users
-            </Link>
-            <Link href="/admin/content" className="flex items-center gap-3 px-4 py-3 hover:bg-white/10 rounded-lg transition-colors">
-              <FileText className="w-5 h-5" />
-              Content
-            </Link>
-            <Link href="/admin/analytics" className="flex items-center gap-3 px-4 py-3 hover:bg-white/10 rounded-lg transition-colors">
-              <TrendingUp className="w-5 h-5" />
-              Analytics
-            </Link>
-            <Link href="/admin/settings" className="flex items-center gap-3 px-4 py-3 hover:bg-white/10 rounded-lg transition-colors">
-              <Settings className="w-5 h-5" />
-              Settings
-            </Link>
-          </nav>
-
-          <div className="absolute bottom-6 left-6 right-6">
+  if (!stats) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <AlertCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+            <p className="text-gray-600 font-semibold">Failed to load dashboard data</p>
             <button
-              onClick={handleLogout}
-              className="flex items-center gap-3 px-4 py-3 hover:bg-white/10 rounded-lg transition-colors w-full text-left"
+              onClick={() => window.location.reload()}
+              className="mt-4 px-6 py-2 bg-gradient-to-r from-rose-500 to-orange-500 text-white rounded-lg font-medium hover:shadow-lg transition-shadow"
             >
-              <LogOut className="w-5 h-5" />
-              Logout
+              Retry
             </button>
           </div>
         </div>
+      </AdminLayout>
+    );
+  }
+
+  return (
+    <AdminLayout>
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard Overview</h1>
+        <p className="text-gray-600">Welcome back! Here's what's happening with VietHawaii.</p>
       </div>
 
-      {/* Main Content */}
-      <div className="ml-64 p-8">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-4xl font-black text-gray-900">Dashboard Overview</h2>
-              <p className="text-gray-600 mt-1">Welcome back! Here's what's happening with VietHawaii.</p>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <StatCard
+          title="Total Businesses"
+          value={stats.totalBusinesses}
+          subtitle={`${stats.activeBusinesses} active`}
+          icon={Store}
+          color="blue"
+        />
+        <StatCard
+          title="Total Reviews"
+          value={stats.totalReviews}
+          subtitle={stats.pendingReviews > 0 ? `${stats.pendingReviews} pending` : 'All reviewed'}
+          icon={MessageSquare}
+          color="purple"
+        />
+        <StatCard
+          title="Total Users"
+          value={stats.totalUsers}
+          icon={Users}
+          color="orange"
+        />
+        <StatCard
+          title="Content Items"
+          value={stats.totalNews + stats.totalBlogs + stats.totalDiscover}
+          subtitle={`${stats.totalNews} news, ${stats.totalBlogs} blogs`}
+          icon={FileText}
+          color="green"
+        />
+      </div>
+
+      {/* Pending Actions Alert */}
+      {(stats.pendingBusinesses > 0 || stats.pendingReviews > 0) && (
+        <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-xl p-6 mb-8">
+          <div className="flex items-start gap-4">
+            <div className="p-2 bg-yellow-100 rounded-lg">
+              <Clock className="w-6 h-6 text-yellow-600" />
             </div>
-            <div className="flex items-center gap-3">
-              <select
-                value={timeRange}
-                onChange={(e) => setTimeRange(e.target.value)}
-                className="px-4 py-2 bg-white border-2 border-gray-200 rounded-lg font-semibold text-gray-700 hover:border-red-500 transition-colors"
-              >
-                <option value="7d">Last 7 days</option>
-                <option value="30d">Last 30 days</option>
-                <option value="90d">Last 90 days</option>
-                <option value="1y">Last year</option>
-              </select>
+            <div className="flex-1">
+              <h3 className="text-lg font-bold text-gray-900 mb-2">Pending Actions Required</h3>
+              <div className="space-y-2">
+                {stats.pendingBusinesses > 0 && (
+                  <Link
+                    href="/admin/pending-businesses"
+                    className="flex items-center justify-between p-3 bg-white rounded-lg hover:shadow-md transition-shadow group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Store className="w-5 h-5 text-gray-600" />
+                      <span className="font-medium text-gray-900">
+                        {stats.pendingBusinesses} business{stats.pendingBusinesses !== 1 ? 'es' : ''} awaiting approval
+                      </span>
+                    </div>
+                    <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-rose-500 transition-colors" />
+                  </Link>
+                )}
+                {stats.pendingReviews > 0 && (
+                  <Link
+                    href="/admin/reviews"
+                    className="flex items-center justify-between p-3 bg-white rounded-lg hover:shadow-md transition-shadow group"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Star className="w-5 h-5 text-gray-600" />
+                      <span className="font-medium text-gray-900">
+                        {stats.pendingReviews} review{stats.pendingReviews !== 1 ? 's' : ''} awaiting moderation
+                      </span>
+                    </div>
+                    <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-rose-500 transition-colors" />
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Recent Reviews */}
+        <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-gray-900">Recent Reviews</h2>
+            <Link
+              href="/admin/reviews"
+              className="text-sm text-rose-600 hover:text-rose-700 font-medium flex items-center gap-1"
+            >
+              View all
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          <div className="space-y-3">
+            {stats.recentReviews.length > 0 ? (
+              stats.recentReviews.map((review) => (
+                <div
+                  key={review.id}
+                  className="p-4 border border-gray-200 rounded-lg hover:border-gray-300 hover:shadow-sm transition-all"
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex-1">
+                      <p className="font-semibold text-gray-900">{review.userName}</p>
+                      <Link
+                        href={`/business/${review.businessSlug}`}
+                        className="text-sm text-gray-600 hover:text-rose-600 transition-colors"
+                      >
+                        {review.businessName}
+                      </Link>
+                    </div>
+                    <div className="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded">
+                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                      <span className="text-sm font-bold text-gray-900">{review.rating}</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-700 line-clamp-2 mb-2">{review.comment}</p>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-gray-500">{getTimeAgo(review.createdAt)}</span>
+                    <span
+                      className={`text-xs px-2 py-1 rounded-full font-medium ${
+                        review.status === 'approved'
+                          ? 'bg-green-50 text-green-700'
+                          : review.status === 'pending'
+                          ? 'bg-yellow-50 text-yellow-700'
+                          : 'bg-red-50 text-red-700'
+                      }`}
+                    >
+                      {review.status}
+                    </span>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-12">
+                <MessageSquare className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                <p className="text-gray-500">No reviews yet</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="space-y-6">
+          {/* Business Stats */}
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Business Status</h3>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-600" />
+                  <span className="font-medium text-gray-900">Active</span>
+                </div>
+                <span className="text-lg font-bold text-gray-900">{stats.activeBusinesses}</span>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <Clock className="w-5 h-5 text-yellow-600" />
+                  <span className="font-medium text-gray-900">Pending</span>
+                </div>
+                <span className="text-lg font-bold text-gray-900">{stats.pendingBusinesses}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h3>
+            <div className="space-y-2">
               <Link
-                href="/"
-                className="px-6 py-2 bg-gradient-to-r from-red-600 to-orange-600 text-white rounded-lg font-bold hover:shadow-lg transition-all"
+                href="/admin/businesses"
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors group"
               >
-                View Site
+                <Store className="w-5 h-5 text-gray-600 group-hover:text-rose-600" />
+                <span className="font-medium text-gray-900">Manage Businesses</span>
+              </Link>
+              <Link
+                href="/admin/content"
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+              >
+                <FileText className="w-5 h-5 text-gray-600 group-hover:text-rose-600" />
+                <span className="font-medium text-gray-900">Manage Content</span>
+              </Link>
+              <Link
+                href="/admin/users"
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+              >
+                <Users className="w-5 h-5 text-gray-600 group-hover:text-rose-600" />
+                <span className="font-medium text-gray-900">Manage Users</span>
               </Link>
             </div>
           </div>
         </div>
-
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-blue-500">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-blue-100 rounded-xl">
-                <MapPin className="w-6 h-6 text-blue-600" />
-              </div>
-              <div className={`flex items-center gap-1 text-sm font-bold ${stats.businessesChange > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {stats.businessesChange > 0 ? <ArrowUp className="w-4 h-4" /> : <ArrowDown className="w-4 h-4" />}
-                {Math.abs(stats.businessesChange)}%
-              </div>
-            </div>
-            <div className="text-3xl font-black text-gray-900 mb-1">{stats.totalBusinesses}</div>
-            <div className="text-sm font-medium text-gray-600">Total Businesses</div>
-          </div>
-
-          <div className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-purple-500">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-purple-100 rounded-xl">
-                <Eye className="w-6 h-6 text-purple-600" />
-              </div>
-              <div className={`flex items-center gap-1 text-sm font-bold ${stats.viewsChange > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {stats.viewsChange > 0 ? <ArrowUp className="w-4 h-4" /> : <ArrowDown className="w-4 h-4" />}
-                {Math.abs(stats.viewsChange)}%
-              </div>
-            </div>
-            <div className="text-3xl font-black text-gray-900 mb-1">{stats.totalViews.toLocaleString()}</div>
-            <div className="text-sm font-medium text-gray-600">Total Views</div>
-          </div>
-
-          <div className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-orange-500">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-orange-100 rounded-xl">
-                <Star className="w-6 h-6 text-orange-600" />
-              </div>
-              <div className={`flex items-center gap-1 text-sm font-bold ${stats.reviewsChange > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {stats.reviewsChange > 0 ? <ArrowUp className="w-4 h-4" /> : <ArrowDown className="w-4 h-4" />}
-                {Math.abs(stats.reviewsChange)}%
-              </div>
-            </div>
-            <div className="text-3xl font-black text-gray-900 mb-1">{stats.totalReviews.toLocaleString()}</div>
-            <div className="text-sm font-medium text-gray-600">Total Reviews</div>
-          </div>
-
-          <div className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-green-500">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-green-100 rounded-xl">
-                <DollarSign className="w-6 h-6 text-green-600" />
-              </div>
-              <div className={`flex items-center gap-1 text-sm font-bold ${stats.revenueChange > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {stats.revenueChange > 0 ? <ArrowUp className="w-4 h-4" /> : <ArrowDown className="w-4 h-4" />}
-                {Math.abs(stats.revenueChange)}%
-              </div>
-            </div>
-            <div className="text-3xl font-black text-gray-900 mb-1">${stats.totalRevenue.toLocaleString()}</div>
-            <div className="text-sm font-medium text-gray-600">Monthly Revenue</div>
-          </div>
-        </div>
-
-        {/* Two Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Recent Activity */}
-          <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6">
-            <h3 className="text-2xl font-black text-gray-900 mb-6">Recent Activity</h3>
-            <div className="space-y-4">
-              {recentActivity.map((activity) => (
-                <div key={activity.id} className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
-                  <div className="text-3xl">{activity.icon}</div>
-                  <div className="flex-1">
-                    <p className="font-bold text-gray-900">{activity.action}</p>
-                    <p className="text-sm text-gray-600">{activity.name}</p>
-                  </div>
-                  <div className="text-sm text-gray-500">{activity.time}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Top Businesses */}
-          <div className="bg-white rounded-2xl shadow-lg p-6">
-            <h3 className="text-2xl font-black text-gray-900 mb-6">Top Rated</h3>
-            <div className="space-y-4">
-              {topBusinesses.map((business, index) => (
-                <div key={business.id} className="flex items-center gap-3 p-3 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-xl">
-                  <div className="w-8 h-8 bg-gradient-to-r from-red-600 to-yellow-600 rounded-full flex items-center justify-center text-white font-black">
-                    {index + 1}
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-bold text-gray-900 text-sm">{business.name}</p>
-                    <div className="flex items-center gap-1 mt-1">
-                      <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                      <span className="text-xs font-bold text-gray-700">{business.rating}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Content Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-          <div className="bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl shadow-lg p-6 text-white">
-            <div className="flex items-center justify-between mb-4">
-              <FileText className="w-10 h-10" />
-              <div className="text-4xl font-black">{blogPosts.length}</div>
-            </div>
-            <div className="text-lg font-bold">Blog Posts</div>
-            <div className="text-sm text-blue-100 mt-1">Published articles</div>
-          </div>
-
-          <div className="bg-gradient-to-br from-pink-600 to-red-600 rounded-2xl shadow-lg p-6 text-white">
-            <div className="flex items-center justify-between mb-4">
-              <Calendar className="w-10 h-10" />
-              <div className="text-4xl font-black">{newsArticles.length}</div>
-            </div>
-            <div className="text-lg font-bold">News Articles</div>
-            <div className="text-sm text-pink-100 mt-1">Community updates</div>
-          </div>
-
-          <div className="bg-gradient-to-br from-green-600 to-teal-600 rounded-2xl shadow-lg p-6 text-white">
-            <div className="flex items-center justify-between mb-4">
-              <Users className="w-10 h-10" />
-              <div className="text-4xl font-black">847</div>
-            </div>
-            <div className="text-lg font-bold">Active Users</div>
-            <div className="text-sm text-green-100 mt-1">This month</div>
-          </div>
-        </div>
       </div>
-    </div>
+    </AdminLayout>
   );
 }

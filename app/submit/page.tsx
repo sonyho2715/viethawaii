@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, Upload, CheckCircle, AlertCircle, Building2, MapPin, Phone, Mail, Globe, Clock, DollarSign, Star, Image as ImageIcon } from 'lucide-react';
+import Navigation from '@/components/Navigation';
+import Footer from '@/components/Footer';
 
 interface FormData {
   // Basic Info
@@ -74,7 +76,43 @@ export default function SubmitBusinessPage() {
     ownerPhone: ''
   });
 
-  const categories = ['Restaurant', 'Retail', 'Service', 'Healthcare', 'Education', 'Real Estate', 'Entertainment', 'Other'];
+  const categoryData = {
+    'Food & Dining': {
+      subcategories: ['Vietnamese Restaurant', 'Pho Restaurant', 'Banh Mi Shop', 'Vietnamese Bakery', 'Coffee Shop', 'Bubble Tea', 'Vietnamese Grocery', 'Asian Market', 'Food Truck', 'Catering']
+    },
+    'Retail & Shopping': {
+      subcategories: ['Vietnamese Grocery Store', 'Asian Supermarket', 'Gift Shop', 'Clothing & Fashion', 'Jewelry', 'Home Goods', 'Bookstore', 'Specialty Store']
+    },
+    'Beauty & Wellness': {
+      subcategories: ['Hair Salon', 'Nail Salon', 'Spa & Massage', 'Barber Shop', 'Beauty Supply', 'Skincare', 'Wellness Center']
+    },
+    'Health & Medical': {
+      subcategories: ['Dental Office', 'Medical Clinic', 'Pharmacy', 'Acupuncture', 'Traditional Medicine', 'Physical Therapy', 'Optometry', 'Mental Health Services']
+    },
+    'Professional Services': {
+      subcategories: ['Legal Services', 'Accounting & Tax', 'Real Estate Agency', 'Insurance Agency', 'Financial Services', 'Consulting', 'Translation Services', 'Immigration Services']
+    },
+    'Education & Training': {
+      subcategories: ['Language School', 'Vietnamese School', 'Tutoring Center', 'Music School', 'Art Studio', 'Dance Studio', 'Martial Arts', 'Test Prep']
+    },
+    'Automotive': {
+      subcategories: ['Auto Repair', 'Auto Detailing', 'Car Wash', 'Auto Parts', 'Tire Shop', 'Body Shop']
+    },
+    'Home & Garden': {
+      subcategories: ['Construction', 'Landscaping', 'Cleaning Services', 'Home Repair', 'Painting', 'Flooring', 'Roofing', 'Plumbing', 'Electrical']
+    },
+    'Entertainment & Events': {
+      subcategories: ['Event Planning', 'Photography', 'Videography', 'DJ Services', 'Entertainment Venue', 'Cultural Center', 'Community Organization']
+    },
+    'Technology': {
+      subcategories: ['Computer Repair', 'Phone Repair', 'IT Services', 'Web Design', 'Software Development', 'Tech Support']
+    },
+    'Other Services': {
+      subcategories: ['Travel Agency', 'Courier Service', 'Storage Facility', 'Pet Services', 'Laundry & Dry Cleaning', 'Other']
+    }
+  };
+
+  const categories = Object.keys(categoryData);
   const islands = ['Oahu', 'Maui', 'Hawaii Island', 'Kauai', 'Molokai', 'Lanai'];
   const priceRanges = ['$', '$$', '$$$', '$$$$'];
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -167,10 +205,32 @@ export default function SubmitBusinessPage() {
 
     setStatus('loading');
 
-    // TODO: Implement API call to submit business
-    setTimeout(() => {
-      setStatus('success');
-    }, 2000);
+    try {
+      const response = await fetch('/api/businesses', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          status: 'pending', // Business submissions need approval
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success || response.ok) {
+        setStatus('success');
+      } else {
+        console.error('Submission error:', result.error);
+        setErrors({ submit: result.error || 'Failed to submit business. Please try again.' });
+        setStatus('idle');
+      }
+    } catch (error) {
+      console.error('Submission error:', error);
+      setErrors({ submit: 'Failed to submit business. Please check your connection and try again.' });
+      setStatus('idle');
+    }
   };
 
   if (status === 'success') {
@@ -227,23 +287,7 @@ export default function SubmitBusinessPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-rose-50 to-amber-50">
-      {/* Header */}
-      <header className="bg-white/90 backdrop-blur-md shadow-md sticky top-0 z-50 border-b border-orange-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center gap-2 text-gray-600 hover:text-rose-600 transition-colors">
-              <ChevronLeft className="w-5 h-5" />
-              <span className="font-semibold">Back to Home</span>
-            </Link>
-            <Link href="/" className="flex items-center space-x-2">
-              <span className="text-2xl">🌺</span>
-              <h1 className="text-3xl font-black bg-gradient-to-r from-rose-600 to-orange-600 bg-clip-text text-transparent">
-                VietHawaii
-              </h1>
-            </Link>
-          </div>
-        </div>
-      </header>
+      <Navigation />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Progress Bar */}
@@ -328,38 +372,48 @@ export default function SubmitBusinessPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-bold text-gray-700 mb-2">
+                  Category <span className="text-rose-500">*</span>
+                </label>
+                <select
+                  name="category"
+                  value={formData.category}
+                  onChange={(e) => {
+                    handleChange(e);
+                    // Reset subcategory when category changes
+                    setFormData(prev => ({ ...prev, subcategory: '' }));
+                  }}
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all font-semibold"
+                >
+                  <option value="">Select category...</option>
+                  {categories.map(cat => (
+                    <option key={cat} value={cat}>{cat}</option>
+                  ))}
+                </select>
+              </div>
+
+              {formData.category && (
                 <div>
                   <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Category <span className="text-rose-500">*</span>
+                    Subcategory <span className="text-rose-500">*</span>
                   </label>
                   <select
-                    name="category"
-                    value={formData.category}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all font-semibold"
-                  >
-                    <option value="">Select category...</option>
-                    {categories.map(cat => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Subcategory
-                  </label>
-                  <input
-                    type="text"
                     name="subcategory"
                     value={formData.subcategory}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all"
-                    placeholder="e.g., Vietnamese Restaurant"
-                  />
+                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all font-semibold"
+                  >
+                    <option value="">Select subcategory...</option>
+                    {categoryData[formData.category as keyof typeof categoryData]?.subcategories.map(subcat => (
+                      <option key={subcat} value={subcat}>{subcat}</option>
+                    ))}
+                  </select>
+                  <p className="mt-2 text-sm text-gray-500">
+                    Choose the option that best describes your business
+                  </p>
                 </div>
-              </div>
+              )}
             </div>
           )}
 
@@ -670,6 +724,7 @@ export default function SubmitBusinessPage() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

@@ -18,21 +18,27 @@ export default function AdminLogin() {
     setError('');
     setLoading(true);
 
-    // Demo credentials - in production, this would be a secure API call
-    const validCredentials = {
-      email: 'admin@viethawaii.com',
-      password: 'admin123'
-    };
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+      const result = await response.json();
 
-    if (email === validCredentials.email && password === validCredentials.password) {
-      // In production, store auth token in httpOnly cookie or secure storage
-      localStorage.setItem('adminAuth', 'true');
-      router.push('/admin');
-    } else {
-      setError('Invalid email or password');
+      if (result.success) {
+        // Auth cookie is set by the server
+        router.push('/admin');
+      } else {
+        setError(result.error || 'Invalid email or password');
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      setError('An error occurred during login. Please try again.');
       setLoading(false);
     }
   };
@@ -154,13 +160,6 @@ export default function AdminLogin() {
               )}
             </button>
           </form>
-
-          {/* Demo Credentials Info */}
-          <div className="mt-8 p-4 bg-blue-50 border-2 border-blue-200 rounded-xl">
-            <p className="text-sm font-bold text-blue-700 mb-2">Demo Credentials:</p>
-            <p className="text-xs text-blue-600 font-mono">Email: admin@viethawaii.com</p>
-            <p className="text-xs text-blue-600 font-mono">Password: admin123</p>
-          </div>
         </div>
 
         {/* Back to Site Link */}
