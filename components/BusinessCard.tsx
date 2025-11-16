@@ -47,6 +47,9 @@ export default function BusinessCard({ business, userLocation }: BusinessCardPro
 
     if (todayHours.closed) return 'Closed';
 
+    // Check if open and close times are defined
+    if (!todayHours.open || !todayHours.close) return 'Closed';
+
     const [openHour, openMin] = todayHours.open.split(':').map(Number);
     const [closeHour, closeMin] = todayHours.close.split(':').map(Number);
     const openTime = openHour * 100 + openMin;
