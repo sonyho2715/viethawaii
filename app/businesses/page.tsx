@@ -223,6 +223,7 @@ export default function BusinessesPage() {
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="w-full pl-12 pr-4 py-4 rounded-xl border-0 focus:ring-2 focus:ring-rose-500 outline-none text-lg text-black"
+                      style={{ color: '#000000' }}
                     />
                   </div>
                   <button className="px-8 py-4 bg-gradient-to-r from-rose-500 to-orange-500 text-white rounded-xl font-bold hover:shadow-xl transition-all hover:scale-105">
