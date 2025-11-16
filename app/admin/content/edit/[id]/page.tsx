@@ -4,15 +4,17 @@ import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronLeft, Save, X, Upload, Image as ImageIcon } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import ImageUpload from '@/components/ImageUpload';
 
 export default function EditContentPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const type = searchParams.get('type') || 'blog';
+  const { loading: authLoading, isAuthenticated } = useAuth(true, true);
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const [formData, setFormData] = useState({
     type: type,
@@ -30,14 +32,10 @@ export default function EditContentPage({ params }: { params: { id: string } }) 
   });
 
   useEffect(() => {
-    const auth = localStorage.getItem('adminAuth');
-    if (auth === 'true') {
-      setIsAuthenticated(true);
+    if (isAuthenticated) {
       fetchContentData();
-    } else {
-      router.push('/admin/login');
     }
-  }, [router, params.id, type]);
+  }, [isAuthenticated, params.id, type]);
 
   const fetchContentData = async () => {
     try {
@@ -141,7 +139,7 @@ export default function EditContentPage({ params }: { params: { id: string } }) 
     }
   };
 
-  if (loading || !isAuthenticated) {
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -150,6 +148,10 @@ export default function EditContentPage({ params }: { params: { id: string } }) 
         </div>
       </div>
     );
+  }
+
+  if (!isAuthenticated) {
+    return null;
   }
 
   return (
@@ -271,6 +273,19 @@ export default function EditContentPage({ params }: { params: { id: string } }) 
             </div>
           </div>
 
+          {/* Featured Image */}
+          <div className="bg-white rounded-xl shadow-md p-8">
+            <h2 className="text-2xl font-black text-gray-900 mb-6 flex items-center gap-3">
+              <span className="text-3xl">🖼️</span>
+              Featured Image
+            </h2>
+            <ImageUpload
+              value={formData.image}
+              onChange={(dataUrl) => setFormData(prev => ({ ...prev, image: dataUrl }))}
+              label="Upload Featured Image"
+            />
+          </div>
+
           {/* Metadata */}
           <div className="bg-white rounded-xl shadow-md p-8">
             <h2 className="text-2xl font-black text-gray-900 mb-6">Metadata</h2>
@@ -317,22 +332,6 @@ export default function EditContentPage({ params }: { params: { id: string } }) 
                   />
                 </div>
               )}
-              <div className="md:col-span-2">
-                <label className="block text-sm font-bold text-gray-700 mb-2">Featured Image URL</label>
-                <input
-                  type="url"
-                  name="image"
-                  value={formData.image}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all"
-                  placeholder="https://example.com/image.jpg"
-                />
-                {formData.image && (
-                  <div className="mt-4">
-                    <img src={formData.image} alt="Preview" className="w-full max-w-md h-48 object-cover rounded-lg" />
-                  </div>
-                )}
-              </div>
               <div>
                 <label className="flex items-center gap-3">
                   <input

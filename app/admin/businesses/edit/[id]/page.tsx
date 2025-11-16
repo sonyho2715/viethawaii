@@ -4,12 +4,14 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, Save, X, Upload, MapPin, Phone, Globe, Mail, Clock } from 'lucide-react';
 import Link from 'next/link';
+import { useAuth } from '@/hooks/useAuth';
+import ImageUpload from '@/components/ImageUpload';
 
 export default function EditBusinessPage({ params }: { params: { id: string } }) {
   const router = useRouter();
+  const { loading: authLoading, isAuthenticated } = useAuth(true, true);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -24,6 +26,7 @@ export default function EditBusinessPage({ params }: { params: { id: string } })
     phone: '',
     email: '',
     website: '',
+    image: '',
     priceRange: '$$',
     rating: 4.5,
     reviewCount: 0,
@@ -44,14 +47,10 @@ export default function EditBusinessPage({ params }: { params: { id: string } })
   const [newFeature, setNewFeature] = useState('');
 
   useEffect(() => {
-    const auth = localStorage.getItem('adminAuth');
-    if (auth === 'true') {
-      setIsAuthenticated(true);
+    if (isAuthenticated) {
       fetchBusinessData();
-    } else {
-      router.push('/admin/login');
     }
-  }, [router, params.id]);
+  }, [isAuthenticated, params.id]);
 
   const fetchBusinessData = async () => {
     try {
@@ -71,6 +70,7 @@ export default function EditBusinessPage({ params }: { params: { id: string } })
           phone: data.phone || '',
           email: data.email || '',
           website: data.website || '',
+          image: data.image || '',
           priceRange: data.priceRange || '$$',
           rating: data.rating || 0,
           reviewCount: data.reviewCount || 0,
@@ -162,7 +162,18 @@ export default function EditBusinessPage({ params }: { params: { id: string } })
     }));
   };
 
-  if (loading || !isAuthenticated) {
+  if (authLoading || loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-rose-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600 font-semibold">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
     return null;
   }
 
@@ -265,6 +276,19 @@ export default function EditBusinessPage({ params }: { params: { id: string } })
                 />
               </div>
             </div>
+          </div>
+
+          {/* Business Image */}
+          <div className="bg-white rounded-xl shadow-md p-8">
+            <h2 className="text-2xl font-black text-gray-900 mb-6 flex items-center gap-3">
+              <span className="text-3xl">🖼️</span>
+              Business Image
+            </h2>
+            <ImageUpload
+              value={formData.image}
+              onChange={(dataUrl) => setFormData(prev => ({ ...prev, image: dataUrl }))}
+              label="Upload Business Image"
+            />
           </div>
 
           {/* Category & Location */}

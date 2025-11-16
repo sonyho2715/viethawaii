@@ -17,6 +17,7 @@ import {
   XCircle,
   Clock
 } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 
 interface Business {
   id: string;
@@ -40,23 +41,19 @@ interface Business {
 
 export default function AdminBusinesses() {
   const router = useRouter();
+  const { loading: authLoading, isAuthenticated } = useAuth(true, true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedIsland, setSelectedIsland] = useState('All');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedStatus, setSelectedStatus] = useState('active');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [businesses, setBusinesses] = useState<Business[]>([]);
 
   useEffect(() => {
-    const auth = localStorage.getItem('adminAuth');
-    if (auth === 'true') {
-      setIsAuthenticated(true);
+    if (isAuthenticated) {
       fetchBusinesses();
-    } else {
-      router.push('/admin/login');
     }
-  }, [router, selectedStatus]);
+  }, [isAuthenticated, selectedStatus]);
 
   const fetchBusinesses = async () => {
     try {
@@ -146,7 +143,7 @@ export default function AdminBusinesses() {
   const islands = ['All', 'Oahu', 'Maui', 'Hawaii', 'Kauai', 'Molokai', 'Lanai'];
   const categories = ['All', 'Food & Dining', 'Retail & Shopping', 'Beauty & Wellness', 'Health & Medical', 'Professional Services', 'Other Services'];
 
-  if (loading && businesses.length === 0) {
+  if (authLoading || (loading && businesses.length === 0)) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">

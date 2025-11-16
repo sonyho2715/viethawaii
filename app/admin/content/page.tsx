@@ -18,6 +18,7 @@ import {
   Tag,
   User
 } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 
 interface ContentItem {
   id: string;
@@ -35,22 +36,18 @@ interface ContentItem {
 
 export default function AdminContent() {
   const router = useRouter();
+  const { loading: authLoading, isAuthenticated } = useAuth(true, true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState('All');
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [allContent, setAllContent] = useState<ContentItem[]>([]);
 
   useEffect(() => {
-    const auth = localStorage.getItem('adminAuth');
-    if (auth === 'true') {
-      setIsAuthenticated(true);
+    if (isAuthenticated) {
       fetchContent();
-    } else {
-      router.push('/admin/login');
     }
-  }, [router]);
+  }, [isAuthenticated]);
 
   const fetchContent = async () => {
     try {
@@ -119,7 +116,7 @@ export default function AdminContent() {
   const newsCount = allContent.filter(item => item.type === 'News').length;
   const discoverCount = allContent.filter(item => item.type === 'Discover').length;
 
-  if (loading) {
+  if (authLoading || (loading && allContent.length === 0)) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">

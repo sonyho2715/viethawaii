@@ -21,6 +21,7 @@ import {
   Filter,
   MoreVertical
 } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 
 // Mock user data
 const mockUsers = [
@@ -132,21 +133,10 @@ const mockUsers = [
 
 export default function AdminUsers() {
   const router = useRouter();
+  const { loading: authLoading, isAuthenticated } = useAuth(true, true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRole, setSelectedRole] = useState('All');
   const [selectedStatus, setSelectedStatus] = useState('All');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const auth = localStorage.getItem('adminAuth');
-    if (auth === 'true') {
-      setIsAuthenticated(true);
-      setLoading(false);
-    } else {
-      router.push('/admin/login');
-    }
-  }, [router]);
 
   const filteredUsers = mockUsers.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -165,7 +155,18 @@ export default function AdminUsers() {
     suspended: mockUsers.filter(u => u.status === 'Suspended').length
   };
 
-  if (loading || !isAuthenticated) {
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-rose-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600 font-semibold">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
     return null;
   }
 

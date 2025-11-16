@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { sampleBusinesses } from '@/lib/sampleData';
 import { realBusinesses } from '@/lib/enhancedData';
+import { useAuth } from '@/hooks/useAuth';
 
 // Mock review data
 const mockReviews = [
@@ -110,21 +111,10 @@ const mockReviews = [
 
 export default function AdminReviews() {
   const router = useRouter();
+  const { loading: authLoading, isAuthenticated } = useAuth(true, true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('All');
   const [selectedRating, setSelectedRating] = useState('All');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const auth = localStorage.getItem('adminAuth');
-    if (auth === 'true') {
-      setIsAuthenticated(true);
-      setLoading(false);
-    } else {
-      router.push('/admin/login');
-    }
-  }, [router]);
 
   const filteredReviews = mockReviews.filter(review => {
     const matchesSearch = review.businessName.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -143,7 +133,18 @@ export default function AdminReviews() {
     avgRating: (mockReviews.reduce((acc, r) => acc + r.rating, 0) / mockReviews.length).toFixed(1)
   };
 
-  if (loading || !isAuthenticated) {
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-rose-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600 font-semibold">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
     return null;
   }
 

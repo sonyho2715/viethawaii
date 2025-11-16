@@ -4,12 +4,13 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronLeft, Save, X, Upload, Image as ImageIcon } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import ImageUpload from '@/components/ImageUpload';
 
 export default function NewContentPage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
+  const { loading: authLoading, isAuthenticated } = useAuth(true, true);
   const [saving, setSaving] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const [formData, setFormData] = useState({
     type: 'news',
@@ -25,16 +26,6 @@ export default function NewContentPage() {
     image: '',
     published: true,
   });
-
-  useEffect(() => {
-    const auth = localStorage.getItem('adminAuth');
-    if (auth === 'true') {
-      setIsAuthenticated(true);
-      setLoading(false);
-    } else {
-      router.push('/admin/login');
-    }
-  }, [router]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -107,7 +98,18 @@ export default function NewContentPage() {
     }
   };
 
-  if (loading || !isAuthenticated) {
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-rose-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-gray-600 font-semibold">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
     return null;
   }
 
@@ -276,6 +278,19 @@ export default function NewContentPage() {
             </div>
           </div>
 
+          {/* Featured Image */}
+          <div className="bg-white rounded-xl shadow-md p-8">
+            <h2 className="text-2xl font-black text-gray-900 mb-6 flex items-center gap-3">
+              <span className="text-3xl">🖼️</span>
+              Featured Image
+            </h2>
+            <ImageUpload
+              value={formData.image}
+              onChange={(dataUrl) => setFormData(prev => ({ ...prev, image: dataUrl }))}
+              label="Upload Featured Image"
+            />
+          </div>
+
           {/* Metadata */}
           <div className="bg-white rounded-xl shadow-md p-8">
             <h2 className="text-2xl font-black text-gray-900 mb-6">Metadata</h2>
@@ -322,17 +337,6 @@ export default function NewContentPage() {
                   />
                 </div>
               )}
-              <div className="md:col-span-2">
-                <label className="block text-sm font-bold text-gray-700 mb-2">Featured Image URL</label>
-                <input
-                  type="url"
-                  name="image"
-                  value={formData.image}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all"
-                  placeholder="https://example.com/image.jpg"
-                />
-              </div>
               <div>
                 <label className="flex items-center gap-3">
                   <input
