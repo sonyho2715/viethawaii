@@ -20,8 +20,8 @@ export function useAuth(requireAuth = true, requireAdmin = false) {
         if (response.ok) {
           const result = await response.json();
 
-          if (result.success && result.data) {
-            const userData = result.data;
+          if (result.success && result.user) {
+            const userData = result.user;
 
             if (requireAdmin && userData.role !== 'admin') {
               router.push('/admin/login');
