@@ -235,7 +235,7 @@ export default function EditBusinessPage({ params }: { params: { id: string } })
                   value={formData.name}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all text-gray-900 placeholder:text-gray-400"
                 />
               </div>
               <div>
@@ -247,7 +247,7 @@ export default function EditBusinessPage({ params }: { params: { id: string } })
                   name="nameVi"
                   value={formData.nameVi}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all text-gray-900 placeholder:text-gray-400"
                 />
               </div>
               <div className="md:col-span-2">
@@ -260,7 +260,7 @@ export default function EditBusinessPage({ params }: { params: { id: string } })
                   onChange={handleInputChange}
                   required
                   rows={4}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all text-gray-900 placeholder:text-gray-400"
                 />
               </div>
               <div className="md:col-span-2">
@@ -272,7 +272,7 @@ export default function EditBusinessPage({ params }: { params: { id: string } })
                   value={formData.descriptionVi}
                   onChange={handleInputChange}
                   rows={4}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all text-gray-900 placeholder:text-gray-400"
                 />
               </div>
             </div>
@@ -305,7 +305,7 @@ export default function EditBusinessPage({ params }: { params: { id: string } })
                   value={formData.category}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all font-semibold"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all font-semibold text-gray-900"
                 >
                   <option value="Restaurant">Restaurant</option>
                   <option value="Retail">Retail</option>
@@ -324,7 +324,7 @@ export default function EditBusinessPage({ params }: { params: { id: string } })
                   value={formData.subcategory}
                   onChange={handleInputChange}
                   placeholder="e.g., Vietnamese Cuisine"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all text-gray-900 placeholder:text-gray-400"
                 />
               </div>
               <div className="md:col-span-2">
@@ -335,7 +335,7 @@ export default function EditBusinessPage({ params }: { params: { id: string } })
                   value={formData.address}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all text-gray-900 placeholder:text-gray-400"
                 />
               </div>
               <div>
@@ -346,7 +346,7 @@ export default function EditBusinessPage({ params }: { params: { id: string } })
                   value={formData.city}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all text-gray-900 placeholder:text-gray-400"
                 />
               </div>
               <div>
@@ -356,7 +356,7 @@ export default function EditBusinessPage({ params }: { params: { id: string } })
                   value={formData.island}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all font-semibold"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all font-semibold text-gray-900"
                 >
                   <option value="Oahu">Oahu</option>
                   <option value="Maui">Maui</option>
@@ -384,7 +384,7 @@ export default function EditBusinessPage({ params }: { params: { id: string } })
                   value={formData.phone}
                   onChange={handleInputChange}
                   placeholder="(808) 555-0123"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all text-gray-900 placeholder:text-gray-400"
                 />
               </div>
               <div>
@@ -395,7 +395,7 @@ export default function EditBusinessPage({ params }: { params: { id: string } })
                   value={formData.email}
                   onChange={handleInputChange}
                   placeholder="info@business.com"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all text-gray-900 placeholder:text-gray-400"
                 />
               </div>
               <div className="md:col-span-2">
@@ -406,7 +406,7 @@ export default function EditBusinessPage({ params }: { params: { id: string } })
                   value={formData.website}
                   onChange={handleInputChange}
                   placeholder="https://business.com"
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all text-gray-900 placeholder:text-gray-400"
                 />
               </div>
             </div>
@@ -422,7 +422,7 @@ export default function EditBusinessPage({ params }: { params: { id: string } })
                   name="priceRange"
                   value={formData.priceRange}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all font-semibold"
+                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all font-semibold text-gray-900"
                 >
                   <option value="$">$ - Budget</option>
                   <option value="$$">$$ - Moderate</option>
@@ -470,7 +470,7 @@ export default function EditBusinessPage({ params }: { params: { id: string } })
                   onChange={(e) => setNewFeature(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addFeature())}
                   placeholder="Add a feature (e.g., Vietnamese Spoken, Parking Available)"
-                  className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all"
+                  className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all text-gray-900 placeholder:text-gray-400"
                 />
                 <button
                   type="button"
