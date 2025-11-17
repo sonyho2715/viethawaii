@@ -159,7 +159,7 @@ export default function BusinessesHomepage({ businesses }: BusinessesHomepagePro
                       placeholder="Search Vietnamese businesses..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-12 pr-4 py-4 rounded-xl border-0 focus:ring-2 focus:ring-rose-500 outline-none text-lg"
+                      className="w-full pl-12 pr-4 py-4 rounded-xl border-0 focus:ring-2 focus:ring-rose-500 outline-none text-lg text-gray-900 placeholder:text-gray-500"
                     />
                   </div>
                   <button className="px-8 py-4 bg-gradient-to-r from-rose-500 to-orange-500 text-white rounded-xl font-bold hover:shadow-xl transition-all hover:scale-105">
