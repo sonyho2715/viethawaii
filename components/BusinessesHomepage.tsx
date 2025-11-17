@@ -112,7 +112,7 @@ export default function BusinessesHomepage({ businesses }: BusinessesHomepagePro
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage: "url('/images/hero/hawaii-scenic.jpg')",
+              backgroundImage: "url('https://images.unsplash.com/photo-1542259009477-d625272157b7?q=80&w=2069&auto=format&fit=crop')",
             }}
           />
           {/* Gradient Overlay */}
@@ -499,7 +499,7 @@ export default function BusinessesHomepage({ businesses }: BusinessesHomepagePro
               <div
                 className="absolute inset-0 bg-cover bg-center transition-transform group-hover:scale-110"
                 style={{
-                  backgroundImage: "url('/images/scenic/diamond-head.jpg')",
+                  backgroundImage: "url('https://images.unsplash.com/photo-1583899892741-b5b7d8c8f9b7?q=80&w=2070&auto=format&fit=crop')",
                 }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
@@ -534,7 +534,7 @@ export default function BusinessesHomepage({ businesses }: BusinessesHomepagePro
               <div
                 className="absolute inset-0 bg-cover bg-center transition-transform group-hover:scale-110"
                 style={{
-                  backgroundImage: "url('/images/scenic/manoa-falls.jpg')",
+                  backgroundImage: "url('https://images.unsplash.com/photo-1566133969348-7a6d7c1c2b46?q=80&w=2070&auto=format&fit=crop')",
                 }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
@@ -569,7 +569,7 @@ export default function BusinessesHomepage({ businesses }: BusinessesHomepagePro
               <div
                 className="absolute inset-0 bg-cover bg-center transition-transform group-hover:scale-110"
                 style={{
-                  backgroundImage: "url('/images/scenic/lanikai-beach.jpg')",
+                  backgroundImage: "url('https://images.unsplash.com/photo-1559827260-dc66d52bef19?q=80&w=2070&auto=format&fit=crop')",
                 }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
@@ -604,7 +604,7 @@ export default function BusinessesHomepage({ businesses }: BusinessesHomepagePro
               <div
                 className="absolute inset-0 bg-cover bg-center transition-transform group-hover:scale-110"
                 style={{
-                  backgroundImage: "url('/images/scenic/haleakala.jpg')",
+                  backgroundImage: "url('https://images.unsplash.com/photo-1505852679233-d9fd70aff56d?q=80&w=2070&auto=format&fit=crop')",
                 }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
@@ -639,7 +639,7 @@ export default function BusinessesHomepage({ businesses }: BusinessesHomepagePro
               <div
                 className="absolute inset-0 bg-cover bg-center transition-transform group-hover:scale-110"
                 style={{
-                  backgroundImage: "url('/images/scenic/waimea-canyon.jpg')",
+                  backgroundImage: "url('https://images.unsplash.com/photo-1542259009477-d625272157b7?q=80&w=2070&auto=format&fit=crop')",
                 }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
@@ -674,7 +674,7 @@ export default function BusinessesHomepage({ businesses }: BusinessesHomepagePro
               <div
                 className="absolute inset-0 bg-cover bg-center transition-transform group-hover:scale-110"
                 style={{
-                  backgroundImage: "url('/images/scenic/volcanoes.jpg')",
+                  backgroundImage: "url('https://images.unsplash.com/photo-1618914179325-811bc6c7e9b6?q=80&w=2070&auto=format&fit=crop')",
                 }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
