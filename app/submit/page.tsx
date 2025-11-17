@@ -1,730 +1,360 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
-import { ChevronLeft, Upload, CheckCircle, AlertCircle, Building2, MapPin, Phone, Mail, Globe, Clock, DollarSign, Star, Image as ImageIcon } from 'lucide-react';
-import Navigation from '@/components/Navigation';
-import Footer from '@/components/Footer';
+import { useRouter } from 'next/navigation';
 
-interface FormData {
-  // Basic Info
-  businessName: string;
-  businessNameVi: string;
-  category: string;
-  subcategory: string;
-
-  // Location
-  island: string;
-  city: string;
-  address: string;
-
-  // Contact
-  phone: string;
-  email: string;
-  website: string;
-
-  // Details
-  description: string;
-  descriptionVi: string;
-  priceRange: string;
-
-  // Hours
-  hours: {
-    [key: string]: string;
-  };
-
-  // Features
-  features: string[];
-
-  // Owner Info
-  ownerName: string;
-  ownerEmail: string;
-  ownerPhone: string;
-}
+const ISLANDS = ['Oahu', 'Maui', 'Big Island', 'Kauai', 'Molokai', 'Lanai'];
+const CATEGORIES = [
+  'Restaurant',
+  'Cafe',
+  'Grocery',
+  'Professional Services',
+  'Beauty & Wellness',
+  'Retail',
+  'Auto Services',
+  'Healthcare',
+  'Education',
+  'Other',
+];
+const PRICE_RANGES = ['$', '$$', '$$$', '$$$$'];
 
 export default function SubmitBusinessPage() {
-  const [step, setStep] = useState(1);
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [errorMessage, setErrorMessage] = useState('');
-
-  const [formData, setFormData] = useState<FormData>({
-    businessName: '',
-    businessNameVi: '',
+  const router = useRouter();
+  const [formData, setFormData] = useState({
+    name: '',
+    nameVi: '',
+    description: '',
+    descriptionVi: '',
     category: '',
     subcategory: '',
-    island: 'Oahu',
-    city: '',
     address: '',
+    city: '',
+    island: 'Oahu',
+    zipCode: '',
     phone: '',
     email: '',
     website: '',
-    description: '',
-    descriptionVi: '',
-    priceRange: '$$',
-    hours: {
-      Monday: '9:00 AM - 5:00 PM',
-      Tuesday: '9:00 AM - 5:00 PM',
-      Wednesday: '9:00 AM - 5:00 PM',
-      Thursday: '9:00 AM - 5:00 PM',
-      Friday: '9:00 AM - 5:00 PM',
-      Saturday: 'Closed',
-      Sunday: 'Closed'
-    },
-    features: [],
-    ownerName: '',
-    ownerEmail: '',
-    ownerPhone: ''
+    priceRange: '',
+    submitterName: '',
+    submitterEmail: '',
   });
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const categoryData = {
-    'Food & Dining': {
-      subcategories: ['Vietnamese Restaurant', 'Pho Restaurant', 'Banh Mi Shop', 'Vietnamese Bakery', 'Coffee Shop', 'Bubble Tea', 'Vietnamese Grocery', 'Asian Market', 'Food Truck', 'Catering']
-    },
-    'Retail & Shopping': {
-      subcategories: ['Vietnamese Grocery Store', 'Asian Supermarket', 'Gift Shop', 'Clothing & Fashion', 'Jewelry', 'Home Goods', 'Bookstore', 'Specialty Store']
-    },
-    'Beauty & Wellness': {
-      subcategories: ['Hair Salon', 'Nail Salon', 'Spa & Massage', 'Barber Shop', 'Beauty Supply', 'Skincare', 'Wellness Center']
-    },
-    'Health & Medical': {
-      subcategories: ['Dental Office', 'Medical Clinic', 'Pharmacy', 'Acupuncture', 'Traditional Medicine', 'Physical Therapy', 'Optometry', 'Mental Health Services']
-    },
-    'Professional Services': {
-      subcategories: ['Legal Services', 'Accounting & Tax', 'Real Estate Agency', 'Insurance Agency', 'Financial Services', 'Consulting', 'Translation Services', 'Immigration Services']
-    },
-    'Education & Training': {
-      subcategories: ['Language School', 'Vietnamese School', 'Tutoring Center', 'Music School', 'Art Studio', 'Dance Studio', 'Martial Arts', 'Test Prep']
-    },
-    'Automotive': {
-      subcategories: ['Auto Repair', 'Auto Detailing', 'Car Wash', 'Auto Parts', 'Tire Shop', 'Body Shop']
-    },
-    'Home & Garden': {
-      subcategories: ['Construction', 'Landscaping', 'Cleaning Services', 'Home Repair', 'Painting', 'Flooring', 'Roofing', 'Plumbing', 'Electrical']
-    },
-    'Entertainment & Events': {
-      subcategories: ['Event Planning', 'Photography', 'Videography', 'DJ Services', 'Entertainment Venue', 'Cultural Center', 'Community Organization']
-    },
-    'Technology': {
-      subcategories: ['Computer Repair', 'Phone Repair', 'IT Services', 'Web Design', 'Software Development', 'Tech Support']
-    },
-    'Other Services': {
-      subcategories: ['Travel Agency', 'Courier Service', 'Storage Facility', 'Pet Services', 'Laundry & Dry Cleaning', 'Other']
-    }
-  };
-
-  const categories = Object.keys(categoryData);
-  const islands = ['Oahu', 'Maui', 'Hawaii Island', 'Kauai', 'Molokai', 'Lanai'];
-  const priceRanges = ['$', '$$', '$$$', '$$$$'];
-  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-
-  const commonFeatures = [
-    'Dine-in', 'Takeout', 'Delivery', 'Parking', 'WiFi', 'Outdoor Seating',
-    'Wheelchair Accessible', 'Family Friendly', 'Pet Friendly', 'Reservations',
-    'Credit Cards', 'Cash Only', 'Catering', 'Vietnamese Speaking Staff'
-  ];
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleHoursChange = (day: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      hours: { ...prev.hours, [day]: value }
-    }));
-  };
-
-  const toggleFeature = (feature: string) => {
-    setFormData(prev => ({
-      ...prev,
-      features: prev.features.includes(feature)
-        ? prev.features.filter(f => f !== feature)
-        : [...prev.features, feature]
-    }));
-  };
-
-  const validateStep = (stepNum: number): boolean => {
-    switch(stepNum) {
-      case 1:
-        if (!formData.businessName || !formData.category) {
-          setErrorMessage('Please fill in business name and category');
-          return false;
-        }
-        break;
-      case 2:
-        if (!formData.island || !formData.city || !formData.address) {
-          setErrorMessage('Please fill in all location fields');
-          return false;
-        }
-        break;
-      case 3:
-        if (!formData.phone || !formData.email) {
-          setErrorMessage('Please provide phone and email');
-          return false;
-        }
-        if (!formData.email.includes('@')) {
-          setErrorMessage('Please provide a valid email');
-          return false;
-        }
-        break;
-      case 4:
-        if (!formData.description || formData.description.length < 50) {
-          setErrorMessage('Please provide a description (at least 50 characters)');
-          return false;
-        }
-        break;
-      case 5:
-        if (!formData.ownerName || !formData.ownerEmail || !formData.ownerPhone) {
-          setErrorMessage('Please fill in all owner information');
-          return false;
-        }
-        if (!formData.ownerEmail.includes('@')) {
-          setErrorMessage('Please provide a valid owner email');
-          return false;
-        }
-        break;
-    }
-    setErrorMessage('');
-    return true;
-  };
-
-  const nextStep = () => {
-    if (validateStep(step)) {
-      setStep(prev => Math.min(prev + 1, 5));
-    }
-  };
-
-  const prevStep = () => {
-    setErrorMessage('');
-    setStep(prev => Math.max(prev - 1, 1));
-  };
-
-  const handleSubmit = async () => {
-    if (!validateStep(5)) return;
-
-    setStatus('loading');
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
 
     try {
-      const response = await fetch('/api/businesses', {
+      const response = await fetch('/api/submissions', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...formData,
-          status: 'pending', // Business submissions need approval
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
       });
 
-      const result = await response.json();
+      const data = await response.json();
 
-      if (result.success || response.ok) {
-        setStatus('success');
-      } else {
-        console.error('Submission error:', result.error);
-        setErrors({ submit: result.error || 'Failed to submit business. Please try again.' });
-        setStatus('idle');
+      if (!response.ok) {
+        setError(data.error || 'Submission failed');
+        setLoading(false);
+        return;
       }
-    } catch (error) {
-      console.error('Submission error:', error);
-      setErrors({ submit: 'Failed to submit business. Please check your connection and try again.' });
-      setStatus('idle');
+
+      setSuccess(true);
+      setLoading(false);
+
+      // Redirect after 3 seconds
+      setTimeout(() => {
+        router.push('/');
+      }, 3000);
+    } catch (err) {
+      setError('An error occurred. Please try again.');
+      setLoading(false);
     }
   };
 
-  if (status === 'success') {
+  if (success) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-rose-50 to-amber-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 max-w-2xl text-center">
-          <div className="flex justify-center mb-6">
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
-              <CheckCircle className="w-12 h-12 text-green-600" />
-            </div>
+      <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-yellow-50 flex items-center justify-center px-4">
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
+          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
           </div>
-          <h1 className="text-4xl font-black text-gray-900 mb-4">Submission Received!</h1>
-          <p className="text-lg text-gray-700 mb-6">
-            Thank you for submitting your business to VietHawaii. Our team will review your submission and get back to you within 2-3 business days.
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Thank You!</h2>
+          <p className="text-gray-600">
+            Your business submission has been received and will be reviewed shortly.
           </p>
-          <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 mb-6">
-            <p className="text-sm text-gray-700">
-              <strong>What's next?</strong><br/>
-              We'll send a confirmation email to <strong>{formData.ownerEmail}</strong> with details about the review process.
-            </p>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/"
-              className="px-6 py-3 bg-gradient-to-r from-rose-500 to-orange-500 text-white rounded-lg font-bold hover:shadow-lg transition-all"
-            >
-              Back to Home
-            </Link>
-            <button
-              onClick={() => {
-                setStatus('idle');
-                setStep(1);
-                setFormData({
-                  businessName: '', businessNameVi: '', category: '', subcategory: '',
-                  island: 'Oahu', city: '', address: '', phone: '', email: '', website: '',
-                  description: '', descriptionVi: '', priceRange: '$$',
-                  hours: {
-                    Monday: '9:00 AM - 5:00 PM', Tuesday: '9:00 AM - 5:00 PM',
-                    Wednesday: '9:00 AM - 5:00 PM', Thursday: '9:00 AM - 5:00 PM',
-                    Friday: '9:00 AM - 5:00 PM', Saturday: 'Closed', Sunday: 'Closed'
-                  },
-                  features: [], ownerName: '', ownerEmail: '', ownerPhone: ''
-                });
-              }}
-              className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-bold hover:bg-gray-50 transition-all"
-            >
-              Submit Another Business
-            </button>
-          </div>
+          <p className="text-sm text-gray-500 mt-4">Redirecting to homepage...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-rose-50 to-amber-50">
-      <Navigation />
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-yellow-50 py-12 px-4">
+      <div className="max-w-3xl mx-auto">
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Submit a Business</h1>
+          <p className="text-gray-600 mb-8">
+            Help grow our Vietnamese business directory by adding a business to VietHawaii.
+          </p>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Progress Bar */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            {[1, 2, 3, 4, 5].map(num => (
-              <div key={num} className="flex items-center">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all ${
-                  step >= num ? 'bg-gradient-to-r from-rose-500 to-orange-500 text-white' : 'bg-gray-200 text-gray-500'
-                }`}>
-                  {num}
-                </div>
-                {num < 5 && (
-                  <div className={`w-12 md:w-24 h-1 ${step > num ? 'bg-gradient-to-r from-rose-500 to-orange-500' : 'bg-gray-200'}`} />
-                )}
-              </div>
-            ))}
-          </div>
-          <div className="flex justify-between text-xs md:text-sm font-semibold text-gray-600">
-            <span>Basic Info</span>
-            <span>Location</span>
-            <span>Contact</span>
-            <span>Details</span>
-            <span>Owner</span>
-          </div>
-        </div>
-
-        {/* Form */}
-        <div className="bg-white rounded-2xl shadow-lg p-8">
-          <div className="mb-6">
-            <h2 className="text-3xl font-black text-gray-900 mb-2">
-              {step === 1 && 'Basic Business Information'}
-              {step === 2 && 'Business Location'}
-              {step === 3 && 'Contact Information'}
-              {step === 4 && 'Business Details'}
-              {step === 5 && 'Owner Information'}
-            </h2>
-            <p className="text-gray-600">
-              {step === 1 && 'Tell us about your business'}
-              {step === 2 && 'Where can customers find you?'}
-              {step === 3 && 'How can customers reach you?'}
-              {step === 4 && 'Additional information about your business'}
-              {step === 5 && 'Your contact information for verification'}
-            </p>
-          </div>
-
-          {errorMessage && (
-            <div className="mb-6 bg-red-50 border-2 border-red-200 rounded-lg p-4 flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-              <p className="text-red-700">{errorMessage}</p>
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm">
+              {error}
             </div>
           )}
 
-          {/* Step 1: Basic Info */}
-          {step === 1 && (
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Business Name <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="businessName"
-                  value={formData.businessName}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all"
-                  placeholder="e.g., Pho Restaurant"
-                />
-              </div>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Business Information */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold text-gray-900 border-b pb-2">Business Information</h2>
 
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Business Name (Vietnamese)
-                </label>
-                <input
-                  type="text"
-                  name="businessNameVi"
-                  value={formData.businessNameVi}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all"
-                  placeholder="e.g., Nhà Hàng Phở"
-                />
-              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Business Name <span className="text-red-600">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    placeholder="Pho Restaurant"
+                  />
+                </div>
 
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Category <span className="text-rose-500">*</span>
-                </label>
-                <select
-                  name="category"
-                  value={formData.category}
-                  onChange={(e) => {
-                    handleChange(e);
-                    // Reset subcategory when category changes
-                    setFormData(prev => ({ ...prev, subcategory: '' }));
-                  }}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all font-semibold"
-                >
-                  <option value="">Select category...</option>
-                  {categories.map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                </select>
-              </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Vietnamese Name (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.nameVi}
+                    onChange={(e) => setFormData({ ...formData, nameVi: e.target.value })}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    placeholder="Nhà hàng Phở"
+                  />
+                </div>
 
-              {formData.category && (
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Subcategory <span className="text-rose-500">*</span>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Category <span className="text-red-600">*</span>
                   </label>
                   <select
-                    name="subcategory"
-                    value={formData.subcategory}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all font-semibold"
+                    required
+                    value={formData.category}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent"
                   >
-                    <option value="">Select subcategory...</option>
-                    {categoryData[formData.category as keyof typeof categoryData]?.subcategories.map(subcat => (
-                      <option key={subcat} value={subcat}>{subcat}</option>
+                    <option value="">Select a category</option>
+                    {CATEGORIES.map((cat) => (
+                      <option key={cat} value={cat}>{cat}</option>
                     ))}
                   </select>
-                  <p className="mt-2 text-sm text-gray-500">
-                    Choose the option that best describes your business
-                  </p>
                 </div>
-              )}
-            </div>
-          )}
 
-          {/* Step 2: Location */}
-          {step === 2 && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Island <span className="text-rose-500">*</span>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Price Range (Optional)
                   </label>
                   <select
-                    name="island"
-                    value={formData.island}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all font-semibold"
+                    value={formData.priceRange}
+                    onChange={(e) => setFormData({ ...formData, priceRange: e.target.value })}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent"
                   >
-                    {islands.map(island => (
+                    <option value="">Select price range</option>
+                    {PRICE_RANGES.map((price) => (
+                      <option key={price} value={price}>{price}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Description <span className="text-red-600">*</span>
+                  </label>
+                  <textarea
+                    required
+                    rows={4}
+                    value={formData.description}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    placeholder="Describe the business, its specialties, and what makes it unique..."
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Location Information */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold text-gray-900 border-b pb-2">Location</h2>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Address <span className="text-red-600">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.address}
+                    onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    placeholder="123 Main Street"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    City <span className="text-red-600">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.city}
+                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    placeholder="Honolulu"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Island <span className="text-red-600">*</span>
+                  </label>
+                  <select
+                    required
+                    value={formData.island}
+                    onChange={(e) => setFormData({ ...formData, island: e.target.value })}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                  >
+                    {ISLANDS.map((island) => (
                       <option key={island} value={island}>{island}</option>
                     ))}
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    City <span className="text-rose-500">*</span>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    ZIP Code (Optional)
                   </label>
                   <input
                     type="text"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all"
-                    placeholder="e.g., Honolulu"
+                    value={formData.zipCode}
+                    onChange={(e) => setFormData({ ...formData, zipCode: e.target.value })}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    placeholder="96814"
                   />
                 </div>
               </div>
-
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Street Address <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all"
-                  placeholder="e.g., 123 Main St, Honolulu, HI 96814"
-                />
-              </div>
             </div>
-          )}
 
-          {/* Step 3: Contact */}
-          {step === 3 && (
-            <div className="space-y-6">
+            {/* Contact Information */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold text-gray-900 border-b pb-2">Contact Information</h2>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Phone Number <span className="text-rose-500">*</span>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Phone (Optional)
                   </label>
                   <input
                     type="tel"
-                    name="phone"
                     value={formData.phone}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all"
-                    placeholder="(808) 555-0123"
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    placeholder="(808) 555-1234"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 mb-2">
-                    Email <span className="text-rose-500">*</span>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email (Optional)
                   </label>
                   <input
                     type="email"
-                    name="email"
                     value={formData.email}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all"
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent"
                     placeholder="business@example.com"
                   />
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Website
-                </label>
-                <input
-                  type="url"
-                  name="website"
-                  value={formData.website}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all"
-                  placeholder="https://yourbusiness.com"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-4">
-                  Business Hours
-                </label>
-                <div className="space-y-3">
-                  {daysOfWeek.map(day => (
-                    <div key={day} className="flex items-center gap-4">
-                      <span className="w-28 font-semibold text-gray-700">{day}</span>
-                      <input
-                        type="text"
-                        value={formData.hours[day]}
-                        onChange={(e) => handleHoursChange(day, e.target.value)}
-                        className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all"
-                        placeholder="9:00 AM - 5:00 PM or Closed"
-                      />
-                    </div>
-                  ))}
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Website (Optional)
+                  </label>
+                  <input
+                    type="url"
+                    value={formData.website}
+                    onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    placeholder="https://example.com"
+                  />
                 </div>
               </div>
             </div>
-          )}
 
-          {/* Step 4: Details */}
-          {step === 4 && (
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Business Description <span className="text-rose-500">*</span>
-                </label>
-                <textarea
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  rows={6}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all resize-none"
-                  placeholder="Describe your business, specialties, what makes you unique... (minimum 50 characters)"
-                />
-                <p className="mt-2 text-sm text-gray-500">
-                  {formData.description.length} / 50 characters minimum
-                </p>
-              </div>
+            {/* Submitter Information */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold text-gray-900 border-b pb-2">Your Information</h2>
 
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Description (Vietnamese)
-                </label>
-                <textarea
-                  name="descriptionVi"
-                  value={formData.descriptionVi}
-                  onChange={handleChange}
-                  rows={4}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all resize-none"
-                  placeholder="Mô tả doanh nghiệp của bạn..."
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Price Range
-                </label>
-                <div className="flex gap-4">
-                  {priceRanges.map(range => (
-                    <button
-                      key={range}
-                      type="button"
-                      onClick={() => setFormData(prev => ({ ...prev, priceRange: range }))}
-                      className={`px-6 py-3 rounded-lg font-bold transition-all ${
-                        formData.priceRange === range
-                          ? 'bg-gradient-to-r from-rose-500 to-orange-500 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                    >
-                      {range}
-                    </button>
-                  ))}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Your Name <span className="text-red-600">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.submitterName}
+                    onChange={(e) => setFormData({ ...formData, submitterName: e.target.value })}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    placeholder="Your full name"
+                  />
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-3">
-                  Features & Amenities
-                </label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  {commonFeatures.map(feature => (
-                    <button
-                      key={feature}
-                      type="button"
-                      onClick={() => toggleFeature(feature)}
-                      className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all ${
-                        formData.features.includes(feature)
-                          ? 'bg-rose-100 text-rose-700 border-2 border-rose-300'
-                          : 'bg-gray-50 text-gray-700 border-2 border-gray-200 hover:bg-gray-100'
-                      }`}
-                    >
-                      {feature}
-                    </button>
-                  ))}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Your Email <span className="text-red-600">*</span>
+                  </label>
+                  <input
+                    type="email"
+                    required
+                    value={formData.submitterEmail}
+                    onChange={(e) => setFormData({ ...formData, submitterEmail: e.target.value })}
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    placeholder="you@example.com"
+                  />
                 </div>
               </div>
             </div>
-          )}
 
-          {/* Step 5: Owner Info */}
-          {step === 5 && (
-            <div className="space-y-6">
-              <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-4 mb-6">
-                <p className="text-sm text-gray-700">
-                  <strong>Privacy Notice:</strong> This information is only used for verification and will not be publicly displayed.
-                </p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Your Full Name <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  name="ownerName"
-                  value={formData.ownerName}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all"
-                  placeholder="John Doe"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Your Email <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="email"
-                  name="ownerEmail"
-                  value={formData.ownerEmail}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all"
-                  placeholder="your@email.com"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-bold text-gray-700 mb-2">
-                  Your Phone Number <span className="text-rose-500">*</span>
-                </label>
-                <input
-                  type="tel"
-                  name="ownerPhone"
-                  value={formData.ownerPhone}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all"
-                  placeholder="(808) 555-0123"
-                />
-              </div>
-
-              <div className="bg-amber-50 border-2 border-amber-200 rounded-lg p-4">
-                <h4 className="font-bold text-gray-900 mb-2">Review Your Submission</h4>
-                <div className="text-sm space-y-1 text-gray-700">
-                  <p><strong>Business:</strong> {formData.businessName}</p>
-                  <p><strong>Category:</strong> {formData.category}</p>
-                  <p><strong>Location:</strong> {formData.city}, {formData.island}</p>
-                  <p><strong>Contact:</strong> {formData.phone}</p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Navigation Buttons */}
-          <div className="mt-8 flex justify-between">
-            {step > 1 && (
+            <div className="flex gap-4">
               <button
-                onClick={prevStep}
-                disabled={status === 'loading'}
-                className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg font-bold hover:bg-gray-50 transition-all disabled:opacity-50"
+                type="button"
+                onClick={() => router.back()}
+                className="flex-1 bg-gray-200 text-gray-700 py-3 px-6 rounded-lg font-semibold hover:bg-gray-300 transition"
               >
-                Previous
+                Cancel
               </button>
-            )}
-
-            <div className={step === 1 ? 'ml-auto' : ''}>
-              {step < 5 ? (
-                <button
-                  onClick={nextStep}
-                  disabled={status === 'loading'}
-                  className="px-8 py-3 bg-gradient-to-r from-rose-500 to-orange-500 text-white rounded-lg font-bold hover:shadow-lg transition-all disabled:opacity-50"
-                >
-                  Next Step
-                </button>
-              ) : (
-                <button
-                  onClick={handleSubmit}
-                  disabled={status === 'loading'}
-                  className="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg font-bold hover:shadow-lg transition-all disabled:opacity-50 flex items-center gap-2"
-                >
-                  {status === 'loading' ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Submitting...
-                    </>
-                  ) : (
-                    <>
-                      <CheckCircle className="w-5 h-5" />
-                      Submit Business
-                    </>
-                  )}
-                </button>
-              )}
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex-1 bg-red-600 text-white py-3 px-6 rounded-lg font-semibold hover:bg-red-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? 'Submitting...' : 'Submit Business'}
+              </button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

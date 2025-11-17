@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { sampleBusinesses } from '../lib/sampleData';
 import { realBusinesses, newsArticles, blogPosts, discoverItems } from '../lib/enhancedData';
+import { additionalBusinesses } from '../lib/additionalBusinesses';
 
 const prisma = new PrismaClient();
 
@@ -9,15 +10,18 @@ async function main() {
 
   // Clear existing data
   console.log('Clearing existing data...');
+  await prisma.photo.deleteMany();
   await prisma.review.deleteMany();
+  await prisma.submission.deleteMany();
   await prisma.business.deleteMany();
   await prisma.newsArticle.deleteMany();
   await prisma.blogPost.deleteMany();
   await prisma.discoverItem.deleteMany();
+  await prisma.user.deleteMany();
 
   // Seed businesses
   console.log('Seeding businesses...');
-  const allBusinesses = [...sampleBusinesses, ...realBusinesses];
+  const allBusinesses = [...sampleBusinesses, ...realBusinesses, ...additionalBusinesses];
 
   for (const business of allBusinesses) {
     await prisma.business.create({

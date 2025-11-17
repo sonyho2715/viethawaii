@@ -38,21 +38,32 @@ model Business {
   lat           Float?
   lng           Float?
   status        String   @default("active") // active, pending, inactive
+
+  // Owner relationship
+  ownerId       String?
+  owner         User?    @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
+  // Relations
   reviews       Review[]
+  photos        Photo[]
 
   @@index([island])
   @@index([category])
   @@index([featured])
   @@index([status])
+  @@index([ownerId])
 }
 
 model Review {
   id         String   @id @default(cuid())
   businessId String
   business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   userName   String
   userEmail  String?
@@ -66,6 +77,7 @@ model Review {
   updatedAt  DateTime @updatedAt
 
   @@index([businessId])
+  @@index([userId])
   @@index([status])
 }
 
@@ -143,8 +155,15 @@ model User {
   email         String   @unique
   name          String
   passwordHash  String
-  role          String   @default("user") // user, admin
+  role          String   @default("user") // user, business_owner, admin
   verified      Boolean  @default(false)
+  avatar        String?
+  phone         String?
+
+  // Relations
+  businesses    Business[]
+  reviews       Review[]
+  photos        Photo[]
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -166,4 +185,24 @@ model Submission {
 
   @@index([type])
   @@index([status])
+}
+
+model Photo {
+  id          String   @id @default(cuid())
+  url         String
+  caption     String?
+  businessId  String?
+  business    Business? @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  uploadedBy  String?
+  uploader    User?    @relation(fields: [uploadedBy], references: [id], onDelete: SetNull)
+
+  featured    Boolean  @default(false)
+  order       Int      @default(0)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([businessId])
+  @@index([uploadedBy])
 }

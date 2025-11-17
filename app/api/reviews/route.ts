@@ -1,117 +1,132 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { createReviewSchema, validate } from '@/lib/validations';
-import type { ApiResponse } from '@/lib/types';
+import { getCurrentUser } from '@/lib/auth';
+import { z } from 'zod';
 
-export async function POST(request: Request) {
+const reviewSchema = z.object({
+  businessId: z.string(),
+  rating: z.number().min(1).max(5),
+  title: z.string().min(3).max(100).optional(),
+  comment: z.string().min(10).max(1000),
+  userName: z.string().min(2),
+  userEmail: z.string().email().optional(),
+});
+
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
     // Validate input
-    const validation = validate(createReviewSchema, body);
-
+    const validation = reviewSchema.safeParse(body);
     if (!validation.success) {
-      return NextResponse.json({
-        success: false,
-        error: 'Validation failed',
-        errors: validation.errors
-      }, { status: 400 });
+      return NextResponse.json(
+        { error: validation.error.errors[0].message },
+        { status: 400 }
+      );
     }
+
+    const { businessId, rating, title, comment, userName, userEmail } = validation.data;
 
     // Check if business exists
     const business = await prisma.business.findUnique({
-      where: { id: validation.data.businessId }
+      where: { id: businessId },
     });
 
     if (!business) {
-      return NextResponse.json({
-        success: false,
-        error: 'Business not found'
-      }, { status: 404 });
+      return NextResponse.json(
+        { error: 'Business not found' },
+        { status: 404 }
+      );
     }
+
+    // Get current user (optional)
+    const currentUser = await getCurrentUser();
 
     // Create review
     const review = await prisma.review.create({
       data: {
-        businessId: validation.data.businessId,
-        userName: validation.data.userName,
-        userEmail: validation.data.userEmail,
-        rating: validation.data.rating,
-        comment: validation.data.content,
-        title: validation.data.title,
-        status: 'pending', // Reviews need approval
-      }
+        businessId,
+        userId: currentUser?.userId,
+        rating,
+        title,
+        comment,
+        userName,
+        userEmail,
+        status: 'pending', // Reviews need admin approval
+      },
     });
 
     // Update business rating (recalculate average)
     const reviews = await prisma.review.findMany({
       where: {
-        businessId: validation.data.businessId,
-        status: 'approved'
-      }
+        businessId,
+        status: 'approved',
+      },
     });
 
-    const avgRating = reviews.length > 0
-      ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
-      : 0;
+    const totalRating = reviews.reduce((sum, r) => sum + r.rating, 0);
+    const avgRating = reviews.length > 0 ? totalRating / reviews.length : 0;
 
     await prisma.business.update({
-      where: { id: validation.data.businessId },
+      where: { id: businessId },
       data: {
         rating: avgRating,
-        reviewCount: reviews.length
-      }
+        reviewCount: reviews.length,
+      },
     });
 
     return NextResponse.json({
       success: true,
-      data: review,
-      message: 'Review submitted successfully and is pending approval'
-    }, { status: 201 });
-
+      message: 'Review submitted successfully! It will be published after review.',
+      review: {
+        id: review.id,
+        rating: review.rating,
+        title: review.title,
+        comment: review.comment,
+      },
+    });
   } catch (error) {
-    console.error('Error creating review:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to create review'
-    }, { status: 500 });
+    console.error('Review submission error:', error);
+    return NextResponse.json(
+      { error: 'Failed to submit review' },
+      { status: 500 }
+    );
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
+    const searchParams = request.nextUrl.searchParams;
     const businessId = searchParams.get('businessId');
     const status = searchParams.get('status') || 'approved';
 
+    if (!businessId) {
+      return NextResponse.json(
+        { error: 'Business ID required' },
+        { status: 400 }
+      );
+    }
+
     const reviews = await prisma.review.findMany({
       where: {
-        ...(businessId ? { businessId } : {}),
-        status: status as string
+        businessId,
+        status,
       },
-      include: {
-        business: {
-          select: {
-            id: true,
-            name: true,
-            slug: true,
-            image: true
-          }
-        }
+      orderBy: {
+        createdAt: 'desc',
       },
-      orderBy: { createdAt: 'desc' }
     });
 
-    return NextResponse.json({
-      success: true,
-      data: reviews
-    });
-
+    return NextResponse.json({ reviews });
   } catch (error) {
-    console.error('Error fetching reviews:', error);
-    return NextResponse.json({
-      success: false,
-      error: 'Failed to fetch reviews'
-    }, { status: 500 });
+    console.error('Get reviews error:', error);
+    return NextResponse.json(
+      { error: 'Failed to get reviews' },
+      { status: 500 }
+    );
+  } finally {
+    await prisma.$disconnect();
   }
 }
