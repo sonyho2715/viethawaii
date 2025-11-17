@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { getBusinessBySlug, sampleBusinesses } from '@/lib/sampleData';
+import { prisma } from '@/lib/prisma';
 import {
   MapPin,
   Phone,
@@ -17,20 +17,35 @@ import StructuredData from '@/components/StructuredData';
 import SocialShare from '@/components/SocialShare';
 
 export const dynamic = 'force-static';
-export const dynamicParams = false;
+export const dynamicParams = true;
 
 export async function generateStaticParams() {
-  return sampleBusinesses.map((business) => ({
+  const businesses = await prisma.business.findMany({
+    where: { status: 'active' },
+    select: { slug: true },
+  });
+
+  return businesses.map((business) => ({
     slug: business.slug,
   }));
 }
 
-export default function BusinessDetailPage({ params }: { params: { slug: string } }) {
-  const business = getBusinessBySlug(params.slug);
+export default async function BusinessDetailPage({ params }: { params: { slug: string } }) {
+  const businessData = await prisma.business.findUnique({
+    where: { slug: params.slug, status: 'active' },
+  });
 
-  if (!business) {
+  if (!businessData) {
     notFound();
   }
+
+  // Convert to expected format with safe defaults
+  const business = {
+    ...businessData,
+    hours: (businessData.hours as Record<string, string>) || {},
+    features: businessData.features || [],
+    images: businessData.images || [],
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
