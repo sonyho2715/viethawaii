@@ -178,7 +178,7 @@ export default function PendingBusinessesPage() {
                 placeholder="Search by business name, owner, or city..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all"
+                className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all text-gray-900 placeholder:text-gray-400"
               />
             </div>
           </div>
@@ -328,42 +328,42 @@ export default function PendingBusinessesPage() {
             <div className="p-6 space-y-6">
               <div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4">Business Information</h3>
-                <div className="space-y-3">
-                  <div><span className="font-semibold">Name:</span> {selectedBusiness.businessName}</div>
+                <div className="space-y-3 text-gray-900">
+                  <div><span className="font-semibold text-gray-700">Name:</span> {selectedBusiness.businessName}</div>
                   {selectedBusiness.businessNameVi && (
-                    <div><span className="font-semibold">Vietnamese Name:</span> {selectedBusiness.businessNameVi}</div>
+                    <div><span className="font-semibold text-gray-700">Vietnamese Name:</span> {selectedBusiness.businessNameVi}</div>
                   )}
-                  <div><span className="font-semibold">Category:</span> {selectedBusiness.category}</div>
-                  <div><span className="font-semibold">Description:</span> {selectedBusiness.description}</div>
+                  <div><span className="font-semibold text-gray-700">Category:</span> {selectedBusiness.category}</div>
+                  <div><span className="font-semibold text-gray-700">Description:</span> {selectedBusiness.description}</div>
                 </div>
               </div>
 
               <div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4">Location</h3>
-                <div className="space-y-3">
-                  <div><span className="font-semibold">Address:</span> {selectedBusiness.address}</div>
-                  <div><span className="font-semibold">City:</span> {selectedBusiness.city}</div>
-                  <div><span className="font-semibold">Island:</span> {selectedBusiness.island}</div>
+                <div className="space-y-3 text-gray-900">
+                  <div><span className="font-semibold text-gray-700">Address:</span> {selectedBusiness.address}</div>
+                  <div><span className="font-semibold text-gray-700">City:</span> {selectedBusiness.city}</div>
+                  <div><span className="font-semibold text-gray-700">Island:</span> {selectedBusiness.island}</div>
                 </div>
               </div>
 
               <div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4">Contact Information</h3>
-                <div className="space-y-3">
-                  <div><span className="font-semibold">Phone:</span> {selectedBusiness.phone}</div>
-                  <div><span className="font-semibold">Email:</span> {selectedBusiness.email}</div>
+                <div className="space-y-3 text-gray-900">
+                  <div><span className="font-semibold text-gray-700">Phone:</span> {selectedBusiness.phone}</div>
+                  <div><span className="font-semibold text-gray-700">Email:</span> {selectedBusiness.email}</div>
                   {selectedBusiness.website && (
-                    <div><span className="font-semibold">Website:</span> <a href={selectedBusiness.website} target="_blank" rel="noopener noreferrer" className="text-rose-600 hover:underline">{selectedBusiness.website}</a></div>
+                    <div><span className="font-semibold text-gray-700">Website:</span> <a href={selectedBusiness.website} target="_blank" rel="noopener noreferrer" className="text-rose-600 hover:underline">{selectedBusiness.website}</a></div>
                   )}
                 </div>
               </div>
 
               <div>
                 <h3 className="text-xl font-bold text-gray-900 mb-4">Owner Information</h3>
-                <div className="space-y-3">
-                  <div><span className="font-semibold">Name:</span> {selectedBusiness.ownerName}</div>
-                  <div><span className="font-semibold">Email:</span> {selectedBusiness.ownerEmail}</div>
-                  <div><span className="font-semibold">Submitted:</span> {new Date(selectedBusiness.submittedDate).toLocaleDateString('en-US', {
+                <div className="space-y-3 text-gray-900">
+                  <div><span className="font-semibold text-gray-700">Name:</span> {selectedBusiness.ownerName}</div>
+                  <div><span className="font-semibold text-gray-700">Email:</span> {selectedBusiness.ownerEmail}</div>
+                  <div><span className="font-semibold text-gray-700">Submitted:</span> {new Date(selectedBusiness.submittedDate).toLocaleDateString('en-US', {
                     month: 'long', day: 'numeric', year: 'numeric'
                   })}</div>
                 </div>
@@ -406,7 +406,7 @@ export default function PendingBusinessesPage() {
                 value={rejectReason}
                 onChange={(e) => setRejectReason(e.target.value)}
                 rows={4}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all resize-none mb-4"
+                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-rose-500 focus:ring-4 focus:ring-rose-100 outline-none transition-all resize-none mb-4 text-gray-900 placeholder:text-gray-400"
                 placeholder="e.g., Incomplete information, does not meet criteria, duplicate listing..."
               />
               <div className="flex gap-3">
