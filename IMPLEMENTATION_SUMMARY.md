@@ -94,7 +94,7 @@ All API routes properly configured and functional:
 
 ### 10. Google Maps Integration (Not Yet Implemented)
 **What's Ready**:
-- Google Maps API key configured: `AIzaSyBLgNMxgyhBidGFMfSqV31NfbOwX0bi-Cw`
+- Google Maps API key configured in environment variables
 - @googlemaps/js-api-loader installed
 - Lat/lng fields in Business model
 
@@ -177,12 +177,12 @@ viethawaii/
 ## Environment Variables
 
 ```bash
-DATABASE_URL="postgresql://postgres:LXyXSConYHpwChOXtIGiwhqgqnNywAVb@switchback.proxy.rlwy.net:54285/railway"
+DATABASE_URL="postgresql://postgres:***@switchback.proxy.rlwy.net:54285/railway"
 NEXT_PUBLIC_API_URL="http://localhost:3000"
 ADMIN_EMAIL="admin@viethawaii.com"
-ADMIN_PASSWORD="admin123"
-JWT_SECRET="your-super-secret-jwt-key-change-in-production-..."
-NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="AIzaSyBLgNMxgyhBidGFMfSqV31NfbOwX0bi-Cw"
+ADMIN_PASSWORD="***"
+JWT_SECRET="***"
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="***"
 ```
 
 ## Database Models
