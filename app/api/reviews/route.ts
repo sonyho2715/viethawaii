@@ -91,8 +91,6 @@ export async function POST(request: NextRequest) {
       { error: 'Failed to submit review' },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
@@ -126,7 +124,5 @@ export async function GET(request: NextRequest) {
       { error: 'Failed to get reviews' },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }

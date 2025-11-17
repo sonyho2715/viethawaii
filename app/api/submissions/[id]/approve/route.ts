@@ -75,7 +75,5 @@ export async function POST(
       { error: 'Failed to approve submission' },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }

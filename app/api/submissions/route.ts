@@ -84,8 +84,6 @@ export async function POST(request: NextRequest) {
       { error: 'Failed to submit business' },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
@@ -111,7 +109,5 @@ export async function GET(request: NextRequest) {
       { error: 'Failed to get submissions' },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }

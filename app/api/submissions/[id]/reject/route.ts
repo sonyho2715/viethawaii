@@ -34,7 +34,5 @@ export async function POST(
       { error: 'Failed to reject submission' },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }
