@@ -112,7 +112,7 @@ export default function BusinessesHomepage({ businesses }: BusinessesHomepagePro
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{
-              backgroundImage: "url('/images/hero/businesses-hero.jpg')",
+              backgroundImage: "url('/images/hero/hawaii-scenic.jpg')",
             }}
           />
           {/* Gradient Overlay */}
@@ -138,10 +138,10 @@ export default function BusinessesHomepage({ businesses }: BusinessesHomepagePro
               </div>
 
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-tight drop-shadow-2xl">
-                Vietnamese businesses
+                Vietnamese Businesses
                 <br />
                 <span className="bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
-                  across Hawaii
+                  Across Hawaii
                 </span>
               </h1>
 
@@ -475,6 +475,258 @@ export default function BusinessesHomepage({ businesses }: BusinessesHomepagePro
       {/* Map Section */}
       <div id="map" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <BusinessMap businesses={allBusinesses} />
+      </div>
+
+      {/* Hawaii Scenic Places & Trails Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-green-100 to-blue-100 rounded-full px-6 py-3 mb-6">
+            <MapPin className="w-5 h-5 text-green-700" />
+            <span className="text-green-800 font-bold">Explore Hawaii</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-6">
+            Discover Hawaii's <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">Natural Beauty</span>
+          </h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            After exploring Vietnamese businesses, venture into Hawaii's breathtaking landscapes, scenic trails, and hidden gems across the islands
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {/* Diamond Head Trail */}
+          <div className="group relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2">
+            <div className="aspect-[4/3] relative">
+              <div
+                className="absolute inset-0 bg-cover bg-center transition-transform group-hover:scale-110"
+                style={{
+                  backgroundImage: "url('/images/scenic/diamond-head.jpg')",
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+
+              <div className="absolute inset-0 flex flex-col justify-end p-6 text-white">
+                <div className="mb-2">
+                  <span className="inline-block px-3 py-1 bg-green-500 rounded-full text-xs font-bold mb-3">
+                    Popular Trail
+                  </span>
+                </div>
+                <h3 className="text-2xl font-black mb-2">Diamond Head Crater</h3>
+                <p className="text-sm text-gray-200 mb-3">
+                  Iconic volcanic crater with panoramic views of Waikiki and the Pacific Ocean
+                </p>
+                <div className="flex items-center gap-4 text-sm">
+                  <div className="flex items-center gap-1">
+                    <Clock className="w-4 h-4" />
+                    <span>1.5-2 hours</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <MapPin className="w-4 h-4" />
+                    <span>Oahu</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Manoa Falls */}
+          <div className="group relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2">
+            <div className="aspect-[4/3] relative">
+              <div
+                className="absolute inset-0 bg-cover bg-center transition-transform group-hover:scale-110"
+                style={{
+                  backgroundImage: "url('/images/scenic/manoa-falls.jpg')",
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+
+              <div className="absolute inset-0 flex flex-col justify-end p-6 text-white">
+                <div className="mb-2">
+                  <span className="inline-block px-3 py-1 bg-blue-500 rounded-full text-xs font-bold mb-3">
+                    Waterfall Hike
+                  </span>
+                </div>
+                <h3 className="text-2xl font-black mb-2">Manoa Falls Trail</h3>
+                <p className="text-sm text-gray-200 mb-3">
+                  Lush rainforest trail leading to a stunning 150-foot waterfall
+                </p>
+                <div className="flex items-center gap-4 text-sm">
+                  <div className="flex items-center gap-1">
+                    <Clock className="w-4 h-4" />
+                    <span>1-1.5 hours</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <MapPin className="w-4 h-4" />
+                    <span>Oahu</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Lanikai Beach */}
+          <div className="group relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2">
+            <div className="aspect-[4/3] relative">
+              <div
+                className="absolute inset-0 bg-cover bg-center transition-transform group-hover:scale-110"
+                style={{
+                  backgroundImage: "url('/images/scenic/lanikai-beach.jpg')",
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+
+              <div className="absolute inset-0 flex flex-col justify-end p-6 text-white">
+                <div className="mb-2">
+                  <span className="inline-block px-3 py-1 bg-cyan-500 rounded-full text-xs font-bold mb-3">
+                    Beach Paradise
+                  </span>
+                </div>
+                <h3 className="text-2xl font-black mb-2">Lanikai Beach</h3>
+                <p className="text-sm text-gray-200 mb-3">
+                  Pristine white sand beach with crystal-clear turquoise waters and island views
+                </p>
+                <div className="flex items-center gap-4 text-sm">
+                  <div className="flex items-center gap-1">
+                    <Clock className="w-4 h-4" />
+                    <span>All day</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <MapPin className="w-4 h-4" />
+                    <span>Oahu</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Haleakala National Park */}
+          <div className="group relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2">
+            <div className="aspect-[4/3] relative">
+              <div
+                className="absolute inset-0 bg-cover bg-center transition-transform group-hover:scale-110"
+                style={{
+                  backgroundImage: "url('/images/scenic/haleakala.jpg')",
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+
+              <div className="absolute inset-0 flex flex-col justify-end p-6 text-white">
+                <div className="mb-2">
+                  <span className="inline-block px-3 py-1 bg-purple-500 rounded-full text-xs font-bold mb-3">
+                    Sunrise Spot
+                  </span>
+                </div>
+                <h3 className="text-2xl font-black mb-2">Haleakala Summit</h3>
+                <p className="text-sm text-gray-200 mb-3">
+                  Witness spectacular sunrise above the clouds at 10,000 feet elevation
+                </p>
+                <div className="flex items-center gap-4 text-sm">
+                  <div className="flex items-center gap-1">
+                    <Clock className="w-4 h-4" />
+                    <span>3-4 hours</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <MapPin className="w-4 h-4" />
+                    <span>Maui</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Waimea Canyon */}
+          <div className="group relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2">
+            <div className="aspect-[4/3] relative">
+              <div
+                className="absolute inset-0 bg-cover bg-center transition-transform group-hover:scale-110"
+                style={{
+                  backgroundImage: "url('/images/scenic/waimea-canyon.jpg')",
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+
+              <div className="absolute inset-0 flex flex-col justify-end p-6 text-white">
+                <div className="mb-2">
+                  <span className="inline-block px-3 py-1 bg-orange-500 rounded-full text-xs font-bold mb-3">
+                    Grand Canyon of Pacific
+                  </span>
+                </div>
+                <h3 className="text-2xl font-black mb-2">Waimea Canyon</h3>
+                <p className="text-sm text-gray-200 mb-3">
+                  Dramatic red-rock canyon with breathtaking overlooks and hiking trails
+                </p>
+                <div className="flex items-center gap-4 text-sm">
+                  <div className="flex items-center gap-1">
+                    <Clock className="w-4 h-4" />
+                    <span>Half day</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <MapPin className="w-4 h-4" />
+                    <span>Kauai</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Volcanoes National Park */}
+          <div className="group relative overflow-hidden rounded-2xl shadow-xl hover:shadow-2xl transition-all hover:-translate-y-2">
+            <div className="aspect-[4/3] relative">
+              <div
+                className="absolute inset-0 bg-cover bg-center transition-transform group-hover:scale-110"
+                style={{
+                  backgroundImage: "url('/images/scenic/volcanoes.jpg')",
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+
+              <div className="absolute inset-0 flex flex-col justify-end p-6 text-white">
+                <div className="mb-2">
+                  <span className="inline-block px-3 py-1 bg-red-500 rounded-full text-xs font-bold mb-3">
+                    Active Volcano
+                  </span>
+                </div>
+                <h3 className="text-2xl font-black mb-2">Volcanoes National Park</h3>
+                <p className="text-sm text-gray-200 mb-3">
+                  Witness the raw power of nature at one of the world's most active volcanoes
+                </p>
+                <div className="flex items-center gap-4 text-sm">
+                  <div className="flex items-center gap-1">
+                    <Clock className="w-4 h-4" />
+                    <span>Full day</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <MapPin className="w-4 h-4" />
+                    <span>Big Island</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="text-center mt-12">
+          <p className="text-gray-600 mb-6 text-lg">
+            Explore more Hawaiian adventures and plan your island getaway
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <a
+              href="https://www.gohawaii.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-xl font-bold hover:shadow-lg transition-all hover:scale-105"
+            >
+              Visit GoHawaii.com
+            </a>
+            <a
+              href="https://www.alltrails.com/us/hawaii"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-6 py-3 bg-white border-2 border-gray-300 text-gray-700 rounded-xl font-bold hover:bg-gray-50 transition-all hover:scale-105"
+            >
+              Browse All Trails
+            </a>
+          </div>
+        </div>
       </div>
 
       {/* CTA Section with Image Background */}

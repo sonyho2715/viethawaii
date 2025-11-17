@@ -6,10 +6,10 @@ import type { Metadata } from 'next';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Vietnamese Businesses Across Hawaii',
+  title: 'Vietnamese Businesses Across Hawaii | VietHawaii',
   description: 'Discover authentic Vietnamese restaurants, shops, and services across Oahu, Maui, Big Island, Kauai, Molokai, and Lanai. Your complete Hawaiian Vietnamese community directory.',
   openGraph: {
-    title: 'VietHawaii | Vietnamese Businesses Across Hawaii',
+    title: 'Vietnamese Businesses Across Hawaii | VietHawaii',
     description: 'Discover authentic Vietnamese restaurants, shops, and services across all Hawaiian islands.',
     images: ['/og-home.jpg'],
   },
