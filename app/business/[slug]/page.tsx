@@ -15,9 +15,11 @@ import {
 } from 'lucide-react';
 import StructuredData from '@/components/StructuredData';
 import SocialShare from '@/components/SocialShare';
+import { CacheDurations } from '@/lib/cache';
 
 export const dynamic = 'force-static';
 export const dynamicParams = true;
+export const revalidate = CacheDurations.medium; // Revalidate every 5 minutes
 
 export async function generateStaticParams() {
   const businesses = await prisma.business.findMany({

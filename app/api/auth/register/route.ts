@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-import { hashPassword, validatePassword, validateEmail } from '@/lib/auth/password';
-import { getSession } from '@/lib/auth/session';
+import { prisma } from '@/lib/prisma';
+import { hashPassword, validatePassword, validateEmail, setUserSession } from '@/lib/auth';
+import { rateLimit, rateLimitConfigs } from '@/lib/rate-limit';
 import { z } from 'zod';
 
-const prisma = new PrismaClient();
+const registerRateLimit = rateLimit(rateLimitConfigs.auth);
 
 const registerSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -14,8 +14,9 @@ const registerSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
+  return registerRateLimit(request, async (req) => {
+    try {
+      const body = await req.json();
 
     // Validate input
     const validation = registerSchema.safeParse(body);
@@ -73,28 +74,28 @@ export async function POST(request: NextRequest) {
     });
 
     // Create session
-    const session = await getSession();
-    session.userId = user.id;
-    session.email = user.email;
-    session.name = user.name;
-    session.role = user.role;
-    session.isLoggedIn = true;
-    await session.save();
-
-    return NextResponse.json({
-      success: true,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
+    await setUserSession({
+      userId: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role
     });
-  } catch (error) {
-    console.error('Registration error:', error);
-    return NextResponse.json(
-      { error: 'Failed to create account' },
-      { status: 500 }
-    );
-  }
+
+      return NextResponse.json({
+        success: true,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+      });
+    } catch (error) {
+      console.error('Registration error:', error);
+      return NextResponse.json(
+        { error: 'Failed to create account' },
+        { status: 500 }
+      );
+    }
+  });
 }

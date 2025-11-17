@@ -7,10 +7,28 @@ export interface SessionData {
   name: string;
   role: string;
   isLoggedIn: boolean;
+  csrfToken?: string;
+}
+
+// Validate session secret
+const SESSION_SECRET = process.env.SESSION_SECRET || process.env.JWT_SECRET;
+
+if (!SESSION_SECRET) {
+  throw new Error(
+    'SESSION_SECRET or JWT_SECRET environment variable must be set. ' +
+    'Generate one using: openssl rand -base64 32'
+  );
+}
+
+if (SESSION_SECRET.length < 32) {
+  console.warn(
+    'WARNING: SESSION_SECRET is too short. Use at least 32 characters for security. ' +
+    'Generate one using: openssl rand -base64 32'
+  );
 }
 
 const sessionOptions = {
-  password: process.env.JWT_SECRET!,
+  password: SESSION_SECRET,
   cookieName: 'viethawaii-session',
   cookieOptions: {
     secure: process.env.NODE_ENV === 'production',

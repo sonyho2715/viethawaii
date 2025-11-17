@@ -100,6 +100,19 @@ export async function GET(request: NextRequest) {
     const businessId = searchParams.get('businessId');
     const status = searchParams.get('status') || 'approved';
 
+    // Pagination parameters
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '10');
+    const skip = (page - 1) * limit;
+
+    // Validate pagination parameters
+    if (page < 1 || limit < 1 || limit > 50) {
+      return NextResponse.json(
+        { error: 'Invalid pagination parameters. Page must be >= 1, limit must be between 1 and 50.' },
+        { status: 400 }
+      );
+    }
+
     if (!businessId) {
       return NextResponse.json(
         { error: 'Business ID required' },
@@ -107,17 +120,35 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    const where = {
+      businessId,
+      status,
+    };
+
+    // Get total count for pagination metadata
+    const totalCount = await prisma.review.count({ where });
+    const totalPages = Math.ceil(totalCount / limit);
+
     const reviews = await prisma.review.findMany({
-      where: {
-        businessId,
-        status,
-      },
+      where,
       orderBy: {
         createdAt: 'desc',
       },
+      skip,
+      take: limit,
     });
 
-    return NextResponse.json({ reviews });
+    return NextResponse.json({
+      data: reviews,
+      pagination: {
+        page,
+        limit,
+        totalCount,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
+    });
   } catch (error) {
     console.error('Get reviews error:', error);
     return NextResponse.json(

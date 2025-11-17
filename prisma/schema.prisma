@@ -55,6 +55,9 @@ model Business {
   @@index([featured])
   @@index([status])
   @@index([ownerId])
+  @@index([name])
+  @@index([city])
+  @@index([rating])
 }
 
 model Review {

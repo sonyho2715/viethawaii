@@ -1,20 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getCurrentUser } from '@/lib/auth';
+import { requireAdmin } from '@/lib/auth';
+import { requireCsrfToken } from '@/lib/csrf';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  try {
-    // Check if user is authenticated and is admin
-    const user = await getCurrentUser();
-    if (!user || user.role !== 'admin') {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+  return requireCsrfToken(request, async (req) => {
+    try {
+      // Check if user is authenticated and is admin
+      await requireAdmin();
+
 
     const { id } = params;
 
@@ -65,15 +62,16 @@ export async function POST(
       data: { status: 'approved' },
     });
 
-    return NextResponse.json({
-      success: true,
-      message: 'Submission approved and business created',
-    });
-  } catch (error) {
-    console.error('Approve submission error:', error);
-    return NextResponse.json(
-      { error: 'Failed to approve submission' },
-      { status: 500 }
-    );
-  }
+      return NextResponse.json({
+        success: true,
+        message: 'Submission approved and business created',
+      });
+    } catch (error) {
+      console.error('Approve submission error:', error);
+      return NextResponse.json(
+        { error: 'Failed to approve submission' },
+        { status: 500 }
+      );
+    }
+  });
 }

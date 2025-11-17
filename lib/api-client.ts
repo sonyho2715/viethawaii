@@ -11,38 +11,101 @@ import type {
 import type { Business, Review, NewsArticle, BlogPost, DiscoverItem } from '@prisma/client';
 
 class ApiClient {
+  private csrfToken: string | null = null;
+
+  /**
+   * Get CSRF token from server
+   */
+  private async getCsrfToken(): Promise<string> {
+    if (this.csrfToken) {
+      return this.csrfToken;
+    }
+
+    try {
+      const response = await fetch('/api/csrf-token');
+      const data = await response.json();
+      this.csrfToken = data.csrfToken;
+      return this.csrfToken;
+    } catch (error) {
+      console.error('Failed to get CSRF token:', error);
+      throw new Error('Failed to get CSRF token');
+    }
+  }
+
+  /**
+   * Delay helper for retries
+   */
+  private delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
   private async request<T>(
     url: string,
-    options: RequestInit = {}
+    options: RequestInit = {},
+    retries: number = 3
   ): Promise<ApiResponse<T>> {
-    try {
-      const response = await fetch(url, {
-        ...options,
-        headers: {
-          'Content-Type': 'application/json',
-          ...options.headers,
-        },
-      });
+    // Add CSRF token for state-changing methods
+    const stateMutatingMethods = ['POST', 'PUT', 'PATCH', 'DELETE'];
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...(options.headers as Record<string, string>),
+    };
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        return {
-          success: false,
-          error: data.error || data.message || 'Request failed',
-        };
+    if (stateMutatingMethods.includes(options.method || 'GET')) {
+      try {
+        const csrfToken = await this.getCsrfToken();
+        headers['x-csrf-token'] = csrfToken;
+      } catch (error) {
+        console.error('CSRF token error:', error);
       }
-
-      return {
-        success: true,
-        data: data.data || data,
-      };
-    } catch (error) {
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Network error',
-      };
     }
+
+    let lastError: Error | null = null;
+
+    for (let attempt = 0; attempt <= retries; attempt++) {
+      try {
+        const response = await fetch(url, {
+          ...options,
+          headers,
+        });
+
+        // Handle rate limiting
+        if (response.status === 429) {
+          const retryAfter = response.headers.get('Retry-After');
+          const delay = retryAfter ? parseInt(retryAfter) * 1000 : 1000 * Math.pow(2, attempt);
+
+          if (attempt < retries) {
+            await this.delay(delay);
+            continue;
+          }
+        }
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          return {
+            success: false,
+            error: data.error || data.message || 'Request failed',
+          };
+        }
+
+        return {
+          success: true,
+          data: data.data || data,
+        };
+      } catch (error) {
+        lastError = error as Error;
+
+        if (attempt < retries) {
+          await this.delay(1000 * Math.pow(2, attempt));
+        }
+      }
+    }
+
+    return {
+      success: false,
+      error: lastError?.message || 'Network error',
+    };
   }
 
   // Business APIs

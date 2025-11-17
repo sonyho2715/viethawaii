@@ -1,21 +1,10 @@
-import { SignJWT, jwtVerify } from 'jose';
-import { cookies } from 'next/headers';
+/**
+ * Unified Authentication Module
+ * Uses iron-session for secure, encrypted session management
+ */
+
 import bcrypt from 'bcryptjs';
-
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'your-secret-key-change-in-production'
-);
-
-const COOKIE_NAME = 'auth-token';
-const TOKEN_EXPIRY = '7d';
-
-export interface JWTPayload {
-  userId: string;
-  email: string;
-  role: string;
-  iat?: number;
-  exp?: number;
-}
+import { getSession } from '@/lib/auth/session';
 
 /**
  * Hash a password using bcrypt
@@ -35,67 +24,72 @@ export async function verifyPassword(
 }
 
 /**
- * Create a JWT token
+ * Validate password strength
  */
-export async function createToken(payload: JWTPayload): Promise<string> {
-  return new SignJWT(payload)
-    .setProtectedHeader({ alg: 'HS256' })
-    .setIssuedAt()
-    .setExpirationTime(TOKEN_EXPIRY)
-    .sign(JWT_SECRET);
+export function validatePassword(password: string): { valid: boolean; message?: string } {
+  if (password.length < 8) {
+    return { valid: false, message: 'Password must be at least 8 characters long' };
+  }
+  if (!/[A-Z]/.test(password)) {
+    return { valid: false, message: 'Password must contain at least one uppercase letter' };
+  }
+  if (!/[a-z]/.test(password)) {
+    return { valid: false, message: 'Password must contain at least one lowercase letter' };
+  }
+  if (!/[0-9]/.test(password)) {
+    return { valid: false, message: 'Password must contain at least one number' };
+  }
+  return { valid: true };
 }
 
 /**
- * Verify and decode a JWT token
+ * Validate email format
  */
-export async function verifyToken(token: string): Promise<JWTPayload | null> {
-  try {
-    const { payload } = await jwtVerify(token, JWT_SECRET);
-    return payload as JWTPayload;
-  } catch (error) {
+export function validateEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+/**
+ * Get current user from session
+ */
+export async function getCurrentUser() {
+  const session = await getSession();
+  if (!session.isLoggedIn) {
     return null;
   }
+  return {
+    userId: session.userId,
+    email: session.email,
+    name: session.name,
+    role: session.role,
+  };
 }
 
 /**
- * Set auth cookie with JWT token
+ * Set user session (login)
  */
-export async function setAuthCookie(payload: JWTPayload): Promise<void> {
-  const token = await createToken(payload);
-  const cookieStore = await cookies();
-
-  cookieStore.set(COOKIE_NAME, token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    maxAge: 60 * 60 * 24 * 7, // 7 days
-    path: '/',
-  });
+export async function setUserSession(user: {
+  userId: string;
+  email: string;
+  name: string;
+  role: string;
+}): Promise<void> {
+  const session = await getSession();
+  session.userId = user.userId;
+  session.email = user.email;
+  session.name = user.name;
+  session.role = user.role;
+  session.isLoggedIn = true;
+  await session.save();
 }
 
 /**
- * Get auth token from cookie
+ * Clear user session (logout)
  */
-export async function getAuthToken(): Promise<string | undefined> {
-  const cookieStore = await cookies();
-  return cookieStore.get(COOKIE_NAME)?.value;
-}
-
-/**
- * Get current user from auth cookie
- */
-export async function getCurrentUser(): Promise<JWTPayload | null> {
-  const token = await getAuthToken();
-  if (!token) return null;
-  return verifyToken(token);
-}
-
-/**
- * Clear auth cookie (logout)
- */
-export async function clearAuthCookie(): Promise<void> {
-  const cookieStore = await cookies();
-  cookieStore.delete(COOKIE_NAME);
+export async function clearUserSession(): Promise<void> {
+  const session = await getSession();
+  session.destroy();
 }
 
 /**
@@ -112,4 +106,26 @@ export async function isAuthenticated(): Promise<boolean> {
 export async function isAdmin(): Promise<boolean> {
   const user = await getCurrentUser();
   return user?.role === 'admin';
+}
+
+/**
+ * Require authentication (throw if not authenticated)
+ */
+export async function requireAuth() {
+  const user = await getCurrentUser();
+  if (!user) {
+    throw new Error('Unauthorized');
+  }
+  return user;
+}
+
+/**
+ * Require admin role (throw if not admin)
+ */
+export async function requireAdmin() {
+  const user = await requireAuth();
+  if (user.role !== 'admin') {
+    throw new Error('Forbidden: Admin access required');
+  }
+  return user;
 }

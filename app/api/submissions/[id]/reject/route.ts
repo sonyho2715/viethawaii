@@ -1,38 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getCurrentUser } from '@/lib/auth';
+import { requireAdmin } from '@/lib/auth';
+import { requireCsrfToken } from '@/lib/csrf';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  try {
-    // Check if user is authenticated and is admin
-    const user = await getCurrentUser();
-    if (!user || user.role !== 'admin') {
+  return requireCsrfToken(request, async (req) => {
+    try {
+      // Check if user is authenticated and is admin
+      await requireAdmin();
+
+      const { id } = params;
+
+      // Update submission status
+      const submission = await prisma.submission.update({
+        where: { id },
+        data: { status: 'rejected' },
+      });
+
+      return NextResponse.json({
+        success: true,
+        message: 'Submission rejected',
+      });
+    } catch (error) {
+      console.error('Reject submission error:', error);
       return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
+        { error: 'Failed to reject submission' },
+        { status: 500 }
       );
     }
-
-    const { id } = params;
-
-    // Update submission status
-    const submission = await prisma.submission.update({
-      where: { id },
-      data: { status: 'rejected' },
-    });
-
-    return NextResponse.json({
-      success: true,
-      message: 'Submission rejected',
-    });
-  } catch (error) {
-    console.error('Reject submission error:', error);
-    return NextResponse.json(
-      { error: 'Failed to reject submission' },
-      { status: 500 }
-    );
-  }
+  });
 }

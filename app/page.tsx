@@ -2,8 +2,7 @@ import BusinessesHomepage from '@/components/BusinessesHomepage';
 import type { Business } from '@/types';
 import { prisma } from '@/lib/prisma';
 import type { Metadata } from 'next';
-
-export const dynamic = 'force-dynamic';
+import { createCachedFunction, CacheTags, CacheDurations } from '@/lib/cache';
 
 export const metadata: Metadata = {
   title: 'Vietnamese Businesses Across Hawaii | VietHawaii',
@@ -15,19 +14,30 @@ export const metadata: Metadata = {
   },
 };
 
+const getCachedBusinesses = createCachedFunction(
+  async (): Promise<Business[]> => {
+    const businesses = await prisma.business.findMany({
+      where: { status: 'active' },
+      orderBy: [
+        { featured: 'desc' },
+        { rating: 'desc' }
+      ]
+    });
+    return businesses.map(b => ({
+      ...b,
+      createdAt: b.createdAt.toISOString(),
+      updatedAt: b.updatedAt.toISOString(),
+    }));
+  },
+  ['homepage-businesses'],
+  {
+    tags: [CacheTags.businesses],
+    revalidate: CacheDurations.medium, // 5 minutes
+  }
+);
+
 async function getBusinesses(): Promise<Business[]> {
-  const businesses = await prisma.business.findMany({
-    where: { status: 'active' },
-    orderBy: [
-      { featured: 'desc' },
-      { rating: 'desc' }
-    ]
-  });
-  return businesses.map(b => ({
-    ...b,
-    createdAt: b.createdAt.toISOString(),
-    updatedAt: b.updatedAt.toISOString(),
-  }));
+  return getCachedBusinesses();
 }
 
 export default async function Home() {
