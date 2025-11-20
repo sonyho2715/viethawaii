@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
 import StructuredData from "@/components/StructuredData";
+import SessionProvider from "@/components/SessionProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -105,7 +106,9 @@ export default function RootLayout({
       <body
         className={`${inter.variable} font-sans antialiased`}
       >
-        {children}
+        <SessionProvider>
+          {children}
+        </SessionProvider>
       </body>
     </html>
   );

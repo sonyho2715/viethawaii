@@ -25,6 +25,7 @@ interface Business {
   island: string;
   category: string;
   rating?: number;
+  priceRange?: string;
   phone?: string;
   slug: string;
   latitude?: number;
@@ -234,22 +235,62 @@ export default function InteractiveBusinessMap({
         ? { lat: business.latitude, lng: business.longitude }
         : ISLAND_COORDINATES[business.island];
 
-      // Custom marker icon
-      const markerIcon = {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: 10,
-        fillColor: business.rating && business.rating >= 4 ? '#f43f5e' : '#fb923c',
-        fillOpacity: 1,
-        strokeColor: '#ffffff',
-        strokeWeight: 2,
-      };
+      // Create custom HTML marker element
+      const markerDiv = document.createElement('div');
+      markerDiv.className = 'custom-marker';
+      markerDiv.style.cssText = `
+        background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 13px;
+        box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
+        cursor: pointer;
+        white-space: nowrap;
+        border: 2px solid white;
+        font-family: system-ui, -apple-system, sans-serif;
+        transition: all 0.2s ease;
+        ${selectedBusiness?.id === business.id ? 'transform: scale(1.15); box-shadow: 0 6px 16px rgba(14, 165, 233, 0.6);' : ''}
+      `;
+      markerDiv.innerHTML = `
+        ${business.priceRange || '$'} • ${business.rating ? business.rating.toFixed(1) + '⭐' : '4.0⭐'}
+      `;
+
+      // Hover effect
+      markerDiv.addEventListener('mouseenter', () => {
+        if (selectedBusiness?.id !== business.id) {
+          markerDiv.style.transform = 'scale(1.1)';
+          markerDiv.style.boxShadow = '0 6px 16px rgba(14, 165, 233, 0.6)';
+        }
+      });
+      markerDiv.addEventListener('mouseleave', () => {
+        if (selectedBusiness?.id !== business.id) {
+          markerDiv.style.transform = 'scale(1)';
+          markerDiv.style.boxShadow = '0 4px 12px rgba(14, 165, 233, 0.4)';
+        }
+      });
 
       const marker = new google.maps.Marker({
         position,
         map: googleMapRef.current,
         title: business.name,
-        icon: markerIcon,
-        animation: selectedBusiness?.id === business.id ? google.maps.Animation.BOUNCE : undefined,
+        icon: {
+          url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+            <svg xmlns="http://www.w3.org/2000/svg" width="1" height="1">
+              <rect width="1" height="1" fill="transparent"/>
+            </svg>
+          `),
+          scaledSize: new google.maps.Size(1, 1),
+          anchor: new google.maps.Point(0, 0),
+        },
+        label: {
+          text: `${business.priceRange || '$'} • ${business.rating ? business.rating.toFixed(1) : '4.0'}⭐`,
+          color: 'white',
+          fontSize: '13px',
+          fontWeight: 'bold',
+          className: 'custom-marker-label'
+        },
       });
 
       // Info window content
@@ -333,12 +374,27 @@ export default function InteractiveBusinessMap({
   }, [selectedBusiness]);
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-rose-500 to-orange-500 text-white p-6">
-        <h2 className="text-3xl font-black mb-2">Business Locations</h2>
-        <p className="text-orange-100">Find Vietnamese businesses near you across Hawaii</p>
-      </div>
+    <>
+      <style jsx global>{`
+        .custom-marker-label {
+          background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%) !important;
+          color: white !important;
+          padding: 6px 12px !important;
+          border-radius: 20px !important;
+          font-weight: 700 !important;
+          box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4) !important;
+          border: 2px solid white !important;
+        }
+        .gm-style-iw button {
+          display: none !important;
+        }
+      `}</style>
+      <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-rose-500 to-orange-500 text-white p-6">
+          <h2 className="text-3xl font-black mb-2">Business Locations</h2>
+          <p className="text-orange-100">Find Vietnamese businesses near you across Hawaii</p>
+        </div>
 
       {/* Controls */}
       <div className="border-b border-gray-200 p-4 bg-gray-50 space-y-4">
@@ -564,12 +620,13 @@ export default function InteractiveBusinessMap({
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="border-t border-gray-200 bg-gray-50 p-4 text-center text-sm text-gray-600">
-        <p>
-          💡 <strong>Tip:</strong> Click on a marker or business to see details and get directions
-        </p>
+        {/* Footer */}
+        <div className="border-t border-gray-200 bg-gray-50 p-4 text-center text-sm text-gray-600">
+          <p>
+            💡 <strong>Tip:</strong> Click on a marker or business to see details and get directions
+          </p>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

@@ -41,3 +41,16 @@ yarn-error.log*
 next-env.d.ts
 
 /lib/generated/prisma
+
+# claude code - exclude sensitive data
+.claude/file-history/
+.claude/debug/
+.claude/history.jsonl
+.claude/session-env/
+.claude/shell-snapshots/
+.claude/settings.local.json
+.claude/plans/
+.claude/todos/
+.claude/statsig/
+.claude/projects/
+.claude/ide/

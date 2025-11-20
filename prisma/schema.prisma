@@ -157,22 +157,89 @@ model User {
   id            String   @id @default(cuid())
   email         String   @unique
   name          String
-  passwordHash  String
+  passwordHash  String?  // Optional for OAuth users
   role          String   @default("user") // user, business_owner, admin
   verified      Boolean  @default(false)
   avatar        String?
   phone         String?
 
+  // OAuth fields
+  provider      String?  // google, facebook, email
+  providerId    String?  // OAuth provider ID
+  emailVerified DateTime?
+
+  // Favorites
+  savedBusinesses String[] // Array of business IDs
+
   // Relations
   businesses    Business[]
   reviews       Review[]
   photos        Photo[]
+  accounts      Account[]
+  sessions      Session[]
+  savedSearches SavedSearch[]
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
+  @@unique([provider, providerId])
   @@index([email])
   @@index([role])
+}
+
+// NextAuth models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Saved Searches
+model SavedSearch {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  name        String   // User-friendly name
+  filters     Json     // Search filters
+  frequency   String   @default("daily") // daily, weekly, instant
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
 }
 
 model Submission {
