@@ -7,15 +7,17 @@ import Link from 'next/link';
 interface Business {
   id: string;
   name: string;
-  address?: string;
+  address?: string | null;
   city: string;
   island: string;
   category: string;
-  rating?: number;
-  phone?: string;
+  rating?: number | null;
+  phone?: string | null;
   slug: string;
-  latitude?: number;
-  longitude?: number;
+  latitude?: number | null;
+  longitude?: number | null;
+  lat?: number | null;
+  lng?: number | null;
 }
 
 interface BusinessMapProps {

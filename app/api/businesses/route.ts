@@ -97,9 +97,15 @@ export async function POST(request: NextRequest) {
       }, { status: 400 });
     }
 
+    // Generate slug from business name
+    const slug = validation.data.name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+
     // Check for duplicate slug
     const existing = await prisma.business.findUnique({
-      where: { slug: validation.data.slug }
+      where: { slug }
     });
 
     if (existing) {
@@ -112,8 +118,25 @@ export async function POST(request: NextRequest) {
     // Create business with validated data
     const business = await prisma.business.create({
       data: {
-        ...validation.data,
-        status: 'pending', // Require approval
+        name: validation.data.name,
+        nameVi: validation.data.nameVi,
+        slug,
+        description: validation.data.description,
+        descriptionVi: validation.data.descriptionVi,
+        category: validation.data.category,
+        subcategory: validation.data.subcategory,
+        address: validation.data.address || '',
+        city: validation.data.city,
+        island: validation.data.island,
+        phone: validation.data.phone || null,
+        email: validation.data.email || null,
+        website: validation.data.website || null,
+        image: validation.data.image,
+        images: validation.data.images || [],
+        priceRange: validation.data.priceRange,
+        features: validation.data.features || [],
+        hours: validation.data.hours,
+        status: 'pending',
         rating: 0,
         reviewCount: 0,
       },

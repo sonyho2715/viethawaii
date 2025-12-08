@@ -25,6 +25,9 @@ class ApiClient {
       const response = await fetch('/api/csrf-token');
       const data = await response.json();
       this.csrfToken = data.csrfToken;
+      if (!this.csrfToken) {
+        throw new Error('CSRF token not received');
+      }
       return this.csrfToken;
     } catch (error) {
       console.error('Failed to get CSRF token:', error);

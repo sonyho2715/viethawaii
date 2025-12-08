@@ -6,6 +6,10 @@
 import bcrypt from 'bcryptjs';
 import { getSession } from '@/lib/auth/session';
 
+// Re-export session functions for convenience
+export { getCurrentUser, requireAuth, requireAdmin, getSession } from '@/lib/auth/session';
+export type { SessionData } from '@/lib/auth/session';
+
 /**
  * Hash a password using bcrypt
  */
@@ -51,22 +55,6 @@ export function validateEmail(email: string): boolean {
 }
 
 /**
- * Get current user from session
- */
-export async function getCurrentUser() {
-  const session = await getSession();
-  if (!session.isLoggedIn) {
-    return null;
-  }
-  return {
-    userId: session.userId,
-    email: session.email,
-    name: session.name,
-    role: session.role,
-  };
-}
-
-/**
  * Set user session (login)
  */
 export async function setUserSession(user: {
@@ -96,6 +84,7 @@ export async function clearUserSession(): Promise<void> {
  * Check if user is authenticated
  */
 export async function isAuthenticated(): Promise<boolean> {
+  const { getCurrentUser } = await import('@/lib/auth/session');
   const user = await getCurrentUser();
   return user !== null;
 }
@@ -104,28 +93,7 @@ export async function isAuthenticated(): Promise<boolean> {
  * Check if user is admin
  */
 export async function isAdmin(): Promise<boolean> {
+  const { getCurrentUser } = await import('@/lib/auth/session');
   const user = await getCurrentUser();
   return user?.role === 'admin';
-}
-
-/**
- * Require authentication (throw if not authenticated)
- */
-export async function requireAuth() {
-  const user = await getCurrentUser();
-  if (!user) {
-    throw new Error('Unauthorized');
-  }
-  return user;
-}
-
-/**
- * Require admin role (throw if not admin)
- */
-export async function requireAdmin() {
-  const user = await requireAuth();
-  if (user.role !== 'admin') {
-    throw new Error('Forbidden: Admin access required');
-  }
-  return user;
 }

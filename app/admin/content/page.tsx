@@ -277,7 +277,7 @@ export default function AdminContent() {
                       <div className="flex items-center gap-3">
                         <div className="w-16 h-16 rounded-lg overflow-hidden">
                           <img
-                            src={item.image}
+                            src={item.image || '/images/placeholder.jpg'}
                             alt={item.title}
                             className="w-full h-full object-cover"
                           />

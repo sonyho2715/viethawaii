@@ -4,7 +4,7 @@
  */
 
 import { prisma } from '@/lib/prisma';
-import type { Review } from '@prisma/client';
+import type { Review, Prisma } from '@prisma/client';
 
 export interface CreateReviewInput {
   businessId: string;
@@ -75,7 +75,7 @@ export class ReviewsService {
     const limit = filters.limit || 10;
     const skip = (page - 1) * limit;
 
-    const where: any = {};
+    const where: Prisma.ReviewWhereInput = {};
 
     if (filters.businessId) {
       where.businessId = filters.businessId;

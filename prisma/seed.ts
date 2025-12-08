@@ -24,30 +24,60 @@ async function main() {
   const allBusinesses = [...sampleBusinesses, ...realBusinesses, ...additionalBusinesses];
 
   for (const business of allBusinesses) {
+    // Type assertion to access optional properties safely
+    const b = business as {
+      name: string;
+      nameVi?: string;
+      slug: string;
+      description: string;
+      descriptionVi?: string;
+      category: string;
+      subcategory?: string;
+      address?: string;
+      city: string;
+      island: string;
+      phone?: string;
+      email?: string;
+      website?: string;
+      image?: string;
+      images?: string[];
+      priceRange?: string;
+      rating?: number;
+      reviewCount?: number;
+      featured?: boolean;
+      verified?: boolean;
+      features?: string[];
+      hours?: Record<string, unknown>;
+      lat?: number;
+      lng?: number;
+    };
+
     await prisma.business.create({
       data: {
-        name: business.name,
-        nameVi: business.nameVi,
-        slug: business.slug,
-        description: business.description,
-        descriptionVi: business.descriptionVi,
-        category: business.category,
-        subcategory: business.subcategory,
-        address: business.address,
-        city: business.city,
-        island: business.island,
-        phone: business.phone,
-        email: business.email,
-        website: business.website,
-        image: business.image,
-        images: business.images || [],
-        priceRange: business.priceRange,
-        rating: business.rating || 0,
-        reviewCount: business.reviewCount || 0,
-        featured: business.featured || false,
-        verified: business.verified || false,
-        features: business.features || [],
-        hours: business.hours as any,
+        name: b.name,
+        nameVi: b.nameVi,
+        slug: b.slug,
+        description: b.description,
+        descriptionVi: b.descriptionVi,
+        category: b.category,
+        subcategory: b.subcategory,
+        address: b.address || '',
+        city: b.city,
+        island: b.island,
+        phone: b.phone,
+        email: b.email,
+        website: b.website,
+        image: b.image,
+        images: b.images || [],
+        priceRange: b.priceRange,
+        rating: b.rating || 0,
+        reviewCount: b.reviewCount || 0,
+        featured: b.featured || false,
+        verified: b.verified || false,
+        features: b.features || [],
+        hours: b.hours as any,
+        lat: b.lat,
+        lng: b.lng,
         status: 'active',
       },
     });
@@ -67,7 +97,7 @@ async function main() {
         author: article.author,
         image: article.image,
         category: article.category,
-        tags: article.tags || [],
+        tags: [],
         featured: article.featured || false,
         published: true,
         publishedAt: new Date(article.date),
@@ -89,9 +119,9 @@ async function main() {
         author: post.author,
         image: post.image,
         category: post.category,
-        tags: post.tags || [],
+        tags: [],
         readTime: post.readTime || 5,
-        featured: post.featured || false,
+        featured: false,
         published: true,
         publishedAt: new Date(post.date),
       },

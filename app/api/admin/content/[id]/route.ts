@@ -4,8 +4,9 @@ import { requireAdmin } from '@/lib/middleware';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   return requireAdmin(request, async (req, user) => {
     try {
       const { searchParams } = new URL(req.url);
@@ -21,15 +22,15 @@ export async function GET(
       let content;
       if (type === 'news') {
         content = await prisma.newsArticle.findUnique({
-          where: { id: params.id },
+          where: { id },
         });
       } else if (type === 'blog') {
         content = await prisma.blogPost.findUnique({
-          where: { id: params.id },
+          where: { id },
         });
       } else if (type === 'discover') {
         content = await prisma.discoverItem.findUnique({
-          where: { id: params.id },
+          where: { id },
         });
       } else {
         return NextResponse.json(
@@ -63,15 +64,16 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   return requireAdmin(request, async (req, user) => {
     try {
       const { type, ...data } = await req.json();
 
       if (type === 'news') {
         const article = await prisma.newsArticle.update({
-          where: { id: params.id },
+          where: { id },
           data: {
             title: data.title,
             titleVi: data.titleVi || null,
@@ -95,7 +97,7 @@ export async function PUT(
 
       if (type === 'blog') {
         const post = await prisma.blogPost.update({
-          where: { id: params.id },
+          where: { id },
           data: {
             title: data.title,
             titleVi: data.titleVi || null,
@@ -120,7 +122,7 @@ export async function PUT(
 
       if (type === 'discover') {
         const item = await prisma.discoverItem.update({
-          where: { id: params.id },
+          where: { id },
           data: {
             title: data.title,
             titleVi: data.titleVi || null,

@@ -17,8 +17,9 @@ function getArticleBySlug(slug: string) {
   return newsArticles.find(article => article.slug === slug);
 }
 
-export default function NewsArticlePage({ params }: { params: { slug: string } }) {
-  const article = getArticleBySlug(params.slug);
+export default async function NewsArticlePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const article = getArticleBySlug(slug);
 
   if (!article) {
     notFound();

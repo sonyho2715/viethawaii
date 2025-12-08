@@ -10,7 +10,8 @@ import BlogCard from '@/components/BlogCard';
 import DiscoverCard from '@/components/DiscoverCard';
 import { Island } from '@/lib/sampleData';
 import { ArrowRight } from 'lucide-react';
-import type { Business, NewsArticle, BlogPost, DiscoverItem } from '@/types';
+import type { Business, DiscoverItem } from '@/types';
+import type { NewsArticle, BlogPost } from '@/lib/enhancedData';
 
 interface HomeClientProps {
   businesses: Business[];

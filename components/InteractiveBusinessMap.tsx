@@ -20,16 +20,16 @@ import Link from 'next/link';
 interface Business {
   id: string;
   name: string;
-  address?: string;
+  address?: string | null;
   city: string;
   island: string;
   category: string;
-  rating?: number;
-  priceRange?: string;
-  phone?: string;
+  rating?: number | null;
+  priceRange?: string | null;
+  phone?: string | null;
   slug: string;
-  latitude?: number;
-  longitude?: number;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
 interface InteractiveBusinessMapProps {
@@ -187,7 +187,11 @@ export default function InteractiveBusinessMap({
       });
 
       try {
-        const google = await loader.load();
+        // Use type assertion for newer API methods
+        const loaderWithLoad = loader as typeof loader & {
+          load: () => Promise<typeof globalThis.google>;
+        };
+        const google = await loaderWithLoad.load();
         const islandCoords = ISLAND_COORDINATES[activeIsland];
 
         const map = new google.maps.Map(mapRef.current, {

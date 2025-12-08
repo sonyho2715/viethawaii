@@ -5,62 +5,60 @@ import { requireCsrfToken } from '@/lib/csrf';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   return requireCsrfToken(request, async (req) => {
     try {
       // Check if user is authenticated and is admin
       await requireAdmin();
 
-
-    const { id } = params;
-
-    // Get submission
-    const submission = await prisma.submission.findUnique({
-      where: { id },
-    });
-
-    if (!submission) {
-      return NextResponse.json(
-        { error: 'Submission not found' },
-        { status: 404 }
-      );
-    }
-
-    if (submission.type === 'business') {
-      // Create business from submission data
-      const businessData = submission.data as any;
-
-      await prisma.business.create({
-        data: {
-          name: businessData.name,
-          nameVi: businessData.nameVi,
-          slug: businessData.slug,
-          description: businessData.description,
-          descriptionVi: businessData.descriptionVi,
-          category: businessData.category,
-          subcategory: businessData.subcategory,
-          address: businessData.address,
-          city: businessData.city,
-          island: businessData.island,
-          zipCode: businessData.zipCode,
-          phone: businessData.phone,
-          email: businessData.email,
-          website: businessData.website,
-          priceRange: businessData.priceRange,
-          features: businessData.features || [],
-          hours: businessData.hours || {},
-          status: 'active',
-          verified: true,
-        },
+      // Get submission
+      const submission = await prisma.submission.findUnique({
+        where: { id },
       });
-    }
 
-    // Update submission status
-    await prisma.submission.update({
-      where: { id },
-      data: { status: 'approved' },
-    });
+      if (!submission) {
+        return NextResponse.json(
+          { error: 'Submission not found' },
+          { status: 404 }
+        );
+      }
+
+      if (submission.type === 'business') {
+        // Create business from submission data
+        const businessData = submission.data as Record<string, unknown>;
+
+        await prisma.business.create({
+          data: {
+            name: businessData.name as string,
+            nameVi: businessData.nameVi as string | undefined,
+            slug: businessData.slug as string,
+            description: businessData.description as string,
+            descriptionVi: businessData.descriptionVi as string | undefined,
+            category: businessData.category as string,
+            subcategory: businessData.subcategory as string | undefined,
+            address: businessData.address as string,
+            city: businessData.city as string,
+            island: businessData.island as string,
+            zipCode: businessData.zipCode as string | undefined,
+            phone: businessData.phone as string | undefined,
+            email: businessData.email as string | undefined,
+            website: businessData.website as string | undefined,
+            priceRange: businessData.priceRange as string | undefined,
+            features: (businessData.features as string[]) || [],
+            hours: businessData.hours || {},
+            status: 'active',
+            verified: true,
+          },
+        });
+      }
+
+      // Update submission status
+      await prisma.submission.update({
+        where: { id },
+        data: { status: 'approved' },
+      });
 
       return NextResponse.json({
         success: true,

@@ -22,8 +22,12 @@ export default function GoogleMap({ address, businessName, lat, lng }: GoogleMap
           version: 'weekly',
         });
 
-        const { Map } = await loader.importLibrary('maps');
-        const { AdvancedMarkerElement } = await loader.importLibrary('marker');
+        // Use type assertion for newer API methods
+        const loaderWithLibrary = loader as typeof loader & {
+          importLibrary: (name: string) => Promise<{ Map?: typeof google.maps.Map; AdvancedMarkerElement?: typeof google.maps.marker.AdvancedMarkerElement }>;
+        };
+        const { Map } = await loaderWithLibrary.importLibrary('maps');
+        const { AdvancedMarkerElement } = await loaderWithLibrary.importLibrary('marker');
 
         if (!mapRef.current) return;
 
@@ -47,6 +51,11 @@ export default function GoogleMap({ address, businessName, lat, lng }: GoogleMap
             mapCenter = { lat: 21.3099, lng: -157.8581 };
             setError('Could not find exact location. Showing approximate area.');
           }
+        }
+
+        if (!Map || !AdvancedMarkerElement) {
+          setError('Failed to load map components');
+          return;
         }
 
         // Create map
@@ -75,7 +84,7 @@ export default function GoogleMap({ address, businessName, lat, lng }: GoogleMap
                 rel="noopener noreferrer"
                 style="color: #DC2626; text-decoration: none; font-weight: 500; font-size: 14px;"
               >
-                Get Directions ’
+                Get Directions ï¿½
               </a>
             </div>
           `,

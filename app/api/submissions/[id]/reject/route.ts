@@ -5,17 +5,16 @@ import { requireCsrfToken } from '@/lib/csrf';
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   return requireCsrfToken(request, async (req) => {
     try {
       // Check if user is authenticated and is admin
       await requireAdmin();
 
-      const { id } = params;
-
       // Update submission status
-      const submission = await prisma.submission.update({
+      await prisma.submission.update({
         where: { id },
         data: { status: 'rejected' },
       });

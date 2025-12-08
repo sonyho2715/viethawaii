@@ -4,12 +4,13 @@ import { requireAdmin } from '@/lib/middleware';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   return requireAdmin(request, async (req, user) => {
     try {
       const business = await prisma.business.findUnique({
-        where: { id: params.id },
+        where: { id },
         include: {
           _count: {
             select: {
@@ -44,14 +45,15 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   return requireAdmin(request, async (req, user) => {
     try {
       const data = await req.json();
 
       const business = await prisma.business.update({
-        where: { id: params.id },
+        where: { id },
         data: {
           name: data.name,
           nameVi: data.nameVi || null,

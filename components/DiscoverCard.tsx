@@ -44,8 +44,10 @@ export default function DiscoverCard({ item }: DiscoverCardProps) {
     tradition: 'from-green-500 to-teal-500',
   };
 
+  const href = item.link || (item.slug ? `/discover/${item.slug}` : '#');
+
   return (
-    <Link href={`/discover/${item.slug}`} className="block group">
+    <Link href={href} className="block group">
       <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer h-full">
         <div className="h-40 relative overflow-hidden">
           <div

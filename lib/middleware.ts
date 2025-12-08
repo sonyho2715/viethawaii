@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getCurrentUser, JWTPayload } from './auth';
+import { getCurrentUser } from './auth';
+import type { UserSession } from '@/types';
 
 /**
  * Middleware to require authentication
@@ -7,7 +8,7 @@ import { getCurrentUser, JWTPayload } from './auth';
  */
 export async function requireAuth(
   request: NextRequest,
-  handler: (request: NextRequest, user: JWTPayload) => Promise<NextResponse>
+  handler: (request: NextRequest, user: UserSession) => Promise<NextResponse>
 ): Promise<NextResponse> {
   const user = await getCurrentUser();
 
@@ -27,7 +28,7 @@ export async function requireAuth(
  */
 export async function requireAdmin(
   request: NextRequest,
-  handler: (request: NextRequest, user: JWTPayload) => Promise<NextResponse>
+  handler: (request: NextRequest, user: UserSession) => Promise<NextResponse>
 ): Promise<NextResponse> {
   const user = await getCurrentUser();
 
@@ -54,7 +55,7 @@ export async function requireAdmin(
  */
 export async function optionalAuth(
   request: NextRequest,
-  handler: (request: NextRequest, user: JWTPayload | null) => Promise<NextResponse>
+  handler: (request: NextRequest, user: UserSession | null) => Promise<NextResponse>
 ): Promise<NextResponse> {
   const user = await getCurrentUser();
   return handler(request, user);

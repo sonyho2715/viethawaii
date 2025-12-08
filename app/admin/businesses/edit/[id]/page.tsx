@@ -1,13 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, Save, X, Upload, MapPin, Phone, Globe, Mail, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import ImageUpload from '@/components/ImageUpload';
 
-export default function EditBusinessPage({ params }: { params: { id: string } }) {
+export default function EditBusinessPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
   const { loading: authLoading, isAuthenticated } = useAuth(true, true);
   const [loading, setLoading] = useState(true);
@@ -50,11 +51,11 @@ export default function EditBusinessPage({ params }: { params: { id: string } })
     if (isAuthenticated) {
       fetchBusinessData();
     }
-  }, [isAuthenticated, params.id]);
+  }, [isAuthenticated, id]);
 
   const fetchBusinessData = async () => {
     try {
-      const response = await fetch(`/api/admin/businesses/${params.id}`);
+      const response = await fetch(`/api/admin/businesses/${id}`);
       if (response.ok) {
         const data = await response.json();
         setFormData({
@@ -105,7 +106,7 @@ export default function EditBusinessPage({ params }: { params: { id: string } })
     setSaving(true);
 
     try {
-      const response = await fetch(`/api/admin/businesses/${params.id}`, {
+      const response = await fetch(`/api/admin/businesses/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),

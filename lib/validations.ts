@@ -21,7 +21,7 @@ export const createBusinessSchema = z.object({
   address: z.string().optional(),
   city: z.string().min(1, 'City is required'),
   island: z.enum(['Oahu', 'Maui', 'Hawaii Island', 'Kauai', 'Molokai', 'Lanai'], {
-    errorMap: () => ({ message: 'Invalid island selected' }),
+    message: 'Invalid island selected',
   }),
   phone: z.string()
     .regex(VALIDATION.business.phoneRegex, 'Invalid phone number format')
@@ -167,7 +167,7 @@ export function validate<T>(schema: z.ZodSchema<T>, data: unknown): { success: t
     if (error instanceof z.ZodError) {
       return {
         success: false,
-        errors: error.errors.map(err => `${err.path.join('.')}: ${err.message}`),
+        errors: error.issues.map(err => `${err.path.join('.')}: ${err.message}`),
       };
     }
     return {

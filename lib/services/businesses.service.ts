@@ -4,7 +4,7 @@
  */
 
 import { prisma } from '@/lib/prisma';
-import type { Business } from '@prisma/client';
+import type { Business, Prisma } from '@prisma/client';
 
 export interface CreateBusinessInput {
   name: string;
@@ -85,7 +85,7 @@ export class BusinessesService {
     const limit = filters.limit || 20;
     const skip = (page - 1) * limit;
 
-    const where: any = {
+    const where: Prisma.BusinessWhereInput = {
       status: filters.status || 'active',
     };
 
@@ -191,7 +191,7 @@ export class BusinessesService {
    * Search businesses with full-text search capabilities
    */
   async searchBusinesses(query: string, filters?: BusinessFilters): Promise<Business[]> {
-    const where: any = {
+    const where: Prisma.BusinessWhereInput = {
       status: filters?.status || 'active',
       OR: [
         { name: { contains: query, mode: 'insensitive' } },

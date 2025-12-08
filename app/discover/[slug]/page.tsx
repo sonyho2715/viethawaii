@@ -16,8 +16,9 @@ function getItemBySlug(slug: string) {
   return discoverItems.find(item => item.link.endsWith(`/${slug}`));
 }
 
-export default function DiscoverItemPage({ params }: { params: { slug: string } }) {
-  const item = getItemBySlug(params.slug);
+export default async function DiscoverItemPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const item = getItemBySlug(slug);
 
   if (!item) {
     notFound();

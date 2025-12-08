@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { Prisma } from '@prisma/client';
 import { z } from 'zod';
 
 const businessSubmissionSchema = z.object({
@@ -18,7 +19,7 @@ const businessSubmissionSchema = z.object({
   website: z.string().url('Invalid website URL').optional().or(z.literal('')),
   priceRange: z.string().optional(),
   features: z.array(z.string()).optional(),
-  hours: z.record(z.any()).optional(),
+  hours: z.record(z.string(), z.unknown()).optional(),
   submitterName: z.string().min(2, 'Your name is required'),
   submitterEmail: z.string().email('Valid email is required'),
 });
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
     const validation = businessSubmissionSchema.safeParse(body);
     if (!validation.success) {
       return NextResponse.json(
-        { error: validation.error.errors[0].message },
+        { error: validation.error.issues[0].message },
         { status: 400 }
       );
     }
@@ -45,31 +46,33 @@ export async function POST(request: NextRequest) {
       .replace(/(^-|-$)/g, '');
 
     // Create submission
+    const submissionData = {
+      name: data.name,
+      nameVi: data.nameVi,
+      slug,
+      description: data.description,
+      descriptionVi: data.descriptionVi,
+      category: data.category,
+      subcategory: data.subcategory,
+      address: data.address,
+      city: data.city,
+      island: data.island,
+      zipCode: data.zipCode,
+      phone: data.phone,
+      email: data.email,
+      website: data.website,
+      priceRange: data.priceRange,
+      features: data.features || [],
+      hours: data.hours || {},
+    };
+
     const submission = await prisma.submission.create({
       data: {
         type: 'business',
         email: data.submitterEmail,
         submittedBy: data.submitterName,
         status: 'pending',
-        data: {
-          name: data.name,
-          nameVi: data.nameVi,
-          slug,
-          description: data.description,
-          descriptionVi: data.descriptionVi,
-          category: data.category,
-          subcategory: data.subcategory,
-          address: data.address,
-          city: data.city,
-          island: data.island,
-          zipCode: data.zipCode,
-          phone: data.phone,
-          email: data.email,
-          website: data.website,
-          priceRange: data.priceRange,
-          features: data.features || [],
-          hours: data.hours || {},
-        },
+        data: submissionData as Prisma.InputJsonValue,
       },
     });
 

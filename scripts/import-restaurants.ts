@@ -1,4 +1,4 @@
-import { Client, PlaceInputType } from '@googlemaps/google-maps-services-js';
+import { Client } from '@googlemaps/google-maps-services-js';
 import { PrismaClient } from '@prisma/client';
 
 const client = new Client({});
@@ -82,7 +82,7 @@ async function importRestaurants(
       params: {
         location: location,
         radius: radius,
-        type: PlaceInputType.restaurant,
+        type: 'restaurant',
         keyword: keyword,
         key: process.env.GOOGLE_PLACES_API_KEY || '',
       },
@@ -185,7 +185,7 @@ async function importRestaurants(
             reviewCount: detail.user_ratings_total || 0,
             priceRange: mapPriceLevel(detail.price_level),
             features: detail.types || [],
-            hours: detail.opening_hours?.periods || null,
+            hours: detail.opening_hours?.periods as any ?? undefined,
             verified: true,
             featured: false,
             status: 'active',

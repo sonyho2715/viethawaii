@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { Metadata } from 'next';
 import { prisma } from '@/lib/prisma';
 import {
   MapPin,
@@ -20,20 +21,78 @@ export const dynamic = 'force-static';
 export const dynamicParams = true;
 export const revalidate = 300; // Revalidate every 5 minutes
 
-export async function generateStaticParams() {
-  const businesses = await prisma.business.findMany({
-    where: { status: 'active' },
-    select: { slug: true },
-  });
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
 
-  return businesses.map((business) => ({
-    slug: business.slug,
-  }));
+  try {
+    const business = await prisma.business.findUnique({
+      where: { slug, status: 'active' },
+      select: {
+        name: true,
+        nameVi: true,
+        description: true,
+        category: true,
+        city: true,
+        island: true,
+        image: true,
+      },
+    });
+
+    if (!business) {
+      return {
+        title: 'Business Not Found',
+      };
+    }
+
+    const title = business.nameVi
+      ? `${business.name} (${business.nameVi})`
+      : business.name;
+
+    return {
+      title,
+      description: business.description?.slice(0, 160) || `${business.name} - ${business.category} in ${business.city}, ${business.island}`,
+      openGraph: {
+        title: `${title} | VietHawaii`,
+        description: business.description?.slice(0, 160),
+        images: business.image ? [{ url: business.image }] : undefined,
+        type: 'website',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: `${title} | VietHawaii`,
+        description: business.description?.slice(0, 160),
+        images: business.image ? [business.image] : undefined,
+      },
+    };
+  } catch {
+    return {
+      title: 'Business Directory',
+    };
+  }
 }
 
-export default async function BusinessDetailPage({ params }: { params: { slug: string } }) {
+export async function generateStaticParams() {
+  try {
+    const businesses = await prisma.business.findMany({
+      where: { status: 'active' },
+      select: { slug: true },
+    });
+
+    return businesses.map((business) => ({
+      slug: business.slug,
+    }));
+  } catch (error) {
+    // Return empty array if database isn't available during build
+    // Pages will be generated on-demand with dynamicParams = true
+    console.warn('generateStaticParams: Database unavailable, using empty params');
+    return [];
+  }
+}
+
+export default async function BusinessDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const businessData = await prisma.business.findUnique({
-    where: { slug: params.slug, status: 'active' },
+    where: { slug, status: 'active' },
   });
 
   if (!businessData) {

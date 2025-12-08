@@ -1,13 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronLeft, Save, X, Upload, Image as ImageIcon } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import ImageUpload from '@/components/ImageUpload';
 
-export default function EditContentPage({ params }: { params: { id: string } }) {
+export default function EditContentPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
   const searchParams = useSearchParams();
   const type = searchParams.get('type') || 'blog';
@@ -35,11 +36,11 @@ export default function EditContentPage({ params }: { params: { id: string } }) 
     if (isAuthenticated) {
       fetchContentData();
     }
-  }, [isAuthenticated, params.id, type]);
+  }, [isAuthenticated, id, type]);
 
   const fetchContentData = async () => {
     try {
-      const response = await fetch(`/api/admin/content/${params.id}?type=${type}`);
+      const response = await fetch(`/api/admin/content/${id}?type=${type}`);
       if (response.ok) {
         const data = await response.json();
         setFormData({
@@ -118,7 +119,7 @@ export default function EditContentPage({ params }: { params: { id: string } }) 
         payload.type = 'feature';
       }
 
-      const response = await fetch(`/api/admin/content/${params.id}`, {
+      const response = await fetch(`/api/admin/content/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),

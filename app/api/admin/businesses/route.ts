@@ -1,6 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { requireAdmin } from '@/lib/middleware';
+import { z } from 'zod';
+import { Prisma } from '@prisma/client';
+
+const updateBusinessSchema = z.object({
+  id: z.string().uuid('Invalid business ID'),
+  status: z.enum(['pending', 'active', 'inactive']).optional(),
+  featured: z.boolean().optional(),
+  verified: z.boolean().optional(),
+  name: z.string().min(1).optional(),
+  description: z.string().optional(),
+  category: z.string().optional(),
+});
+
+const deleteBusinessSchema = z.object({
+  id: z.string().uuid('Invalid business ID'),
+});
 
 export async function GET(request: NextRequest) {
   return requireAdmin(request, async (req, user) => {
@@ -9,7 +25,7 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status') || undefined;
     const search = searchParams.get('search') || undefined;
 
-    const where: any = {};
+    const where: Prisma.BusinessWhereInput = {};
     if (status) {
       where.status = status;
     }
@@ -57,7 +73,17 @@ export async function GET(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   return requireAdmin(request, async (req, user) => {
   try {
-    const { id, ...data } = await request.json();
+    const body = await request.json();
+    const validated = updateBusinessSchema.safeParse(body);
+
+    if (!validated.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: validated.error.issues },
+        { status: 400 }
+      );
+    }
+
+    const { id, ...data } = validated.data;
 
     const business = await prisma.business.update({
       where: { id },
@@ -82,7 +108,17 @@ export async function PATCH(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   return requireAdmin(request, async (req, user) => {
   try {
-    const { id } = await request.json();
+    const body = await request.json();
+    const validated = deleteBusinessSchema.safeParse(body);
+
+    if (!validated.success) {
+      return NextResponse.json(
+        { error: 'Validation failed', details: validated.error.issues },
+        { status: 400 }
+      );
+    }
+
+    const { id } = validated.data;
 
     await prisma.business.delete({
       where: { id },

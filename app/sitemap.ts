@@ -4,12 +4,6 @@ import { prisma } from '@/lib/prisma';
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://viethawaii.com';
 
-  // Get all active businesses
-  const businesses = await prisma.business.findMany({
-    where: { status: 'active' },
-    select: { slug: true, updatedAt: true },
-  });
-
   // Static pages
   const staticPages = [
     {
@@ -50,13 +44,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // Dynamic business pages
-  const businessPages = businesses.map((business) => ({
-    url: `${baseUrl}/business/${business.slug}`,
-    lastModified: business.updatedAt,
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
-  }));
+  // Try to get dynamic business pages from database
+  let businessPages: MetadataRoute.Sitemap = [];
+  try {
+    const businesses = await prisma.business.findMany({
+      where: { status: 'active' },
+      select: { slug: true, updatedAt: true },
+    });
+
+    businessPages = businesses.map((business) => ({
+      url: `${baseUrl}/business/${business.slug}`,
+      lastModified: business.updatedAt,
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    }));
+  } catch (error) {
+    // Database unavailable during build, return only static pages
+    console.warn('Sitemap: Database unavailable, using static pages only');
+  }
 
   return [...staticPages, ...businessPages];
 }

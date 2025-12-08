@@ -1,10 +1,13 @@
 import type { Business as DBBusiness } from '@/types';
 
 export type Island = 'Oahu' | 'Maui' | 'Big Island' | 'Kauai' | 'Molokai' | 'Lanai';
-export type Category = 'Restaurant' | 'Market' | 'Services' | 'Healthcare' | 'Beauty' | 'Professional';
+export type Category = 'Restaurant' | 'Market' | 'Services' | 'Healthcare' | 'Beauty' | 'Professional' | 'Food & Dining' | 'Retail & Shopping' | 'Beauty & Wellness' | 'Health & Medical' | 'Professional Services';
 
 // Re-export the shared Business type for compatibility
 export type { DBBusiness as Business };
+
+// Local alias for use within this file
+type Business = DBBusiness;
 
 // Legacy interface for sample data (will be migrated to use API)
 interface LegacyBusiness {
