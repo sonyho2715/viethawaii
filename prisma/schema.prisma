@@ -179,6 +179,26 @@ model User {
   sessions      Session[]
   savedSearches SavedSearch[]
 
+  // Guide relations
+  guideBookmarks    GuideBookmark[]
+
+  // Classified relations
+  classifiedListings     ClassifiedListing[]
+  classifiedInquiries    ClassifiedInquiry[] @relation("InquirySender")
+  classifiedReports      ClassifiedReport[]
+  classifiedFavorites    ClassifiedFavorite[]
+
+  // Community relations
+  communityEvents   CommunityEvent[]
+
+  // Tools relations
+  savedCalculations SavedCalculation[]
+
+  // Payment relations
+  payments       Payment[]
+  subscriptions  Subscription[]
+  boostPurchases BoostPurchase[]
+
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -275,4 +295,463 @@ model Photo {
 
   @@index([businessId])
   @@index([uploadedBy])
+}
+
+// ============================================
+// SETTLEMENT GUIDE MODELS (Ebook Integration)
+// ============================================
+
+model GuidePart {
+  id          String   @id @default(cuid())
+  slug        String   @unique  // e.g., "chao-mung", "giao-duc"
+  title       String            // Vietnamese title (primary)
+  titleEn     String?           // English title
+  description String
+  descriptionEn String?
+  icon        String?           // Emoji or icon class
+  order       Int               // Sort order (1-8)
+  published   Boolean  @default(true)
+
+  chapters    GuideChapter[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([order])
+  @@index([published])
+}
+
+model GuideChapter {
+  id          String   @id @default(cuid())
+  partId      String
+  part        GuidePart @relation(fields: [partId], references: [id], onDelete: Cascade)
+
+  slug        String            // e.g., "chi-phi-sinh-hoat"
+  chapterNumber Int             // 1-31
+  title       String            // Vietnamese title (primary)
+  titleEn     String?           // English title
+  excerpt     String            // Short summary (Vietnamese)
+  excerptEn   String?           // English summary
+  content     String   @db.Text // Full markdown content (Vietnamese)
+  contentEn   String?  @db.Text // English content
+
+  order       Int               // Sort within part
+  readTime    Int      @default(10)  // Minutes
+
+  // Features
+  hasCaseStudy  Boolean  @default(false)
+  hasChecklist  Boolean  @default(false)
+  hasMistakes   Boolean  @default(false)
+
+  // SEO
+  metaTitle     String?
+  metaDescription String?
+  keywords      String[]
+
+  // Relations to businesses
+  relatedBusinessCategories String[]
+
+  published   Boolean  @default(true)
+  featured    Boolean  @default(false)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Bookmarks
+  bookmarks   GuideBookmark[]
+
+  @@unique([partId, slug])
+  @@index([partId])
+  @@index([published])
+  @@index([chapterNumber])
+  @@index([order])
+}
+
+model GuideBookmark {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chapterId   String
+  chapter     GuideChapter @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, chapterId])
+  @@index([userId])
+  @@index([chapterId])
+}
+
+// ============================================
+// CLASSIFIEDS/MARKETPLACE MODELS
+// ============================================
+
+model ClassifiedCategory {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String            // Vietnamese (primary)
+  nameEn      String?           // English
+  description String?
+  descriptionEn String?
+  icon        String?           // Emoji or icon
+  order       Int
+
+  // Hierarchy
+  parentId    String?
+  parent      ClassifiedCategory? @relation("CategoryHierarchy", fields: [parentId], references: [id])
+  children    ClassifiedCategory[] @relation("CategoryHierarchy")
+
+  listings    ClassifiedListing[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([parentId])
+  @@index([order])
+}
+
+model ClassifiedListing {
+  id          String   @id @default(cuid())
+
+  // Category
+  categoryId  String
+  category    ClassifiedCategory @relation(fields: [categoryId], references: [id])
+
+  // Poster
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Content (Vietnamese primary)
+  title       String
+  titleEn     String?
+  description String   @db.Text
+  descriptionEn String? @db.Text
+
+  // Pricing
+  price       Decimal? @db.Decimal(10, 2)
+  priceType   String?  // fixed, negotiable, free, contact
+
+  // Location
+  island      String
+  city        String?
+  zipCode     String?
+  neighborhood String?
+  address     String?
+  lat         Float?
+  lng         Float?
+  hideExactLocation Boolean @default(true)
+
+  // Contact
+  contactEmail String?
+  contactPhone String?
+  contactMethod String @default("email") // email, phone, both, message
+
+  // Images
+  images      String[]
+
+  // Type-specific fields (JSON for flexibility)
+  jobDetails    Json?  // salary, type, remote, experience
+  housingDetails Json? // bedrooms, bathrooms, sqft, parking
+  vehicleDetails Json? // make, model, year, mileage
+
+  // Status
+  status      String   @default("pending") // pending, active, expired, sold, removed, rejected
+  featured    Boolean  @default(false)
+  urgent      Boolean  @default(false)
+
+  // Moderation
+  moderatedAt     DateTime?
+  moderatedBy     String?
+  rejectionReason String?
+
+  // Engagement
+  viewCount   Int      @default(0)
+  reportCount Int      @default(0)
+
+  // Timestamps
+  expiresAt   DateTime?
+  renewedAt   DateTime?
+  publishedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  inquiries   ClassifiedInquiry[]
+  reports     ClassifiedReport[]
+  favorites   ClassifiedFavorite[]
+
+  @@index([categoryId])
+  @@index([userId])
+  @@index([status])
+  @@index([island])
+  @@index([featured])
+  @@index([createdAt])
+  @@index([expiresAt])
+  @@index([price])
+}
+
+model ClassifiedInquiry {
+  id          String   @id @default(cuid())
+  listingId   String
+  listing     ClassifiedListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  senderId    String?
+  sender      User?    @relation("InquirySender", fields: [senderId], references: [id], onDelete: SetNull)
+
+  senderName  String
+  senderEmail String
+  senderPhone String?
+  message     String   @db.Text
+
+  isRead      Boolean  @default(false)
+  repliedAt   DateTime?
+
+  createdAt   DateTime @default(now())
+
+  @@index([listingId])
+  @@index([senderId])
+  @@index([isRead])
+}
+
+model ClassifiedReport {
+  id          String   @id @default(cuid())
+  listingId   String
+  listing     ClassifiedListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  reporterId  String?
+  reporter    User?    @relation(fields: [reporterId], references: [id], onDelete: SetNull)
+
+  reason      String   // spam, scam, inappropriate, duplicate, other
+  details     String?  @db.Text
+  status      String   @default("pending") // pending, reviewed, dismissed, actioned
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([listingId])
+  @@index([status])
+}
+
+model ClassifiedFavorite {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listingId   String
+  listing     ClassifiedListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, listingId])
+  @@index([userId])
+  @@index([listingId])
+}
+
+// ============================================
+// COMMUNITY MODELS
+// ============================================
+
+model CommunityEvent {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String            // Vietnamese (primary)
+  titleEn     String?
+  description String   @db.Text
+  descriptionEn String? @db.Text
+
+  // Timing
+  startDate   DateTime
+  endDate     DateTime?
+  isAllDay    Boolean  @default(false)
+  recurring   String?  // weekly, monthly, yearly
+
+  // Location
+  venue       String?
+  address     String?
+  island      String
+  city        String?
+  lat         Float?
+  lng         Float?
+  virtualLink String?  // For online events
+
+  image       String?
+  category    String   // cultural, religious, business, social, educational
+
+  // Organizer
+  organizerId String?
+  organizer   User?    @relation(fields: [organizerId], references: [id], onDelete: SetNull)
+  organizationName String?
+  contactEmail String?
+  contactPhone String?
+  website     String?
+
+  // Tickets
+  isFree      Boolean  @default(true)
+  ticketPrice Decimal? @db.Decimal(10, 2)
+  ticketLink  String?
+
+  status      String   @default("pending") // pending, approved, cancelled
+  featured    Boolean  @default(false)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([startDate])
+  @@index([island])
+  @@index([category])
+  @@index([status])
+  @@index([featured])
+}
+
+model CommunityOrganization {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String            // Vietnamese (primary)
+  nameEn      String?
+  description String   @db.Text
+  descriptionEn String? @db.Text
+
+  type        String   // religious, cultural, business, social, educational
+  subtype     String?  // catholic, buddhist, protestant for religious
+
+  // Location
+  address     String?
+  island      String
+  city        String?
+  zipCode     String?
+  lat         Float?
+  lng         Float?
+
+  // Contact
+  phone       String?
+  email       String?
+  website     String?
+  facebookUrl String?
+
+  image       String?
+  logo        String?
+
+  // For religious organizations
+  serviceSchedule Json?  // Weekly service times
+
+  verified    Boolean  @default(false)
+  featured    Boolean  @default(false)
+  published   Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([type])
+  @@index([island])
+  @@index([published])
+}
+
+// ============================================
+// TOOLS - SAVED CALCULATIONS
+// ============================================
+
+model SavedCalculation {
+  id          String   @id @default(cuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  toolType    String   // cost-of-living, mortgage, tax, remittance
+  name        String?  // User-given name
+  inputs      Json     // Input parameters
+  results     Json     // Calculated results
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([toolType])
+}
+
+// ============================================
+// MONETIZATION - STRIPE PAYMENTS
+// ============================================
+
+model Payment {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  stripePaymentId String   @unique  // Stripe payment intent ID
+  stripeCustomerId String?          // Stripe customer ID
+
+  amount          Int              // Amount in cents
+  currency        String   @default("usd")
+  status          String           // pending, succeeded, failed, refunded
+
+  productType     String           // BUSINESS_PREMIUM, CLASSIFIED_BOOST, etc.
+  productName     String
+  metadata        Json?            // Additional payment data
+
+  // Reference to what was purchased
+  businessId      String?
+  classifiedId    String?
+  eventId         String?
+  organizationId  String?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+  @@index([stripePaymentId])
+  @@index([status])
+}
+
+model Subscription {
+  id                  String   @id @default(cuid())
+  userId              String
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  stripeSubscriptionId String  @unique
+  stripeCustomerId    String
+  stripePriceId       String
+
+  status              String   // active, canceled, past_due, trialing
+  productType         String   // BUSINESS_PREMIUM
+
+  currentPeriodStart  DateTime
+  currentPeriodEnd    DateTime
+  cancelAtPeriodEnd   Boolean  @default(false)
+
+  // Reference to what is subscribed
+  businessId          String?
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([userId])
+  @@index([stripeSubscriptionId])
+  @@index([status])
+  @@index([businessId])
+}
+
+model BoostPurchase {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  productType     String   // CLASSIFIED_BOOST, EVENT_SPONSOR
+
+  // Reference to boosted item
+  classifiedId    String?
+  eventId         String?
+  organizationId  String?
+
+  // Boost period
+  startDate       DateTime @default(now())
+  endDate         DateTime
+  active          Boolean  @default(true)
+
+  paymentId       String?  // Reference to Payment
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+  @@index([classifiedId])
+  @@index([eventId])
+  @@index([active])
+  @@index([endDate])
 }

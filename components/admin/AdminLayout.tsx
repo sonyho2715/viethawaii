@@ -17,6 +17,7 @@ import {
   Search,
   Bell,
   ChevronDown,
+  Tag,
 } from 'lucide-react';
 
 interface AdminLayoutProps {
@@ -32,6 +33,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
     { name: 'Businesses', href: '/admin/businesses', icon: Store },
     { name: 'Pending', href: '/admin/pending-businesses', icon: Clock, badge: true },
+    { name: 'Rao Vặt', href: '/admin/classifieds', icon: Tag, badge: true },
     { name: 'Reviews', href: '/admin/reviews', icon: Star, badge: true },
     { name: 'Users', href: '/admin/users', icon: Users },
     { name: 'Content', href: '/admin/content', icon: FileText },

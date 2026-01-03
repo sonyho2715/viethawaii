@@ -4,6 +4,7 @@ import "./globals.css";
 import Script from "next/script";
 import StructuredData from "@/components/StructuredData";
 import SessionProvider from "@/components/SessionProvider";
+import { LanguageProvider } from "@/lib/i18n";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -80,7 +81,7 @@ export default function RootLayout({
   const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
   return (
-    <html lang="en">
+    <html lang="vi" suppressHydrationWarning>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
         <StructuredData type="organization" />
@@ -106,9 +107,11 @@ export default function RootLayout({
       <body
         className={`${inter.variable} font-sans antialiased`}
       >
-        <SessionProvider>
-          {children}
-        </SessionProvider>
+        <LanguageProvider defaultLanguage="vi">
+          <SessionProvider>
+            {children}
+          </SessionProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

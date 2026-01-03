@@ -4,8 +4,9 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
-import { Menu, X, Home, Newspaper, BookOpen, Compass, PlusCircle, Mail, Map, User, LogOut, Heart, Settings, Shield } from 'lucide-react';
+import { Menu, X, Home, Newspaper, BookOpen, Compass, PlusCircle, Mail, Map, User, LogOut, Heart, Settings, Shield, Briefcase, Calculator, Users, Crown } from 'lucide-react';
 import GlobalSearch from '@/components/GlobalSearch';
+import LanguageToggle from '@/components/LanguageToggle';
 
 interface NavigationProps {
   businesses?: any[];
@@ -18,13 +19,13 @@ export default function Navigation({ businesses = [] }: NavigationProps) {
   const { data: session } = useSession();
 
   const navItems = [
-    { name: 'Home', href: '/', icon: Home },
-    { name: 'Map', href: '/#map', icon: Map },
-    { name: 'News', href: '/news', icon: Newspaper },
-    { name: 'Blog', href: '/blog', icon: BookOpen },
-    { name: 'Discover', href: '/discover', icon: Compass },
-    { name: 'Submit Business', href: '/submit', icon: PlusCircle },
-    { name: 'Contact', href: '/contact', icon: Mail },
+    { name: 'Trang Chủ', nameEn: 'Home', href: '/', icon: Home },
+    { name: 'Doanh Nghiệp', nameEn: 'Businesses', href: '/#map', icon: Map },
+    { name: 'Hướng Dẫn', nameEn: 'Guide', href: '/huong-dan', icon: BookOpen },
+    { name: 'Rao Vặt', nameEn: 'Classifieds', href: '/rao-vat', icon: Briefcase },
+    { name: 'Công Cụ', nameEn: 'Tools', href: '/cong-cu', icon: Calculator },
+    { name: 'Cộng Đồng', nameEn: 'Community', href: '/cong-dong', icon: Users },
+    { name: 'Tin Tức', nameEn: 'News', href: '/news', icon: Newspaper },
   ];
 
   const isActive = (href: string) => {
@@ -70,6 +71,11 @@ export default function Navigation({ businesses = [] }: NavigationProps) {
               <GlobalSearch businesses={businesses} />
             </div>
 
+            {/* Language Toggle */}
+            <div className="ml-2">
+              <LanguageToggle variant="compact" />
+            </div>
+
             {/* User Menu */}
             {session ? (
               <div className="relative ml-2">
@@ -111,6 +117,14 @@ export default function Navigation({ businesses = [] }: NavigationProps) {
                         <span className="font-semibold">Admin Panel</span>
                       </Link>
                     )}
+                    <Link
+                      href="/thanh-toan"
+                      onClick={() => setUserMenuOpen(false)}
+                      className="flex items-center gap-3 px-4 py-2.5 hover:bg-yellow-50 transition text-yellow-700"
+                    >
+                      <Crown className="w-4 h-4" />
+                      <span className="font-semibold">Nâng Cấp</span>
+                    </Link>
                     <div className="border-t border-gray-200 my-2" />
                     <button
                       onClick={() => {
@@ -168,6 +182,59 @@ export default function Navigation({ businesses = [] }: NavigationProps) {
                   </Link>
                 );
               })}
+            </div>
+
+            {/* Mobile User Actions */}
+            <div className="mt-4 pt-4 border-t border-gray-100 space-y-1">
+              {session ? (
+                <>
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    <User className="w-5 h-5" />
+                    Trang Cá Nhân
+                  </Link>
+                  <Link
+                    href="/thanh-toan"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-sm text-yellow-700 bg-yellow-50 hover:bg-yellow-100"
+                  >
+                    <Crown className="w-5 h-5" />
+                    Nâng Cấp
+                  </Link>
+                  {(session.user as any)?.role === 'ADMIN' && (
+                    <Link
+                      href="/admin"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-sm text-purple-700 hover:bg-purple-50"
+                    >
+                      <Shield className="w-5 h-5" />
+                      Admin Panel
+                    </Link>
+                  )}
+                  <button
+                    onClick={() => {
+                      setIsOpen(false);
+                      signOut({ callbackUrl: '/' });
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-sm text-red-600 hover:bg-red-50"
+                  >
+                    <LogOut className="w-5 h-5" />
+                    Đăng Xuất
+                  </button>
+                </>
+              ) : (
+                <Link
+                  href="/auth/signin"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-sm bg-gradient-to-r from-rose-500 to-orange-500 text-white"
+                >
+                  <User className="w-5 h-5" />
+                  Đăng Nhập
+                </Link>
+              )}
             </div>
           </div>
         )}
