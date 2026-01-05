@@ -1,7 +1,6 @@
 'use client';
 
-import { useState } from 'react';
-import { signIn } from 'next-auth/react';
+import { useActionState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
@@ -10,50 +9,24 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2, Mail, Lock, AlertCircle } from 'lucide-react';
+import { authenticate } from './actions';
 
 export default function LoginClient() {
   const searchParams = useSearchParams();
   const { language } = useLanguage();
-
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [state, formAction, isPending] = useActionState(authenticate, undefined);
 
   const callbackUrl = searchParams.get('callbackUrl') || '/';
   const errorParam = searchParams.get('error');
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setIsLoading(true);
-
-    try {
-      // Use redirect: true for more reliable auth flow
-      await signIn('credentials', {
-        email,
-        password,
-        callbackUrl,
-      });
-      // Note: If signIn succeeds, the page will redirect
-      // If it fails, it will redirect to error page or show error param
-    } catch (err) {
-      console.error('SignIn exception:', err);
-      setError(
-        language === 'vn'
-          ? 'Đã xảy ra lỗi. Vui lòng thử lại.'
-          : 'Something went wrong. Please try again.'
-      );
-      setIsLoading(false);
-    }
-  };
-
-  // Show error from URL params (NextAuth redirect errors)
-  const displayError = error || (errorParam === 'CredentialsSignin'
-    ? (language === 'vn' ? 'Email hoặc mật khẩu không đúng' : 'Invalid email or password')
-    : errorParam
-      ? (language === 'vn' ? 'Đã xảy ra lỗi. Vui lòng thử lại.' : 'Something went wrong. Please try again.')
-      : null);
+  // Show error from URL params or action state
+  const displayError = state?.error
+    ? (language === 'vn' ? 'Email hoặc mật khẩu không đúng' : state.error)
+    : errorParam === 'CredentialsSignin'
+      ? (language === 'vn' ? 'Email hoặc mật khẩu không đúng' : 'Invalid email or password')
+      : errorParam
+        ? (language === 'vn' ? 'Đã xảy ra lỗi. Vui lòng thử lại.' : 'Something went wrong. Please try again.')
+        : null;
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 px-4">
@@ -69,7 +42,9 @@ export default function LoginClient() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form action={formAction} className="space-y-4">
+            <input type="hidden" name="callbackUrl" value={callbackUrl} />
+
             {displayError && (
               <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-600">
                 <AlertCircle className="h-4 w-4 flex-shrink-0" />
@@ -83,13 +58,12 @@ export default function LoginClient() {
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   id="email"
+                  name="email"
                   type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="your@email.com"
                   className="pl-10"
                   required
-                  disabled={isLoading}
+                  disabled={isPending}
                 />
               </div>
             </div>
@@ -110,13 +84,12 @@ export default function LoginClient() {
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   id="password"
+                  name="password"
                   type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   className="pl-10"
                   required
-                  disabled={isLoading}
+                  disabled={isPending}
                 />
               </div>
             </div>
@@ -124,9 +97,9 @@ export default function LoginClient() {
             <Button
               type="submit"
               className="w-full bg-red-600 hover:bg-red-700"
-              disabled={isLoading}
+              disabled={isPending}
             >
-              {isLoading ? (
+              {isPending ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                   {language === 'vn' ? 'Đang đăng nhập...' : 'Signing in...'}
