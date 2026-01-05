@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
-import { Sun, DollarSign, TrendingUp, Mail } from 'lucide-react';
+import { Sun, Cloud, CloudRain, DollarSign, TrendingUp, Mail, Loader2 } from 'lucide-react';
 
 const TRENDING_TOPICS = [
   { tag: '#TuyenNhanVien', labelVn: 'Tuyển nhân viên', labelEn: 'Hiring' },
@@ -11,10 +11,77 @@ const TRENDING_TOPICS = [
   { tag: '#ViecLam', labelVn: 'Việc làm', labelEn: 'Jobs' },
 ];
 
+// Honolulu coordinates
+const HONOLULU_LAT = 21.3069;
+const HONOLULU_LON = -157.8583;
+
+interface WeatherData {
+  temp: number;
+  weatherCode: number;
+}
+
+interface ExchangeData {
+  rate: number;
+}
+
 export default function Widgets() {
   const { language } = useLanguage();
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [exchangeRate, setExchangeRate] = useState<ExchangeData | null>(null);
+  const [loadingWeather, setLoadingWeather] = useState(true);
+  const [loadingExchange, setLoadingExchange] = useState(true);
+
+  // Fetch weather data from Open-Meteo (free, no API key)
+  useEffect(() => {
+    const fetchWeather = async () => {
+      try {
+        const res = await fetch(
+          `https://api.open-meteo.com/v1/forecast?latitude=${HONOLULU_LAT}&longitude=${HONOLULU_LON}&current=temperature_2m,weather_code&temperature_unit=fahrenheit&timezone=Pacific%2FHonolulu`
+        );
+        const data = await res.json();
+        if (data.current) {
+          setWeather({
+            temp: Math.round(data.current.temperature_2m),
+            weatherCode: data.current.weather_code,
+          });
+        }
+      } catch (error) {
+        console.error('Weather fetch error:', error);
+      } finally {
+        setLoadingWeather(false);
+      }
+    };
+    fetchWeather();
+  }, []);
+
+  // Fetch exchange rate from exchangerate-api (free tier)
+  useEffect(() => {
+    const fetchExchangeRate = async () => {
+      try {
+        const res = await fetch('https://open.er-api.com/v6/latest/USD');
+        const data = await res.json();
+        if (data.rates?.VND) {
+          setExchangeRate({ rate: Math.round(data.rates.VND) });
+        }
+      } catch (error) {
+        console.error('Exchange rate fetch error:', error);
+      } finally {
+        setLoadingExchange(false);
+      }
+    };
+    fetchExchangeRate();
+  }, []);
+
+  // Get weather icon based on WMO weather code
+  const getWeatherIcon = (code: number) => {
+    if (code === 0 || code === 1) return <Sun size={24} className="mb-1" />;
+    if (code >= 2 && code <= 3) return <Cloud size={24} className="mb-1" />;
+    if (code >= 51 && code <= 67) return <CloudRain size={24} className="mb-1" />;
+    if (code >= 80 && code <= 82) return <CloudRain size={24} className="mb-1" />;
+    return <Sun size={24} className="mb-1" />;
+  };
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,20 +97,30 @@ export default function Widgets() {
     <div className="space-y-6">
       {/* Weather & Exchange Rate */}
       <div className="grid grid-cols-2 gap-3">
-        {/* Weather Widget */}
+        {/* Weather Widget - Live from Open-Meteo */}
         <div className="bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl p-3 text-white shadow-sm">
-          <Sun size={24} className="mb-1" />
+          {loadingWeather ? (
+            <Loader2 size={24} className="mb-1 animate-spin" />
+          ) : weather ? (
+            getWeatherIcon(weather.weatherCode)
+          ) : (
+            <Sun size={24} className="mb-1" />
+          )}
           <div className="flex flex-col">
-            <span className="text-2xl font-bold">82°F</span>
+            <span className="text-2xl font-bold">
+              {loadingWeather ? '...' : weather ? `${weather.temp}°F` : '82°F'}
+            </span>
             <span className="text-xs opacity-90">Honolulu</span>
           </div>
         </div>
 
-        {/* Exchange Rate Widget */}
+        {/* Exchange Rate Widget - Live from ExchangeRate API */}
         <div className="bg-gradient-to-br from-green-500 to-teal-600 rounded-xl p-3 text-white shadow-sm">
           <DollarSign size={24} className="mb-1" />
           <div className="flex flex-col">
-            <span className="text-sm font-bold">$1 = 24,890₫</span>
+            <span className="text-sm font-bold">
+              {loadingExchange ? '...' : exchangeRate ? `$1 = ${exchangeRate.rate.toLocaleString()}₫` : '$1 = 25,000₫'}
+            </span>
             <span className="text-xs opacity-90">
               {language === 'vn' ? 'Tỷ giá' : 'Live Rate'}
             </span>
