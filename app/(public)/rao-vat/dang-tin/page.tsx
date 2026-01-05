@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { serializeArray } from '@/lib/serialize';
 import PostListingClient from './PostListingClient';
 import type { Metadata } from 'next';
 
@@ -14,16 +15,14 @@ async function getCategories() {
     where: { isActive: true },
     orderBy: [{ parentId: 'asc' }, { sortOrder: 'asc' }],
   });
-  // Serialize to plain objects to avoid Prisma type issues
-  return JSON.parse(JSON.stringify(categories));
+  return serializeArray(categories);
 }
 
 async function getNeighborhoods() {
   const neighborhoods = await db.neighborhood.findMany({
     orderBy: { name: 'asc' },
   });
-  // Serialize to plain objects (Decimal types don't serialize properly)
-  return JSON.parse(JSON.stringify(neighborhoods));
+  return serializeArray(neighborhoods);
 }
 
 export default async function PostListingPage() {
