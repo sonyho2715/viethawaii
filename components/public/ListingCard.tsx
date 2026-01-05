@@ -4,11 +4,76 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
 import { MapPin, ShoppingBag } from 'lucide-react';
-import type { Category, Listing, ListingImage } from '@prisma/client';
+// Serialized types for client components (Decimal → number, Date → string)
+export interface SerializedNeighborhood {
+  id: number;
+  slug: string;
+  name: string;
+  island: string | null;
+  region: string | null;
+  vietnameseCommunity: boolean;
+  avgRent1br: number | null;
+  avgRent2br: number | null;
+  lat: number | null;
+  lng: number | null;
+  descriptionVn: string | null;
+  descriptionEn: string | null;
+}
 
-export interface ListingWithRelations extends Listing {
-  category: Category;
-  images: ListingImage[];
+export interface SerializedListingImage {
+  id: number;
+  listingId: number;
+  imageUrl: string;
+  thumbnailUrl: string | null;
+  cloudinaryId: string | null;
+  isPrimary: boolean;
+  sortOrder: number;
+  createdAt: string | null;
+}
+
+export interface SerializedCategory {
+  id: number;
+  parentId: number | null;
+  slug: string;
+  nameVn: string;
+  nameEn: string | null;
+  icon: string | null;
+  sortOrder: number;
+  isActive: boolean;
+  createdAt: string | null;
+}
+
+export interface ListingWithRelations {
+  id: number;
+  userId: string;
+  categoryId: number;
+  neighborhoodId: number | null;
+  title: string;
+  titleEn: string | null;
+  description: string | null;
+  descriptionEn: string | null;
+  price: number | null;
+  priceType: string;
+  location: string | null;
+  lat: number | null;
+  lng: number | null;
+  contactPhone: string | null;
+  contactEmail: string | null;
+  zaloNumber: string | null;
+  hidePhone: boolean;
+  preferredContact: string | null;
+  status: string;
+  rejectionReason: string | null;
+  isFeatured: boolean;
+  featuredUntil: string | null;
+  featuredTier: string | null;
+  views: number;
+  createdAt: string | null;
+  updatedAt: string | null;
+  approvedAt: string | null;
+  expiresAt: string | null;
+  category: SerializedCategory;
+  images: SerializedListingImage[];
   _count?: {
     savedBy: number;
   };
@@ -33,16 +98,19 @@ export default function ListingCard({ listing, variant = 'default' }: ListingCar
       style: 'currency',
       currency: 'USD',
       maximumFractionDigits: 0,
-    }).format(Number(price));
+    }).format(price);
 
     if (priceType === 'HOURLY') return `${formatted}/hr`;
     if (priceType === 'MONTHLY') return `${formatted}/mo`;
     return formatted;
   };
 
-  const formatDate = (date: Date) => {
+  // Date is already serialized as ISO string from server
+  const formatDate = (dateStr: string | null) => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
     const now = new Date();
-    const diffMs = now.getTime() - new Date(date).getTime();
+    const diffMs = now.getTime() - date.getTime();
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
@@ -51,7 +119,7 @@ export default function ListingCard({ listing, variant = 'default' }: ListingCar
     if (diffMins < 60) return `${diffMins} ${language === 'vn' ? 'phút trước' : 'mins ago'}`;
     if (diffHours < 24) return `${diffHours} ${language === 'vn' ? 'giờ trước' : 'hours ago'}`;
     if (diffDays < 7) return `${diffDays} ${language === 'vn' ? 'ngày trước' : 'days ago'}`;
-    return new Date(date).toLocaleDateString(language === 'vn' ? 'vi-VN' : 'en-US');
+    return date.toLocaleDateString(language === 'vn' ? 'vi-VN' : 'en-US');
   };
 
   // Get category display name
@@ -80,7 +148,7 @@ export default function ListingCard({ listing, variant = 'default' }: ListingCar
           <div className="p-3 flex-1 flex flex-col justify-between">
             <div>
               <p className="font-bold text-teal-600 mb-1">
-                {formatPrice(listing.price ? Number(listing.price) : null, listing.priceType)}
+                {formatPrice(listing.price, listing.priceType)}
               </p>
               <h4 className="font-medium text-gray-900 text-sm line-clamp-2 group-hover:text-teal-600 transition-colors">
                 {language === 'vn' ? listing.title : listing.titleEn || listing.title}
@@ -115,7 +183,7 @@ export default function ListingCard({ listing, variant = 'default' }: ListingCar
             )}
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
               <p className="text-white font-bold text-sm">
-                {formatPrice(listing.price ? Number(listing.price) : null, listing.priceType)}
+                {formatPrice(listing.price, listing.priceType)}
               </p>
             </div>
           </div>
@@ -148,7 +216,7 @@ export default function ListingCard({ listing, variant = 'default' }: ListingCar
           )}
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
             <p className="text-white font-bold text-lg">
-              {formatPrice(listing.price ? Number(listing.price) : null, listing.priceType)}
+              {formatPrice(listing.price, listing.priceType)}
             </p>
           </div>
           <div className="absolute top-2 right-2 bg-white/90 backdrop-blur text-xs font-bold text-gray-700 px-2 py-1 rounded shadow-sm">

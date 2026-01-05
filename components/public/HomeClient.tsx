@@ -4,16 +4,15 @@ import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Newspaper, ShoppingBag } from 'lucide-react';
-import type { Category, Listing, ListingImage } from '@prisma/client';
 import Sidebar from './Sidebar';
 import Widgets from './Widgets';
-import ListingCard, { ListingWithRelations } from './ListingCard';
+import ListingCard, { ListingWithRelations, SerializedCategory } from './ListingCard';
 import NewsCard from './NewsCard';
 
 interface HomeClientProps {
-  categories: Category[];
-  featuredListings: (Listing & { category: Category; images: ListingImage[] })[];
-  latestListings: (Listing & { category: Category; images: ListingImage[] })[];
+  categories: SerializedCategory[];
+  featuredListings: ListingWithRelations[];
+  latestListings: ListingWithRelations[];
 }
 
 // Sample news data - in production, this would come from the database
@@ -48,16 +47,6 @@ export default function HomeClient({
   latestListings,
 }: HomeClientProps) {
   const { language, t } = useLanguage();
-
-  // Convert fetched listings to the format expected by ListingCard
-  const formatListingsForCard = (
-    listings: (Listing & { category: Category; images: ListingImage[] })[]
-  ): ListingWithRelations[] => {
-    return listings.map((listing) => ({
-      ...listing,
-      images: listing.images,
-    }));
-  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -109,7 +98,7 @@ export default function HomeClient({
                   </Link>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {formatListingsForCard(featuredListings).slice(0, 6).map((listing) => (
+                  {featuredListings.slice(0, 6).map((listing) => (
                     <ListingCard key={listing.id} listing={listing} variant="compact" />
                   ))}
                 </div>
@@ -133,7 +122,7 @@ export default function HomeClient({
               </div>
               {latestListings.length > 0 ? (
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {formatListingsForCard(latestListings).slice(0, 9).map((listing) => (
+                  {latestListings.slice(0, 9).map((listing) => (
                     <ListingCard key={listing.id} listing={listing} />
                   ))}
                 </div>

@@ -10,10 +10,10 @@ import {
   MessageCircle,
   Sun,
 } from 'lucide-react';
-import type { Category } from '@prisma/client';
+import type { SerializedCategory } from './ListingCard';
 
 interface SidebarProps {
-  categories: Category[];
+  categories: SerializedCategory[];
   activeCategory?: string;
 }
 

@@ -4,7 +4,11 @@ import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
-import ListingCard, { type ListingWithRelations } from '@/components/public/ListingCard';
+import ListingCard, {
+  type ListingWithRelations,
+  type SerializedCategory,
+  type SerializedNeighborhood,
+} from '@/components/public/ListingCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -26,15 +30,14 @@ import {
   Plus,
   X,
 } from 'lucide-react';
-import type { Category, Neighborhood } from '@prisma/client';
 
-interface CategoryWithChildren extends Category {
-  children?: Category[];
+interface CategoryWithChildren extends SerializedCategory {
+  children?: SerializedCategory[];
 }
 
 interface ListingsClientProps {
-  categories: Category[];
-  neighborhoods: Neighborhood[];
+  categories: SerializedCategory[];
+  neighborhoods: SerializedNeighborhood[];
   initialListings: ListingWithRelations[];
   pagination: {
     page: number;
@@ -446,8 +449,8 @@ function FilterForm({
   t,
   onFilter,
 }: {
-  categories: Category[];
-  neighborhoods: Neighborhood[];
+  categories: SerializedCategory[];
+  neighborhoods: SerializedNeighborhood[];
   searchParams: ListingsClientProps['searchParams'];
   language: string;
   t: Record<string, string>;

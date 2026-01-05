@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
-import ListingDetailClient from './ListingDetailClient';
+import { serialize, serializeArray } from '@/lib/serialize';
+import ListingDetailClient, { type ListingWithDetails } from './ListingDetailClient';
+import type { ListingWithRelations } from '@/components/public/ListingCard';
 import type { Metadata } from 'next';
 
 interface PageProps {
@@ -81,6 +83,7 @@ async function getRelatedListings(listing: NonNullable<Awaited<ReturnType<typeof
       images: {
         orderBy: { sortOrder: 'asc' },
       },
+      neighborhood: true,
     },
     take: 4,
     orderBy: { createdAt: 'desc' },
@@ -100,5 +103,9 @@ export default async function ListingDetailPage({ params }: PageProps) {
 
   const relatedListings = await getRelatedListings(listing);
 
-  return <ListingDetailClient listing={listing} relatedListings={relatedListings} />;
+  // Serialize data to convert Prisma Decimal/Date types to JSON-safe values
+  const serializedListing = serialize(listing) as unknown as ListingWithDetails;
+  const serializedRelated = serializeArray(relatedListings) as unknown as ListingWithRelations[];
+
+  return <ListingDetailClient listing={serializedListing} relatedListings={serializedRelated} />;
 }

@@ -4,7 +4,12 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
-import ListingCard, { type ListingWithRelations } from '@/components/public/ListingCard';
+import ListingCard, {
+  type ListingWithRelations,
+  type SerializedCategory,
+  type SerializedListingImage,
+  type SerializedNeighborhood,
+} from '@/components/public/ListingCard';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -32,17 +37,51 @@ import {
   Tag,
   X,
 } from 'lucide-react';
-import type { Category, Listing, ListingImage, Neighborhood, User as PrismaUser } from '@prisma/client';
 
-interface ListingWithDetails extends Listing {
-  category: Category;
-  images: ListingImage[];
-  neighborhood: Neighborhood | null;
-  user: Pick<PrismaUser, 'id' | 'name' | 'image' | 'createdAt'> & {
-    _count: {
-      listings: number;
-    };
+// Serialized types for client component (Date → string, Decimal → number)
+interface SerializedUser {
+  id: string;
+  name: string | null;
+  image: string | null;
+  createdAt: string;
+  _count: {
+    listings: number;
   };
+}
+
+export interface ListingWithDetails {
+  id: number;
+  userId: string;
+  categoryId: number;
+  neighborhoodId: number | null;
+  title: string;
+  titleEn: string | null;
+  description: string | null;
+  descriptionEn: string | null;
+  price: number | null;
+  priceType: string;
+  location: string | null;
+  lat: number | null;
+  lng: number | null;
+  contactPhone: string | null;
+  contactEmail: string | null;
+  zaloNumber: string | null;
+  hidePhone: boolean;
+  preferredContact: string | null;
+  status: string;
+  rejectionReason: string | null;
+  isFeatured: boolean;
+  featuredUntil: string | null;
+  featuredTier: string | null;
+  views: number;
+  createdAt: string;
+  updatedAt: string;
+  approvedAt: string | null;
+  expiresAt: string | null;
+  category: SerializedCategory;
+  images: SerializedListingImage[];
+  neighborhood: SerializedNeighborhood | null;
+  user: SerializedUser;
 }
 
 interface ListingDetailClientProps {
@@ -80,12 +119,13 @@ export default function ListingDetailClient({
     return formatted;
   };
 
-  const formatDate = (date: Date) => {
+  // Date is already serialized as ISO string from server
+  const formatDate = (dateStr: string) => {
     return new Intl.DateTimeFormat(language === 'vn' ? 'vi-VN' : 'en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
-    }).format(new Date(date));
+    }).format(new Date(dateStr));
   };
 
   const handleShare = async () => {

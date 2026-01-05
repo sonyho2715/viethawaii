@@ -1,8 +1,10 @@
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
+import { serialize, serializeArray } from '@/lib/serialize';
 import ListingsClient from '../ListingsClient';
 import type { Metadata } from 'next';
+import type { ListingWithRelations, SerializedCategory, SerializedNeighborhood } from '@/components/public/ListingCard';
 
 interface PageProps {
   params: Promise<{ category: string }>;
@@ -172,15 +174,22 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
     getListings(categorySlug, searchParamsResolved),
   ]);
 
+  // Serialize data to convert Prisma Decimal/Date types to JSON-safe values
+  // JSON.parse(JSON.stringify()) converts Decimal → number and Date → string
+  const serializedCategories = serializeArray(categories) as unknown as SerializedCategory[];
+  const serializedNeighborhoods = serializeArray(neighborhoods) as unknown as SerializedNeighborhood[];
+  const serializedListings = serializeArray(listings) as unknown as ListingWithRelations[];
+  const serializedCurrentCategory = serialize(category) as unknown as SerializedCategory & { children?: SerializedCategory[] };
+
   return (
     <Suspense fallback={<CategoryLoadingSkeleton />}>
       <ListingsClient
-        categories={categories}
-        neighborhoods={neighborhoods}
-        initialListings={listings}
+        categories={serializedCategories}
+        neighborhoods={serializedNeighborhoods}
+        initialListings={serializedListings}
         pagination={pagination}
         searchParams={{ ...searchParamsResolved, category: categorySlug }}
-        currentCategory={category}
+        currentCategory={serializedCurrentCategory}
       />
     </Suspense>
   );

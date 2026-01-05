@@ -1,6 +1,7 @@
-import Link from 'next/link';
 import { db } from '@/lib/db';
+import { serializeArray } from '@/lib/serialize';
 import HomeClient from '@/components/public/HomeClient';
+import type { ListingWithRelations, SerializedCategory } from '@/components/public/ListingCard';
 
 // Fetch categories from database
 async function getCategories() {
@@ -26,9 +27,9 @@ async function getFeaturedListings() {
     include: {
       category: true,
       images: {
-        where: { isPrimary: true },
-        take: 1,
+        orderBy: { sortOrder: 'asc' },
       },
+      neighborhood: true,
     },
     orderBy: {
       createdAt: 'desc',
@@ -47,9 +48,9 @@ async function getLatestListings() {
     include: {
       category: true,
       images: {
-        where: { isPrimary: true },
-        take: 1,
+        orderBy: { sortOrder: 'asc' },
       },
+      neighborhood: true,
     },
     orderBy: {
       createdAt: 'desc',
@@ -66,11 +67,16 @@ export default async function HomePage() {
     getLatestListings(),
   ]);
 
+  // Serialize data to convert Prisma Decimal/Date types to JSON-safe values
+  const serializedCategories = serializeArray(categories) as unknown as SerializedCategory[];
+  const serializedFeatured = serializeArray(featuredListings) as unknown as ListingWithRelations[];
+  const serializedLatest = serializeArray(latestListings) as unknown as ListingWithRelations[];
+
   return (
     <HomeClient
-      categories={categories}
-      featuredListings={featuredListings}
-      latestListings={latestListings}
+      categories={serializedCategories}
+      featuredListings={serializedFeatured}
+      latestListings={serializedLatest}
     />
   );
 }

@@ -1,7 +1,9 @@
 import { Suspense } from 'react';
 import { db } from '@/lib/db';
+import { serializeArray } from '@/lib/serialize';
 import ListingsClient from './ListingsClient';
 import type { Metadata } from 'next';
+import type { ListingWithRelations, SerializedCategory, SerializedNeighborhood } from '@/components/public/ListingCard';
 
 export const metadata: Metadata = {
   title: 'Rao vặt - Mua bán, việc làm, nhà thuê',
@@ -140,12 +142,18 @@ export default async function ListingsPage({ searchParams }: PageProps) {
     getListings(params),
   ]);
 
+  // Serialize data to convert Prisma Decimal/Date types to JSON-safe values
+  // JSON.parse(JSON.stringify()) converts Decimal → number and Date → string
+  const serializedCategories = serializeArray(categories) as unknown as SerializedCategory[];
+  const serializedNeighborhoods = serializeArray(neighborhoods) as unknown as SerializedNeighborhood[];
+  const serializedListings = serializeArray(listings) as unknown as ListingWithRelations[];
+
   return (
     <Suspense fallback={<ListingsLoadingSkeleton />}>
       <ListingsClient
-        categories={categories}
-        neighborhoods={neighborhoods}
-        initialListings={listings}
+        categories={serializedCategories}
+        neighborhoods={serializedNeighborhoods}
+        initialListings={serializedListings}
         pagination={pagination}
         searchParams={params}
       />
