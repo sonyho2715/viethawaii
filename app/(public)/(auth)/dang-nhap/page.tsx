@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Mail, Lock } from 'lucide-react';
-import { authenticate } from './actions';
 
 interface LoginPageProps {
   searchParams: Promise<{ callbackUrl?: string; error?: string }>;
@@ -30,7 +29,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={authenticate} className="space-y-4">
+          <form action="/api/auth/login" method="POST" className="space-y-4">
             <input type="hidden" name="callbackUrl" value={callbackUrl} />
 
             {displayError && (
