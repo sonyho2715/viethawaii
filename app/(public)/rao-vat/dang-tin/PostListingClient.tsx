@@ -52,8 +52,8 @@ const iconMap: Record<string, LucideIcon> = {
   UtensilsCrossed,
 };
 
-// Serialized types (from JSON.parse/stringify)
-interface Category {
+// Serialized types (from JSON.parse/stringify) - exported for page.tsx
+export interface Category {
   id: number;
   parentId: number | null;
   slug: string;
@@ -65,7 +65,7 @@ interface Category {
   createdAt: string;
 }
 
-interface Neighborhood {
+export interface Neighborhood {
   id: number;
   slug: string;
   name: string;

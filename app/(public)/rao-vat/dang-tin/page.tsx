@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { serializeArray } from '@/lib/serialize';
-import PostListingClient from './PostListingClient';
+import PostListingClient, { type Category, type Neighborhood } from './PostListingClient';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -10,19 +10,21 @@ export const metadata: Metadata = {
   description: 'Đăng tin rao vặt miễn phí. Bán đồ, tìm việc, cho thuê nhà và nhiều hơn nữa.',
 };
 
-async function getCategories() {
+async function getCategories(): Promise<Category[]> {
   const categories = await db.category.findMany({
     where: { isActive: true },
     orderBy: [{ parentId: 'asc' }, { sortOrder: 'asc' }],
   });
-  return serializeArray(categories);
+  // JSON serialization converts Date to string, Decimal to number
+  return serializeArray(categories) as unknown as Category[];
 }
 
-async function getNeighborhoods() {
+async function getNeighborhoods(): Promise<Neighborhood[]> {
   const neighborhoods = await db.neighborhood.findMany({
     orderBy: { name: 'asc' },
   });
-  return serializeArray(neighborhoods);
+  // JSON serialization converts Date to string, Decimal to number
+  return serializeArray(neighborhoods) as unknown as Neighborhood[];
 }
 
 export default async function PostListingPage() {
