@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
@@ -14,19 +14,37 @@ import { authenticate } from './actions';
 export default function LoginClient() {
   const searchParams = useSearchParams();
   const { language } = useLanguage();
-  const [state, formAction, isPending] = useActionState(authenticate, undefined);
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, setIsPending] = useState(false);
 
   const callbackUrl = searchParams.get('callbackUrl') || '/';
   const errorParam = searchParams.get('error');
 
-  // Show error from URL params or action state
-  const displayError = state?.error
-    ? (language === 'vn' ? 'Email hoặc mật khẩu không đúng' : state.error)
+  // Show error from URL params or state
+  const displayError = error
+    ? (language === 'vn' ? 'Email hoặc mật khẩu không đúng' : error)
     : errorParam === 'CredentialsSignin'
       ? (language === 'vn' ? 'Email hoặc mật khẩu không đúng' : 'Invalid email or password')
       : errorParam
         ? (language === 'vn' ? 'Đã xảy ra lỗi. Vui lòng thử lại.' : 'Something went wrong. Please try again.')
         : null;
+
+  async function handleSubmit(formData: FormData) {
+    setIsPending(true);
+    setError(null);
+
+    try {
+      const result = await authenticate(undefined, formData);
+      if (result?.error) {
+        setError(result.error);
+        setIsPending(false);
+      }
+      // If no error, the Server Action will redirect
+    } catch {
+      // The redirect throws an error, which is expected behavior
+      // No need to handle it
+    }
+  }
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 px-4">
@@ -42,7 +60,7 @@ export default function LoginClient() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form action={formAction} className="space-y-4">
+          <form action={handleSubmit} className="space-y-4">
             <input type="hidden" name="callbackUrl" value={callbackUrl} />
 
             {displayError && (
