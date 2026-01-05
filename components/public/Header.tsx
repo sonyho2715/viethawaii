@@ -34,7 +34,7 @@ import {
 const MOBILE_CATEGORIES = [
   { id: 'housing', labelEn: 'Housing', labelVn: 'Nhà ở', icon: Home, href: '/rao-vat/nha-o' },
   { id: 'jobs', labelEn: 'Jobs', labelVn: 'Việc làm', icon: Briefcase, href: '/rao-vat/viec-lam' },
-  { id: 'market', labelEn: 'Marketplace', labelVn: 'Chợ trời', icon: ShoppingBag, href: '/rao-vat/mua-ban' },
+  { id: 'market', labelEn: 'Marketplace', labelVn: 'Chợ trời', icon: ShoppingBag, href: '/rao-vat/cho-troi' },
   { id: 'community', labelEn: 'Community', labelVn: 'Cộng đồng', icon: MessageCircle, href: '/rao-vat/cong-dong' },
 ];
 
