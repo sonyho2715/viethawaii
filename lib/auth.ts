@@ -34,6 +34,7 @@ declare module '@auth/core/jwt' {
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(db) as Adapter,
   session: { strategy: 'jwt' },
+  trustHost: true,
   pages: {
     signIn: '/dang-nhap',
     newUser: '/tai-khoan',
