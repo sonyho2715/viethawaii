@@ -20,11 +20,11 @@ interface SidebarProps {
 const CATEGORY_ICONS: Record<string, React.ElementType> = {
   'nha-o': Home,
   'viec-lam': Briefcase,
-  'mua-ban': ShoppingBag,
+  'cho-troi': ShoppingBag,
   'dich-vu': Briefcase,
   'cong-dong': MessageCircle,
   'xe-co': ShoppingBag,
-  'do-dien-tu': ShoppingBag,
+  'am-thuc': Sun,
 };
 
 export default function Sidebar({ categories, activeCategory }: SidebarProps) {
