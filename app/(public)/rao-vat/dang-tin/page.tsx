@@ -10,16 +10,20 @@ export const metadata: Metadata = {
 };
 
 async function getCategories() {
-  return db.category.findMany({
+  const categories = await db.category.findMany({
     where: { isActive: true },
     orderBy: [{ parentId: 'asc' }, { sortOrder: 'asc' }],
   });
+  // Serialize to plain objects to avoid Prisma type issues
+  return JSON.parse(JSON.stringify(categories));
 }
 
 async function getNeighborhoods() {
-  return db.neighborhood.findMany({
+  const neighborhoods = await db.neighborhood.findMany({
     orderBy: { name: 'asc' },
   });
+  // Serialize to plain objects (Decimal types don't serialize properly)
+  return JSON.parse(JSON.stringify(neighborhoods));
 }
 
 export default async function PostListingPage() {

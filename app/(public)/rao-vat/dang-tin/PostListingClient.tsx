@@ -31,8 +31,54 @@ import {
   Phone,
   Image as ImageIcon,
   Eye,
+  Home,
+  Briefcase,
+  ShoppingBag,
+  Car,
+  Wrench,
+  Users,
+  UtensilsCrossed,
+  type LucideIcon,
 } from 'lucide-react';
-import type { Category, Neighborhood } from '@prisma/client';
+
+// Icon mapping for categories stored in database as string names
+const iconMap: Record<string, LucideIcon> = {
+  Home,
+  Briefcase,
+  ShoppingBag,
+  Car,
+  Wrench,
+  Users,
+  UtensilsCrossed,
+};
+
+// Serialized types (from JSON.parse/stringify)
+interface Category {
+  id: number;
+  parentId: number | null;
+  slug: string;
+  nameVn: string;
+  nameEn: string | null;
+  icon: string | null;
+  sortOrder: number;
+  isActive: boolean;
+  createdAt: string;
+}
+
+interface Neighborhood {
+  id: number;
+  slug: string;
+  name: string;
+  island: string;
+  region: string | null;
+  vietnameseCommunity: string | null;
+  avgRent1br: number | null;
+  avgRent2br: number | null;
+  lat: string | null;
+  lng: string | null;
+  descriptionVn: string | null;
+  descriptionEn: string | null;
+}
 
 interface PostListingClientProps {
   categories: Category[];
@@ -321,9 +367,9 @@ export default function PostListingClient({
                         <button
                           type="button"
                           onClick={() => {
-                            if (subcats.length === 0) {
-                              updateField('categoryId', String(cat.id));
-                            }
+                            // Always set the category - if it has subcategories,
+                            // this will show them and user can pick one
+                            updateField('categoryId', String(cat.id));
                           }}
                           className={`w-full p-4 rounded-lg border-2 text-left transition-all ${
                             isSelected
@@ -331,7 +377,16 @@ export default function PostListingClient({
                               : 'border-gray-200 hover:border-gray-300'
                           }`}
                         >
-                          <span className="text-2xl mb-2 block">{cat.icon || '📦'}</span>
+                          <span className="text-2xl mb-2 block">
+                            {cat.icon && iconMap[cat.icon] ? (
+                              (() => {
+                                const IconComponent = iconMap[cat.icon];
+                                return <IconComponent className="h-8 w-8 text-gray-600" />;
+                              })()
+                            ) : (
+                              '📦'
+                            )}
+                          </span>
                           <span className="font-medium">
                             {language === 'vn' ? cat.nameVn : cat.nameEn || cat.nameVn}
                           </span>
