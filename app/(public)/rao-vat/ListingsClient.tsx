@@ -273,14 +273,14 @@ export default function ListingsClient({
               {/* Desktop Filters */}
               <div className="hidden md:flex items-center gap-2">
                 <Select
-                  value={searchParams.neighborhood || ''}
-                  onValueChange={(v) => updateFilters('neighborhood', v || null)}
+                  value={searchParams.neighborhood || '__all__'}
+                  onValueChange={(v) => updateFilters('neighborhood', v === '__all__' ? null : v)}
                 >
                   <SelectTrigger className="w-40">
                     <SelectValue placeholder={t.select_neighborhood} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">{language === 'vn' ? 'Tất cả khu vực' : 'All areas'}</SelectItem>
+                    <SelectItem value="__all__">{language === 'vn' ? 'Tất cả khu vực' : 'All areas'}</SelectItem>
                     {neighborhoods.map((n) => (
                       <SelectItem key={n.id} value={n.slug}>
                         {n.name}
@@ -467,14 +467,14 @@ function FilterForm({
           {language === 'vn' ? 'Danh mục' : 'Category'}
         </label>
         <Select
-          value={searchParams.category || ''}
-          onValueChange={(v) => onFilter('category', v || null)}
+          value={searchParams.category || '__all__'}
+          onValueChange={(v) => onFilter('category', v === '__all__' ? null : v)}
         >
           <SelectTrigger>
             <SelectValue placeholder={t.select_category} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">{language === 'vn' ? 'Tất cả' : 'All'}</SelectItem>
+            <SelectItem value="__all__">{language === 'vn' ? 'Tất cả' : 'All'}</SelectItem>
             {categories.map((cat) => (
               <SelectItem key={cat.id} value={cat.slug}>
                 {language === 'vn' ? cat.nameVn : cat.nameEn || cat.nameVn}
@@ -490,14 +490,14 @@ function FilterForm({
           {language === 'vn' ? 'Khu vực' : 'Neighborhood'}
         </label>
         <Select
-          value={searchParams.neighborhood || ''}
-          onValueChange={(v) => onFilter('neighborhood', v || null)}
+          value={searchParams.neighborhood || '__all__'}
+          onValueChange={(v) => onFilter('neighborhood', v === '__all__' ? null : v)}
         >
           <SelectTrigger>
             <SelectValue placeholder={t.select_neighborhood} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">{language === 'vn' ? 'Tất cả' : 'All'}</SelectItem>
+            <SelectItem value="__all__">{language === 'vn' ? 'Tất cả' : 'All'}</SelectItem>
             {neighborhoods.map((n) => (
               <SelectItem key={n.id} value={n.slug}>
                 {n.name}
