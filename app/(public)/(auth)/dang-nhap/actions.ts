@@ -2,32 +2,29 @@
 
 import { signIn } from '@/lib/auth';
 import { AuthError } from 'next-auth';
+import { redirect } from 'next/navigation';
 
-export async function authenticate(
-  prevState: { error: string | null } | undefined,
-  formData: FormData
-) {
+export async function authenticate(formData: FormData) {
+  const email = formData.get('email') as string;
+  const password = formData.get('password') as string;
+  const callbackUrl = formData.get('callbackUrl') as string || '/';
+
   try {
-    const email = formData.get('email') as string;
-    const password = formData.get('password') as string;
-    const callbackUrl = formData.get('callbackUrl') as string || '/';
-
     await signIn('credentials', {
       email,
       password,
-      redirectTo: callbackUrl,
+      redirect: false,
     });
-
-    return { error: null };
   } catch (error) {
     if (error instanceof AuthError) {
-      switch (error.type) {
-        case 'CredentialsSignin':
-          return { error: 'Invalid email or password' };
-        default:
-          return { error: 'Something went wrong' };
-      }
+      const url = new URL('/dang-nhap', process.env.NEXTAUTH_URL || 'http://localhost:3000');
+      url.searchParams.set('error', error.type);
+      url.searchParams.set('callbackUrl', callbackUrl);
+      redirect(url.toString());
     }
-    throw error; // Re-throw for redirect to work
+    throw error;
   }
+
+  // Success - redirect to callback URL
+  redirect(callbackUrl);
 }
