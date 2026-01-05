@@ -24,7 +24,10 @@ export async function middleware(request: NextRequest) {
 
   // For auth-protected routes, check for session cookie
   // If no session, redirect to login
-  const sessionToken = request.cookies.get('next-auth.session-token') ||
+  // NextAuth v5 uses authjs.* cookies, v4 uses next-auth.*
+  const sessionToken = request.cookies.get('authjs.session-token') ||
+                       request.cookies.get('__Secure-authjs.session-token') ||
+                       request.cookies.get('next-auth.session-token') ||
                        request.cookies.get('__Secure-next-auth.session-token');
 
   // Check admin routes

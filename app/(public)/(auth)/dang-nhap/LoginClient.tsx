@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
@@ -12,7 +12,6 @@ import { Label } from '@/components/ui/label';
 import { Loader2, Mail, Lock, AlertCircle } from 'lucide-react';
 
 export default function LoginClient() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { language } = useLanguage();
 
@@ -22,6 +21,7 @@ export default function LoginClient() {
   const [isLoading, setIsLoading] = useState(false);
 
   const callbackUrl = searchParams.get('callbackUrl') || '/';
+  const errorParam = searchParams.get('error');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,32 +29,31 @@ export default function LoginClient() {
     setIsLoading(true);
 
     try {
-      const result = await signIn('credentials', {
+      // Use redirect: true for more reliable auth flow
+      await signIn('credentials', {
         email,
         password,
-        redirect: false,
+        callbackUrl,
       });
-
-      if (result?.error) {
-        setError(
-          language === 'vn'
-            ? 'Email hoặc mật khẩu không đúng'
-            : 'Invalid email or password'
-        );
-      } else {
-        router.push(callbackUrl);
-        router.refresh();
-      }
-    } catch {
+      // Note: If signIn succeeds, the page will redirect
+      // If it fails, it will redirect to error page or show error param
+    } catch (err) {
+      console.error('SignIn exception:', err);
       setError(
         language === 'vn'
           ? 'Đã xảy ra lỗi. Vui lòng thử lại.'
           : 'Something went wrong. Please try again.'
       );
-    } finally {
       setIsLoading(false);
     }
   };
+
+  // Show error from URL params (NextAuth redirect errors)
+  const displayError = error || (errorParam === 'CredentialsSignin'
+    ? (language === 'vn' ? 'Email hoặc mật khẩu không đúng' : 'Invalid email or password')
+    : errorParam
+      ? (language === 'vn' ? 'Đã xảy ra lỗi. Vui lòng thử lại.' : 'Something went wrong. Please try again.')
+      : null);
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 px-4">
@@ -71,10 +70,10 @@ export default function LoginClient() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
+            {displayError && (
               <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-600">
                 <AlertCircle className="h-4 w-4 flex-shrink-0" />
-                <span className="text-sm">{error}</span>
+                <span className="text-sm">{displayError}</span>
               </div>
             )}
 
