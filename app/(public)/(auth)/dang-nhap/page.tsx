@@ -2,7 +2,6 @@ import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
 import { Mail, Lock } from 'lucide-react';
 import { authenticate } from './actions';
 
@@ -78,12 +77,12 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
               </div>
             </div>
 
-            <Button
+            <button
               type="submit"
-              className="w-full bg-red-600 hover:bg-red-700"
+              className="w-full h-10 px-4 py-2 rounded-md text-white font-medium bg-red-600 hover:bg-red-700 transition-colors"
             >
               Đăng nhập
-            </Button>
+            </button>
           </form>
 
           <div className="mt-6 text-center text-sm">
