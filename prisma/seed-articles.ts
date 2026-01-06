@@ -26,79 +26,125 @@ async function main() {
   if (!admin) throw new Error('No admin user found');
   console.log('Admin user:', admin.id);
 
-  // Article 1: Hướng dẫn tìm nhà thuê
-  const article1Content = `# Hướng dẫn tìm nhà thuê tại Hawaii cho người Việt
+  // Article 1: Hướng dẫn tìm nhà thuê 2026
+  const article1Content = `Tìm nhà tại Hawaii luôn là một thử thách lớn do chi phí đắt đỏ và tính cạnh tranh cao. Bài viết này cung cấp thông tin thực tế về thị trường, các khu vực người Việt thường sống và những lưu ý pháp lý quan trọng để tránh rủi ro.
 
-Tìm nhà thuê tại Hawaii có thể là một thử thách, đặc biệt với những người mới đến. Bài viết này sẽ giúp bạn hiểu rõ thị trường thuê nhà và tìm được nơi ở phù hợp.
+---
 
-## Các khu vực phổ biến
+## 1. Các Khu Vực Phổ Biến (Phân Theo Nhu Cầu)
 
-### Honolulu
-- **Chinatown**: Giá rẻ hơn, gần chợ Việt, nhiều người Việt sinh sống
-- **Kalihi**: Khu vực bình dân, gần Costco và nhiều cửa hàng Á Châu
-- **Ala Moana**: Khu vực trung tâm, gần biển và trung tâm mua sắm
+Việc chọn khu vực sống phụ thuộc lớn vào nơi bạn làm việc và khả năng chịu đựng kẹt xe (traffic).
 
-### Các khu vực khác trên Oahu
-- **Pearl City**: Giá hợp lý, gần trung tâm
-- **Waipahu**: Nhiều gia đình Việt Nam, có chùa và nhà thờ Việt
-- **Aiea**: Khu vực yên tĩnh, phù hợp gia đình
+### Tại Honolulu (Thành phố chính)
 
-## Mức giá trung bình (2025)
+**Kalihi**: Khu vực có đông người Việt sinh sống nhất.
+- ✅ **Ưu điểm**: Giá thuê rẻ nhất, gần chợ Việt, nhiều đồ ăn Việt, gần trung tâm
+- ⚠️ **Nhược điểm**: Một số khu vực an ninh không tốt, nhà cửa thường cũ
 
-| Loại nhà | Giá/tháng |
-|----------|-----------|
-| Studio | $1,200 - $1,800 |
-| 1 phòng ngủ | $1,500 - $2,200 |
-| 2 phòng ngủ | $2,000 - $3,000 |
-| 3 phòng ngủ | $2,500 - $4,000 |
+**Chinatown**: Rất thuận tiện mua sắm và đi lại bằng xe bus. Tuy nhiên, vấn đề người vô gia cư và an ninh vào ban đêm là điều cần cân nhắc kỹ.
 
-## Những điều cần chuẩn bị
+**Makiki / McCully / Moiliili**: Khu vực tập trung nhiều sinh viên và người đi làm. Gần Waikiki và Ala Moana nhưng giá mềm hơn trung tâm một chút.
 
-1. **Credit Score**: Điểm tín dụng tốt (trên 650) sẽ giúp bạn dễ thuê hơn
-2. **Proof of Income**: Bằng chứng thu nhập (thường yêu cầu 2.5-3x tiền thuê)
-3. **References**: Thư giới thiệu từ chủ nhà cũ
-4. **Security Deposit**: Tiền đặt cọc (thường 1-2 tháng tiền thuê)
+### Khu Vực Phía Tây & Trung Tâm Đảo (Central & West Oahu)
 
-## Mẹo hữu ích
+**Waipahu**: "Thủ phủ" thứ hai của cộng đồng người Việt. Nhiều gia đình chọn ở đây vì nhà rộng hơn. Có chợ, nhà hàng và chùa Việt Nam.
 
-- **Đi xem nhà trực tiếp**: Không thuê nhà chỉ qua hình ảnh
-- **Kiểm tra hợp đồng kỹ**: Đọc kỹ điều khoản về tiện ích, pets, và thời hạn
-- **Hỏi về chi phí phụ**: Điện, nước, internet có bao gồm không?
-- **Tìm roommate**: Chia sẻ phòng có thể tiết kiệm đáng kể
+**Pearl City / Aiea**: Khu dân cư yên tĩnh, an ninh tốt hơn, nằm giữa trung tâm và phía Tây. Gần trung tâm mua sắm Pearlridge.
 
-## Các trang web tìm nhà uy tín
+**Kapolei**: Thành phố mới. Nhà cửa đẹp, hiện đại, đường sá rộng rãi nhưng rất xa trung tâm Honolulu (mất 45-60 phút lái xe giờ cao điểm).
 
-- VietHawaii.com (Rao vặt cộng đồng Việt)
-- Craigslist Hawaii
-- Facebook Marketplace
-- Zillow, Apartments.com
+---
 
-## Cảnh báo lừa đảo
+## 2. Mức Giá Thuê Trung Bình (Ước tính 2026)
 
-⚠️ **Không bao giờ** chuyển tiền trước khi xem nhà trực tiếp
-⚠️ **Cẩn thận** với giá quá rẻ so với thị trường
-⚠️ **Xác minh** chủ nhà thật sự sở hữu bất động sản
+⚠️ **Lưu ý**: Giá dưới đây chưa bao gồm điện nước (utilities). Giá điện tại Hawaii rất cao (trung bình **$150 - $250/tháng** cho căn hộ nhỏ nếu dùng điều hòa).
 
-Chúc bạn tìm được nơi ở ưng ý tại Hawaii!`;
+| Loại nhà | Mức giá trung bình | Đối tượng phù hợp |
+|----------|-------------------|-------------------|
+| Phòng lẻ (Room for rent) | $800 - $1,200 | Sinh viên, người độc thân. Thường chung bếp/toilet |
+| Studio / Ohana Unit | $1,400 - $1,800 | Người độc thân hoặc cặp đôi. "Ohana Unit" là dạng nhà phụ, gắn liền với nhà chính |
+| 1 Phòng ngủ (Apartment) | $1,700 - $2,400 | Cặp đôi muốn riêng tư |
+| 2 Phòng ngủ | $2,300 - $3,200+ | Gia đình nhỏ (3-4 người) |
+
+---
+
+## 3. Quy Trình & Giấy Tờ Cần Thiết
+
+Thị trường Hawaii cạnh tranh rất gay gắt. Khi đi xem nhà, hãy chuẩn bị sẵn hồ sơ để nộp ngay nếu ưng ý.
+
+### Chứng minh thu nhập (Proof of Income)
+Chủ nhà thường yêu cầu thu nhập gộp (gross income) gấp **2.5 đến 3 lần** tiền thuê nhà.
+> Ví dụ: Thuê nhà $2,000 thì lương phải khoảng $5,000 - $6,000
+
+### Điểm tín dụng (Credit Score)
+- Điểm tốt thường là **650+**
+- Nếu bạn mới đến Mỹ và chưa có điểm tín dụng, hãy nhờ người thân ký bảo lãnh (Co-signer)
+
+### Tiền đặt cọc (Security Deposit)
+- ⚖️ **Luật Hawaii quy định**: Tiền cọc không được vượt quá **1 tháng tiền thuê**
+- Nếu có thú cưng, chủ nhà có thể thu thêm khoản cọc thú cưng (nhưng tổng cộng cũng bị giới hạn theo luật định)
+
+### Bảo hiểm người thuê (Renter's Insurance)
+Nhiều chung cư hiện đại bắt buộc bạn phải mua bảo hiểm này (khoảng $15-$20/tháng).
+
+---
+
+## 4. Mẹo Tìm Nhà Riêng Cho Người Việt
+
+### 🚗 Tìm biển "For Rent" trên cửa sổ
+Ở các khu vực như Kalihi hay Palolo, nhiều chủ nhà lớn tuổi (bao gồm người Việt) không đăng tin lên mạng. Họ chỉ treo bảng trước cửa. Hãy lái xe quanh khu vực bạn muốn thuê.
+
+### 🗣️ Hỏi người quen (Word of Mouth)
+Cộng đồng người Việt tại Hawaii rất gắn kết. Hãy hỏi thăm tại các tiệm Nail, chợ Việt hoặc nơi làm việc. Nhiều căn "Ohana unit" giá tốt được truyền miệng trước khi đăng báo.
+
+### 🚨 Cẩn thận với lừa đảo (Scams)
+
+⛔ **Không bao giờ** chuyển tiền cọc qua Zelle/Venmo trước khi gặp chủ nhà và xem nhà trực tiếp.
+
+⛔ Nếu giá quá rẻ so với mặt bằng chung (ví dụ: nhà 2 phòng ngủ giá $1,200), đó **99% là lừa đảo**.
+
+⛔ Kẻ lừa đảo thường lấy hình trên mạng, nói rằng "đang đi công tác xa" và yêu cầu bạn chuyển tiền để giữ chỗ.
+
+---
+
+## 5. Các Kênh Tìm Nhà Uy Tín
+
+### Facebook Groups (Hiệu quả nhất với cộng đồng Việt)
+- Tìm các nhóm: "Nguoi Viet o Hawaii", "Hawaii Rentals", "Oahu Housing"
+- **Facebook Marketplace**: Cập nhật nhanh, dễ nhắn tin trực tiếp cho chủ nhà
+
+### Các trang web khác
+- **Craigslist Hawaii**: Nguồn tin phong phú nhất nhưng cũng nhiều lừa đảo nhất. Hãy cảnh giác
+- **Hicentral.com**: Trang web chính thức của hiệp hội môi giới bất động sản Hawaii (MLS), thông tin chính xác, an toàn
+- **Zillow / Apartments.com**: Tốt để khảo sát giá thị trường
+
+---
+
+*Thông tin trong bài viết mang tính chất tham khảo và dựa trên thị trường thực tế đầu năm 2026. Hãy luôn đọc kỹ hợp đồng thuê nhà trước khi đặt bút ký.*`;
 
   const article1 = await db.article.upsert({
     where: { slug: 'huong-dan-tim-nha-thue-hawaii' },
     update: {
+      titleVn: 'Hướng Dẫn Tìm Nhà Thuê Tại Hawaii Cho Người Việt (Cập Nhật 2026)',
+      titleEn: 'Guide to Finding Rentals in Hawaii for Vietnamese (2026 Update)',
+      excerptVn: 'Thông tin thực tế về thị trường, các khu vực người Việt thường sống và những lưu ý pháp lý quan trọng.',
+      excerptEn: 'Practical information about the market, Vietnamese community areas, and important legal considerations.',
       contentVn: article1Content,
       status: 'PUBLISHED',
+      publishedAt: new Date('2026-01-06'),
     },
     create: {
       authorId: admin.id,
       categoryId: 2, // Hướng dẫn
       slug: 'huong-dan-tim-nha-thue-hawaii',
-      titleVn: 'Hướng dẫn tìm nhà thuê tại Hawaii cho người Việt',
-      titleEn: 'Guide to Finding Rentals in Hawaii for Vietnamese',
-      excerptVn: 'Những điều cần biết khi tìm nhà thuê tại Hawaii: khu vực, giá cả, và mẹo hữu ích.',
-      excerptEn: 'Everything you need to know about finding rentals in Hawaii: areas, prices, and useful tips.',
+      titleVn: 'Hướng Dẫn Tìm Nhà Thuê Tại Hawaii Cho Người Việt (Cập Nhật 2026)',
+      titleEn: 'Guide to Finding Rentals in Hawaii for Vietnamese (2026 Update)',
+      excerptVn: 'Thông tin thực tế về thị trường, các khu vực người Việt thường sống và những lưu ý pháp lý quan trọng.',
+      excerptEn: 'Practical information about the market, Vietnamese community areas, and important legal considerations.',
       contentVn: article1Content,
-      contentEn: 'Guide to finding rentals in Hawaii for Vietnamese community.',
+      contentEn: 'Guide to finding rentals in Hawaii for Vietnamese community - 2026 update.',
       status: 'PUBLISHED',
-      publishedAt: new Date('2025-01-01'),
+      publishedAt: new Date('2026-01-06'),
       views: 156,
     },
   });
