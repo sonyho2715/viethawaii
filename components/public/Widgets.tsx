@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
-import { Sun, Cloud, CloudRain, DollarSign, TrendingUp, Mail, Loader2 } from 'lucide-react';
+import { Sun, Cloud, CloudRain, DollarSign, TrendingUp, Mail, Loader2, Clock } from 'lucide-react';
+import Link from 'next/link';
 
 const TRENDING_TOPICS = [
   { tag: '#TuyenNhanVien', labelVn: 'Tuyển nhân viên', labelEn: 'Hiring' },
@@ -24,6 +25,11 @@ interface ExchangeData {
   rate: number;
 }
 
+interface TimeData {
+  hawaii: Date;
+  vietnam: Date;
+}
+
 export default function Widgets() {
   const { language } = useLanguage();
   const [email, setEmail] = useState('');
@@ -32,6 +38,7 @@ export default function Widgets() {
   const [exchangeRate, setExchangeRate] = useState<ExchangeData | null>(null);
   const [loadingWeather, setLoadingWeather] = useState(true);
   const [loadingExchange, setLoadingExchange] = useState(true);
+  const [times, setTimes] = useState<TimeData | null>(null);
 
   // Fetch weather data from Open-Meteo (free, no API key)
   useEffect(() => {
@@ -73,6 +80,51 @@ export default function Widgets() {
     };
     fetchExchangeRate();
   }, []);
+
+  // Update time every second
+  useEffect(() => {
+    const updateTimes = () => {
+      const now = new Date();
+      // Hawaii time (UTC-10)
+      const hawaiiTime = new Date(now.toLocaleString('en-US', { timeZone: 'Pacific/Honolulu' }));
+      // Vietnam time (UTC+7)
+      const vietnamTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' }));
+      setTimes({ hawaii: hawaiiTime, vietnam: vietnamTime });
+    };
+    updateTimes();
+    const interval = setInterval(updateTimes, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Format time as HH:MM:SS AM/PM
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: true,
+    });
+  };
+
+  // Format date for Hawaii (English)
+  const formatDateEn = (date: Date) => {
+    return date.toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  };
+
+  // Format date for Vietnam (Vietnamese)
+  const formatDateVn = (date: Date) => {
+    const weekdays = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    const weekday = weekdays[date.getDay()];
+    return `${weekday}, ${day} tháng ${month}, ${year}`;
+  };
 
   // Get weather icon based on WMO weather code
   const getWeatherIcon = (code: number) => {
@@ -127,6 +179,47 @@ export default function Widgets() {
           </div>
         </div>
       </div>
+
+      {/* Time Zone Widget */}
+      <Link href="/cong-cu/gio-viet-nam" className="block">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow">
+          <div className="flex flex-col items-center mb-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center mb-2">
+              <Clock size={20} className="text-white" />
+            </div>
+            <h3 className="font-bold text-gray-800">
+              {language === 'vn' ? 'Giờ Việt Nam' : 'Vietnam Time'}
+            </h3>
+            <p className="text-xs text-gray-500">
+              {language === 'vn' ? 'So sánh giờ Hawaii và Việt Nam' : 'Compare Hawaii & Vietnam time'}
+            </p>
+          </div>
+
+          {times && (
+            <div className="grid grid-cols-2 gap-2">
+              {/* Hawaii Time */}
+              <div className="bg-gradient-to-br from-blue-400 to-cyan-500 rounded-lg p-3 text-white">
+                <div className="flex items-center gap-1 mb-1">
+                  <Sun size={12} />
+                  <span className="text-xs font-medium">Hawaii (HST)</span>
+                </div>
+                <div className="text-lg font-bold">{formatTime(times.hawaii)}</div>
+                <div className="text-[10px] opacity-80 truncate">{formatDateEn(times.hawaii)}</div>
+              </div>
+
+              {/* Vietnam Time */}
+              <div className="bg-gradient-to-br from-orange-400 to-red-500 rounded-lg p-3 text-white">
+                <div className="flex items-center gap-1 mb-1">
+                  <Sun size={12} />
+                  <span className="text-xs font-medium">Việt Nam (ICT)</span>
+                </div>
+                <div className="text-lg font-bold">{formatTime(times.vietnam)}</div>
+                <div className="text-[10px] opacity-80 truncate">{formatDateVn(times.vietnam)}</div>
+              </div>
+            </div>
+          )}
+        </div>
+      </Link>
 
       {/* Trending Topics */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
