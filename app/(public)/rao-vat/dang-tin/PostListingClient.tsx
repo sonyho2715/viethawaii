@@ -199,7 +199,7 @@ export default function PostListingClient({
     const files = e.target.files;
     if (!files) return;
 
-    const newImages = Array.from(files).slice(0, 10 - formData.images.length).map(file => ({
+    const newImages = Array.from(files).slice(0, 5 - formData.images.length).map(file => ({
       url: URL.createObjectURL(file),
       file,
     }));
@@ -610,8 +610,8 @@ export default function PostListingClient({
                 <div>
                   <Label>
                     {language === 'vn'
-                      ? `Tải lên hình ảnh (${formData.images.length}/10)`
-                      : `Upload images (${formData.images.length}/10)`}
+                      ? `Tải lên hình ảnh (${formData.images.length}/5)`
+                      : `Upload images (${formData.images.length}/5)`}
                   </Label>
 
                   <div className="mt-2 grid grid-cols-3 sm:grid-cols-5 gap-4">
@@ -638,7 +638,7 @@ export default function PostListingClient({
                       </div>
                     ))}
 
-                    {formData.images.length < 10 && (
+                    {formData.images.length < 5 && (
                       <label className="aspect-square rounded-lg border-2 border-dashed border-gray-300 flex flex-col items-center justify-center cursor-pointer hover:border-red-600 hover:bg-red-50 transition-colors">
                         <Upload className="h-6 w-6 text-gray-400" />
                         <span className="text-xs text-gray-500 mt-1">
