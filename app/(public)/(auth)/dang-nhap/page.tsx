@@ -31,6 +31,15 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         <CardContent>
           <form action="/api/auth/login" method="POST" className="space-y-4">
             <input type="hidden" name="callbackUrl" value={callbackUrl} />
+            {/* Honeypot field - hidden from users, bots will fill it */}
+            <input
+              type="text"
+              name="website"
+              tabIndex={-1}
+              autoComplete="off"
+              style={{ position: 'absolute', left: '-9999px', opacity: 0 }}
+              aria-hidden="true"
+            />
 
             {displayError && (
               <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-600">

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { checkRateLimit, getClientIP, RATE_LIMITS } from '@/lib/rate-limit';
 
 const createListingSchema = z.object({
   categoryId: z.number().int(),
@@ -21,6 +22,25 @@ const createListingSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
+    // Rate limiting
+    const clientIP = getClientIP(req);
+    const rateLimit = checkRateLimit(`listing:${clientIP}`, RATE_LIMITS.createListing);
+
+    if (!rateLimit.success) {
+      const retryAfter = Math.ceil((rateLimit.resetAt - Date.now()) / 1000);
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Quá nhiều tin đăng. Vui lòng thử lại sau.',
+          retryAfter
+        },
+        {
+          status: 429,
+          headers: { 'Retry-After': String(retryAfter) }
+        }
+      );
+    }
+
     const session = await auth();
     if (!session?.user?.id) {
       return NextResponse.json(
@@ -30,6 +50,15 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
+
+    // Honeypot check - if website field is filled, it's a bot
+    if (body.website) {
+      // Return fake success to confuse bots
+      return NextResponse.json(
+        { success: true, data: { id: 'fake-listing' } },
+        { status: 201 }
+      );
+    }
     const validated = createListingSchema.parse(body);
 
     // Verify category exists
