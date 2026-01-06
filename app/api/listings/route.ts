@@ -59,6 +59,10 @@ export async function POST(req: NextRequest) {
     }
 
     // Create listing with images
+    // Set expiration to 60 days from now
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 60);
+
     const listing = await db.listing.create({
       data: {
         userId: session.user.id,
@@ -75,6 +79,7 @@ export async function POST(req: NextRequest) {
         zaloNumber: validated.zaloNumber,
         hidePhone: validated.hidePhone ?? false,
         status: 'PENDING', // Require admin approval
+        expiresAt, // Auto-delete after 60 days
         images: validated.images?.length
           ? {
               create: validated.images.map((url, index) => ({
