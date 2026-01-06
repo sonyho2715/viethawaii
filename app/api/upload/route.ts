@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
-import { existsSync } from 'fs';
+import { put } from '@vercel/blob';
 
 export async function POST(req: NextRequest) {
   try {
@@ -33,11 +31,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Validate file size (max 5MB)
-    const maxSize = 5 * 1024 * 1024;
+    // Validate file size (max 4.5MB for Vercel Blob free tier)
+    const maxSize = 4.5 * 1024 * 1024;
     if (file.size > maxSize) {
       return NextResponse.json(
-        { success: false, error: 'File too large. Maximum size is 5MB' },
+        { success: false, error: 'File too large. Maximum size is 4.5MB' },
         { status: 400 }
       );
     }
@@ -46,37 +44,23 @@ export async function POST(req: NextRequest) {
     const timestamp = Date.now();
     const randomString = Math.random().toString(36).substring(2, 8);
     const extension = file.name.split('.').pop() || 'jpg';
-    const filename = `${timestamp}-${randomString}.${extension}`;
+    const filename = `listings/${timestamp}-${randomString}.${extension}`;
 
-    // Ensure uploads directory exists
-    const uploadsDir = join(process.cwd(), 'public', 'uploads');
-    if (!existsSync(uploadsDir)) {
-      await mkdir(uploadsDir, { recursive: true });
-    }
+    // Upload to Vercel Blob
+    const blob = await put(filename, file, {
+      access: 'public',
+      addRandomSuffix: false,
+    });
 
-    // Save file
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    const filepath = join(uploadsDir, filename);
-    await writeFile(filepath, buffer);
-
-    // Return URL
-    const url = `/uploads/${filename}`;
-
-    return NextResponse.json({ success: true, url });
+    return NextResponse.json({
+      success: true,
+      url: blob.url,
+    });
   } catch (error) {
     console.error('Upload error:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to upload file' },
+      { success: false, error: 'Failed to upload image' },
       { status: 500 }
     );
   }
 }
-
-// Note: For production, you should use Cloudinary or similar service.
-// This local file upload is for development purposes only.
-//
-// To switch to Cloudinary:
-// 1. Install: npm install cloudinary next-cloudinary
-// 2. Add to .env: CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET
-// 3. Replace this route with Cloudinary upload logic
