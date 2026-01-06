@@ -87,11 +87,13 @@ export interface ListingWithDetails {
 interface ListingDetailClientProps {
   listing: ListingWithDetails;
   relatedListings: ListingWithRelations[];
+  isOwner?: boolean;
 }
 
 export default function ListingDetailClient({
   listing,
   relatedListings,
+  isOwner = false,
 }: ListingDetailClientProps) {
   const { t, language } = useLanguage();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -153,8 +155,53 @@ export default function ListingDetailClient({
     setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
   };
 
+  // Status banner for non-active listings
+  const getStatusBanner = () => {
+    if (listing.status === 'ACTIVE') return null;
+
+    const statusConfig: Record<string, { bg: string; text: string; messageVn: string; messageEn: string }> = {
+      PENDING: {
+        bg: 'bg-yellow-50 border-yellow-200',
+        text: 'text-yellow-800',
+        messageVn: 'Tin đăng đang chờ duyệt. Chỉ bạn mới có thể xem trang này.',
+        messageEn: 'This listing is pending approval. Only you can see this page.',
+      },
+      REJECTED: {
+        bg: 'bg-red-50 border-red-200',
+        text: 'text-red-800',
+        messageVn: `Tin đăng bị từ chối${listing.rejectionReason ? `: ${listing.rejectionReason}` : '.'}`,
+        messageEn: `Listing rejected${listing.rejectionReason ? `: ${listing.rejectionReason}` : '.'}`,
+      },
+      EXPIRED: {
+        bg: 'bg-gray-50 border-gray-200',
+        text: 'text-gray-800',
+        messageVn: 'Tin đăng đã hết hạn.',
+        messageEn: 'This listing has expired.',
+      },
+      SOLD: {
+        bg: 'bg-blue-50 border-blue-200',
+        text: 'text-blue-800',
+        messageVn: 'Tin đăng đã bán.',
+        messageEn: 'This listing has been sold.',
+      },
+    };
+
+    const config = statusConfig[listing.status] || statusConfig.PENDING;
+
+    return (
+      <div className={`${config.bg} border-b`}>
+        <div className={`container mx-auto px-4 py-3 ${config.text} text-sm font-medium`}>
+          {language === 'vn' ? config.messageVn : config.messageEn}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="bg-gray-50 min-h-screen">
+      {/* Status Banner for non-active listings */}
+      {isOwner && getStatusBanner()}
+
       {/* Breadcrumb */}
       <div className="bg-white border-b">
         <div className="container mx-auto px-4 py-3">

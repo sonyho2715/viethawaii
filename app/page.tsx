@@ -3,6 +3,9 @@ import { serializeArray } from '@/lib/serialize';
 import HomeClient from '@/components/public/HomeClient';
 import type { ListingWithRelations, SerializedCategory } from '@/components/public/ListingCard';
 
+// Revalidate every 60 seconds to show fresh listings
+export const revalidate = 60;
+
 // Fetch categories from database
 async function getCategories() {
   const categories = await db.category.findMany({

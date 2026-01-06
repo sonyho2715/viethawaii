@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { db } from '@/lib/db';
+import { auth } from '@/lib/auth';
 import { serialize, serializeArray } from '@/lib/serialize';
 import ListingDetailClient, { type ListingWithDetails } from './ListingDetailClient';
 import type { ListingWithRelations } from '@/components/public/ListingCard';
@@ -95,9 +96,23 @@ export default async function ListingDetailPage({ params }: PageProps) {
   const listingId = parseInt(id, 10);
   if (isNaN(listingId)) notFound();
 
-  const listing = await getListing(listingId);
+  const [listing, session] = await Promise.all([
+    getListing(listingId),
+    auth(),
+  ]);
 
-  if (!listing || listing.status !== 'ACTIVE') {
+  if (!listing) {
+    notFound();
+  }
+
+  // Check access permissions:
+  // - ACTIVE listings: visible to everyone
+  // - PENDING/other statuses: visible only to owner or admin
+  const isOwner = session?.user?.id === listing.userId;
+  const isAdmin = session?.user?.role === 'ADMIN';
+  const canView = listing.status === 'ACTIVE' || isOwner || isAdmin;
+
+  if (!canView) {
     notFound();
   }
 
@@ -107,5 +122,12 @@ export default async function ListingDetailPage({ params }: PageProps) {
   const serializedListing = serialize(listing) as unknown as ListingWithDetails;
   const serializedRelated = serializeArray(relatedListings) as unknown as ListingWithRelations[];
 
-  return <ListingDetailClient listing={serializedListing} relatedListings={serializedRelated} />;
+  // Pass ownership info to client for displaying status banner
+  return (
+    <ListingDetailClient
+      listing={serializedListing}
+      relatedListings={serializedRelated}
+      isOwner={isOwner}
+    />
+  );
 }

@@ -5,6 +5,9 @@ import ListingsClient from './ListingsClient';
 import type { Metadata } from 'next';
 import type { ListingWithRelations, SerializedCategory, SerializedNeighborhood } from '@/components/public/ListingCard';
 
+// Revalidate every 60 seconds to show fresh listings
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: 'Rao vặt - Mua bán, việc làm, nhà thuê',
   description: 'Khám phá hàng ngàn tin đăng từ cộng đồng Việt Nam tại Hawaii. Tìm việc làm, nhà thuê, mua bán đồ cũ và nhiều hơn nữa.',
