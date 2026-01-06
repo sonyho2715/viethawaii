@@ -170,6 +170,7 @@ async function main() {
     { slug: 'vlog', nameVn: 'Vlog', nameEn: 'Vlog', type: 'VLOG' as const, color: '#8B5CF6', sortOrder: 3 },
     { slug: 'cong-dong', nameVn: 'Cộng đồng', nameEn: 'Community', type: 'BLOG' as const, color: '#F59E0B', sortOrder: 4 },
     { slug: 'am-thuc', nameVn: 'Ẩm thực', nameEn: 'Food', type: 'BLOG' as const, color: '#EC4899', sortOrder: 5 },
+    { slug: 'du-lich', nameVn: 'Du lịch', nameEn: 'Travel', type: 'BLOG' as const, color: '#06B6D4', sortOrder: 6 },
   ];
 
   for (const cat of contentCategories) {
