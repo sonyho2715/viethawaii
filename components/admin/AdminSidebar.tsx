@@ -12,7 +12,7 @@ import {
   LogOut,
   Home,
   Newspaper,
-  BarChart,
+  FolderTree,
   Shield,
 } from 'lucide-react';
 
@@ -29,9 +29,9 @@ const menuItems = [
   { href: '/admin/users', label: 'Quản lý Users', icon: Users },
   { href: '/admin/listings', label: 'Tất cả Tin đăng', icon: FileText },
   { href: '/admin/listings/pending', label: 'Chờ duyệt', icon: Clock },
-  // { href: '/admin/articles', label: 'Bài viết', icon: Newspaper },
-  // { href: '/admin/analytics', label: 'Thống kê', icon: BarChart },
-  // { href: '/admin/settings', label: 'Cài đặt', icon: Settings },
+  { href: '/admin/articles', label: 'Tin tức / Bài viết', icon: Newspaper },
+  { href: '/admin/categories', label: 'Danh mục', icon: FolderTree },
+  { href: '/admin/settings', label: 'Cài đặt', icon: Settings },
 ];
 
 export default function AdminSidebar({ user }: AdminSidebarProps) {
