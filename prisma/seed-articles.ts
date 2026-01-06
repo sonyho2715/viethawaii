@@ -104,104 +104,147 @@ Chúc bạn tìm được nơi ở ưng ý tại Hawaii!`;
   });
   console.log('Article 1 created:', article1.slug);
 
-  // Article 2: Việc làm phổ biến
-  const article2Content = `# Những công việc phổ biến cho người Việt tại Hawaii
+  // Article 2: Cẩm Nang Việc Làm 2026
+  const article2Content = `Chào mừng bạn đến với thị trường lao động tại Hawaii. Hawaii không chỉ là thiên đường du lịch mà còn là nơi có cộng đồng người Việt phát triển mạnh (đặc biệt tại khu vực Honolulu/Kalihi). Dưới đây là thông tin chi tiết về các ngành nghề phổ biến, mức lương thực tế và các lưu ý pháp lý quan trọng cho năm 2026.
 
-Hawaii có nền kinh tế đa dạng với nhiều cơ hội việc làm cho cộng đồng người Việt. Dưới đây là những ngành nghề phổ biến nhất.
+## ⚠️ Lưu ý quan trọng về Lương Tối Thiểu (2026)
 
-## 1. Ngành Du Lịch & Khách Sạn
+Kể từ ngày 01/01/2026, mức lương tối thiểu tại Hawaii là **$16.00/giờ**. Mọi công việc trả dưới mức này (trừ một số trường hợp đặc biệt có tiền tip) đều cần được xem xét kỹ về tính hợp pháp.
 
-Hawaii là điểm du lịch hàng đầu thế giới, tạo ra hàng ngàn việc làm:
+---
 
-- **Khách sạn**: Lễ tân, housekeeping, bellman
-- **Nhà hàng**: Server, bartender, hostess
-- **Tour guide**: Hướng dẫn viên du lịch (biết tiếng Việt là lợi thế)
-- **Spa & Massage**: Kỹ thuật viên massage, nail technician
+## 1. Ngành Du Lịch & Khách Sạn (Hospitality)
 
-**Mức lương trung bình**: $15 - $25/giờ + tips
+Đây là "xương sống" của kinh tế Hawaii. Biết tiếng Việt là một lợi thế lớn khi phục vụ du khách Á Đông.
 
-## 2. Ngành Y Tế
+### Khách sạn (Hotel)
+- **Vị trí**: Lễ tân (Front Desk), Dọn phòng (Housekeeping), Hành lý (Bellman)
+- **Mức lương**: $18 - $28/giờ (Các vị trí thuộc nghiệp đoàn thường có lương và phúc lợi rất tốt)
 
-Nhu cầu nhân viên y tế tại Hawaii rất cao:
+### Nhà hàng (F&B)
+- **Vị trí**: Phục vụ (Server), Pha chế (Bartender), Đón khách (Hostess)
+- **Thu nhập**: Lương cơ bản ($14.75 - $16.00) + Tiền tip. Tổng thu nhập thường đạt **$25 - $40/giờ** tại các khu du lịch Waikiki
 
-- **CNA (Certified Nursing Assistant)**: $18 - $25/giờ
-- **Caregiver**: Chăm sóc người già tại nhà, $15 - $22/giờ
-- **Medical Assistant**: $20 - $28/giờ
-- **Registered Nurse**: $40 - $60/giờ
+### Du lịch
+- **Vị trí**: Hướng dẫn viên, Tài xế xe tour
+- **Yêu cầu**: Tiếng Anh giao tiếp tốt, bằng lái xe phù hợp
 
-**Lưu ý**: Cần có chứng chỉ và license phù hợp
+---
 
-## 3. Ngành Xây Dựng
+## 2. Ngành Nail & Làm Đẹp (Beauty Industry)
 
-Hawaii đang có nhiều dự án xây dựng lớn:
+Ngành nghề truyền thống và thế mạnh của người Việt.
 
-- **General laborer**: $20 - $30/giờ
-- **Electrician**: $35 - $55/giờ
-- **Plumber**: $30 - $50/giờ
-- **Carpenter**: $25 - $45/giờ
+- **Vị trí**: Thợ Nail (Nail Technician), Thợ tóc (Hair Stylist), Chăm sóc da (Esthetician)
+- **Thu nhập**: $16.00/giờ (Lương cứng) + Tiền tip
+- **Thợ lành nghề** có thể kiếm **$4,000 - $7,000/tháng**
 
-**Lợi thế**: Nhiều công ty xây dựng do người Việt làm chủ
+### Yêu cầu bắt buộc
+- ✅ Phải có chứng chỉ hành nghề (License) từ Hawaii Board of Barbering and Cosmetology
+- ✅ Cần hoàn thành giờ học (ví dụ: 350 giờ cho thợ Nail) và thi đỗ kỳ thi của tiểu bang
 
-## 4. Ngành Nhà Hàng & Ẩm Thực
+---
 
-Với nhiều nhà hàng Việt Nam tại Hawaii:
+## 3. Ngành Y Tế (Healthcare)
 
-- **Đầu bếp**: $18 - $35/giờ
-- **Phụ bếp**: $15 - $20/giờ
-- **Server**: $12 - $15/giờ + tips
-- **Manager**: $50,000 - $70,000/năm
+Nhu cầu cực cao do dân số già hóa. Đây là ngành có thu nhập ổn định nhất.
 
-## 5. Ngành Nail & Làm Đẹp
+| Vị trí | Mức lương | Ghi chú |
+|--------|-----------|---------|
+| Y tá (RN) | $50 - $75+/giờ | Hawaii trả lương y tá cao nhất nước Mỹ |
+| Trợ lý điều dưỡng (CNA) | $20 - $28/giờ | Cần chứng chỉ CNA |
+| Chăm sóc người già (Caregiver) | $18 - $25/giờ | Nhiều chủ Care Home là người Việt |
+| Trợ lý y tế (Medical Assistant) | $22 - $30/giờ | |
 
-Ngành nghề truyền thống của cộng đồng Việt:
+---
 
-- **Nail Technician**: $15 - $25/giờ + tips
-- **Hair Stylist**: $15 - $30/giờ + tips
-- **Esthetician**: $18 - $28/giờ + tips
+## 4. Ngành Xây Dựng (Construction)
 
-**Yêu cầu**: License của Hawaii State
+Hawaii luôn có nhiều dự án cải tạo và xây dựng mới.
 
-## 6. Ngành Vận Tải
+- **Lao động phổ thông (Laborer)**: $22 - $30/giờ
+- **Thợ chuyên môn (Thợ điện, Thợ nước, Thợ mộc)**: $35 - $60+/giờ
 
-- **Uber/Lyft Driver**: $15 - $30/giờ
-- **Delivery Driver**: $15 - $25/giờ
-- **CDL Truck Driver**: $25 - $40/giờ
+**Lợi thế**: Nhiều nhà thầu (Contractor) là người Việt, dễ dàng hơn trong giao tiếp và xin việc.
 
-## Mẹo tìm việc
+**Lưu ý**: Các công việc chuyên môn (điện, nước) yêu cầu License từ DCCA (Department of Commerce and Consumer Affairs).
 
-1. **Networking**: Tham gia cộng đồng Việt Nam tại Hawaii
-2. **Học tiếng Anh**: Tiếng Anh tốt mở nhiều cơ hội hơn
-3. **Lấy chứng chỉ**: Nhiều nghề cần license của Hawaii
-4. **Dùng VietHawaii**: Đăng tin tìm việc miễn phí
+---
 
-## Các nguồn tìm việc
+## 5. Ngành Ẩm Thực Việt Nam
 
-- VietHawaii.com - Việc làm cộng đồng Việt
-- Indeed.com
-- LinkedIn
-- Hawaii State Job Portal
-- Các nhóm Facebook cộng đồng Việt Hawaii
+Hawaii có rất nhiều nhà hàng, quán phở, tiệm bánh mì của người Việt.
 
-Chúc bạn sớm tìm được công việc phù hợp!`;
+- **Đầu bếp chính (Chef/Cook)**: $25 - $40/giờ (tùy tay nghề)
+- **Phụ bếp (Prep Cook)**: $17 - $22/giờ
+- **Quản lý (Manager)**: $55,000 - $80,000/năm
+
+---
+
+## 6. Ngành Vận Tải (Transportation)
+
+Linh hoạt về thời gian, phù hợp cho người mới đến cần thu nhập ngay.
+
+- **Tài xế công nghệ (Uber/Lyft)**: $25 - $35+/giờ (chưa trừ xăng xe/khấu hao). Nhu cầu cao ở khu vực Honolulu và sân bay HNL
+- **Giao đồ ăn (DoorDash/UberEats)**: $18 - $25/giờ
+- **Lái xe tải (CDL Driver)**: $28 - $45/giờ. Cần bằng lái thương mại (CDL)
+
+---
+
+## 💡 Thông Tin Bổ Sung Quan Trọng
+
+### 1. Chi Phí Sinh Hoạt (Cost of Living)
+
+⚠️ **Cảnh báo**: Hawaii là tiểu bang đắt đỏ nhất nước Mỹ. Mức lương $20/giờ tại đây chỉ tương đương khoảng $12-$14/giờ ở các tiểu bang khác về sức mua.
+
+**Nhà ở**: Thuê căn hộ 1 phòng ngủ tại Honolulu trung bình **$1,600 - $2,200/tháng**
+
+### 2. Ngôn Ngữ
+
+- Mặc dù cộng đồng Việt đông, **Tiếng Anh là chìa khóa** để có mức lương cao (đặc biệt trong Y tế và Khách sạn cao cấp)
+- Các công việc lao động tay chân hoặc trong khu phố người Việt (Chinatown, Kalihi) có thể yêu cầu tiếng Anh thấp hơn
+
+### 3. Nguồn Tìm Việc Uy Tín
+
+Đừng chỉ dựa vào một nguồn. Hãy kết hợp:
+
+- **Facebook Groups**: Tìm từ khóa "Nguoi Viet o Hawaii", "Viec Lam Hawaii", "Cho Hawaii". Đây là nơi cập nhật nhanh nhất các việc làm trong cộng đồng
+- **Indeed / Glassdoor**: Tốt cho các việc làm Y tế, Khách sạn, Văn phòng
+- **Craigslist Hawaii**: Phổ biến cho các công việc lao động, xây dựng, nhà hàng (cẩn thận lừa đảo)
+- **Mối quan hệ (Networking)**: Đi chợ, sinh hoạt tôn giáo (Chùa, Nhà thờ) là cách tốt nhất để nghe ngóng thông tin tuyển dụng nội bộ
+
+### 4. Lời Khuyên Cho Người Mới
+
+- 🚗 **Học bằng lái xe ngay lập tức**: Giao thông công cộng (TheBus) khá tốt nhưng đi làm bằng xe riêng vẫn thuận tiện hơn nhiều
+- ⚠️ **Kiểm tra giấy phép**: Đừng làm chui (trá hình) trong các ngành cần bằng cấp (Nail, Massage, Điện nước). Mức phạt của tiểu bang rất nặng
+
+---
+
+*Thông tin được cập nhật đến tháng 01/2026. Mức lương thực tế có thể thay đổi tùy thuộc vào kinh nghiệm và địa điểm làm việc cụ thể.*`;
 
   const article2 = await db.article.upsert({
     where: { slug: 'viec-lam-pho-bien-nguoi-viet-hawaii' },
     update: {
+      titleVn: 'Cẩm Nang Việc Làm Cho Người Việt Tại Hawaii (Cập Nhật 2026)',
+      titleEn: 'Job Guide for Vietnamese in Hawaii (2026 Update)',
+      excerptVn: 'Hướng dẫn chi tiết về các ngành nghề, mức lương thực tế và lưu ý pháp lý cho năm 2026.',
+      excerptEn: 'Comprehensive guide on industries, actual wages, and legal considerations for 2026.',
       contentVn: article2Content,
       status: 'PUBLISHED',
+      publishedAt: new Date('2026-01-06'),
     },
     create: {
       authorId: admin.id,
       categoryId: jobsCategory.id, // Việc làm
       slug: 'viec-lam-pho-bien-nguoi-viet-hawaii',
-      titleVn: 'Những công việc phổ biến cho người Việt tại Hawaii',
-      titleEn: 'Popular Jobs for Vietnamese in Hawaii',
-      excerptVn: 'Tổng hợp các ngành nghề có nhiều cơ hội việc làm cho cộng đồng người Việt.',
-      excerptEn: 'Overview of industries with many job opportunities for the Vietnamese community.',
+      titleVn: 'Cẩm Nang Việc Làm Cho Người Việt Tại Hawaii (Cập Nhật 2026)',
+      titleEn: 'Job Guide for Vietnamese in Hawaii (2026 Update)',
+      excerptVn: 'Hướng dẫn chi tiết về các ngành nghề, mức lương thực tế và lưu ý pháp lý cho năm 2026.',
+      excerptEn: 'Comprehensive guide on industries, actual wages, and legal considerations for 2026.',
       contentVn: article2Content,
-      contentEn: 'Popular jobs for Vietnamese in Hawaii.',
+      contentEn: 'Job guide for Vietnamese in Hawaii - 2026 update.',
       status: 'PUBLISHED',
-      publishedAt: new Date('2025-01-01'),
+      publishedAt: new Date('2026-01-06'),
       views: 234,
     },
   });
