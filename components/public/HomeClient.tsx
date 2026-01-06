@@ -7,44 +7,20 @@ import { ArrowRight, Newspaper, ShoppingBag } from 'lucide-react';
 import Sidebar from './Sidebar';
 import Widgets from './Widgets';
 import ListingCard, { ListingWithRelations, SerializedCategory } from './ListingCard';
-import NewsCard from './NewsCard';
+import NewsCard, { SerializedArticle } from './NewsCard';
 
 interface HomeClientProps {
   categories: SerializedCategory[];
   featuredListings: ListingWithRelations[];
   latestListings: ListingWithRelations[];
+  latestArticles: SerializedArticle[];
 }
-
-// Sample news data - in production, this would come from the database
-const SAMPLE_NEWS = [
-  {
-    id: 1,
-    slug: 'cong-dong-viet-hawaii-don-tet',
-    category: 'Cộng Đồng',
-    title: 'Vietnamese Community in Hawaii Celebrates Lunar New Year',
-    titleVn: 'Cộng Đồng Việt Hawaii Đón Tết Nguyên Đán',
-    excerpt: 'The Vietnamese community in Hawaii gathers for the annual Lunar New Year celebration with traditional performances, food, and cultural activities.',
-    image: '/images/news/tet-hawaii.jpg',
-    date: 'Dec 28, 2025',
-    views: 1234,
-  },
-  {
-    id: 2,
-    slug: 'viec-lam-nha-hang-viet',
-    category: 'Việc Làm',
-    title: 'Top Vietnamese Restaurants Hiring in Honolulu',
-    titleVn: 'Các Nhà Hàng Việt Tại Honolulu Đang Tuyển Dụng',
-    excerpt: 'Several popular Vietnamese restaurants in Honolulu are looking for experienced cooks and servers. Competitive wages and flexible hours.',
-    image: '/images/news/restaurant-jobs.jpg',
-    date: 'Dec 26, 2025',
-    views: 892,
-  },
-];
 
 export default function HomeClient({
   categories,
   featuredListings,
   latestListings,
+  latestArticles,
 }: HomeClientProps) {
   const { language, t } = useLanguage();
 
@@ -74,11 +50,22 @@ export default function HomeClient({
                   <ArrowRight size={14} className="ml-1" />
                 </Link>
               </div>
-              <div className="space-y-4">
-                {SAMPLE_NEWS.map((item) => (
-                  <NewsCard key={item.id} item={item} />
-                ))}
-              </div>
+              {latestArticles.length > 0 ? (
+                <div className="space-y-4">
+                  {latestArticles.map((article) => (
+                    <NewsCard key={article.id} article={article} />
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
+                  <Newspaper className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-500">
+                    {language === 'vn'
+                      ? 'Chưa có tin tức nào.'
+                      : 'No news articles yet.'}
+                  </p>
+                </div>
+              )}
             </section>
 
             {/* Featured Listings */}

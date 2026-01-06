@@ -2,8 +2,9 @@ import { db } from '@/lib/db';
 import { serializeArray } from '@/lib/serialize';
 import HomeClient from '@/components/public/HomeClient';
 import type { ListingWithRelations, SerializedCategory } from '@/components/public/ListingCard';
+import type { SerializedArticle } from '@/components/public/NewsCard';
 
-// Revalidate every 60 seconds to show fresh listings
+// Revalidate every 60 seconds to show fresh content
 export const revalidate = 60;
 
 // Fetch categories from database
@@ -63,23 +64,43 @@ async function getLatestListings() {
   return listings;
 }
 
+// Fetch latest news articles
+async function getLatestArticles() {
+  const articles = await db.article.findMany({
+    where: {
+      status: 'PUBLISHED',
+    },
+    include: {
+      category: true,
+    },
+    orderBy: {
+      publishedAt: 'desc',
+    },
+    take: 4,
+  });
+  return articles;
+}
+
 export default async function HomePage() {
-  const [categories, featuredListings, latestListings] = await Promise.all([
+  const [categories, featuredListings, latestListings, latestArticles] = await Promise.all([
     getCategories(),
     getFeaturedListings(),
     getLatestListings(),
+    getLatestArticles(),
   ]);
 
   // Serialize data to convert Prisma Decimal/Date types to JSON-safe values
   const serializedCategories = serializeArray(categories) as unknown as SerializedCategory[];
   const serializedFeatured = serializeArray(featuredListings) as unknown as ListingWithRelations[];
   const serializedLatest = serializeArray(latestListings) as unknown as ListingWithRelations[];
+  const serializedArticles = serializeArray(latestArticles) as unknown as SerializedArticle[];
 
   return (
     <HomeClient
       categories={serializedCategories}
       featuredListings={serializedFeatured}
       latestListings={serializedLatest}
+      latestArticles={serializedArticles}
     />
   );
 }
