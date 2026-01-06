@@ -159,7 +159,7 @@ export const translations = {
     privacy_policy: 'Chính sách bảo mật',
     terms: 'Điều khoản',
     advertise: 'Quảng cáo',
-    copyright: '© 2024 VietHawaii. All rights reserved. Made with Aloha.',
+    copyright: '© 2026 VietHawaii. All rights reserved. Made with Aloha.',
 
     // Admin
     admin_dashboard: 'Quản trị',
@@ -339,7 +339,7 @@ export const translations = {
     privacy_policy: 'Privacy Policy',
     terms: 'Terms of Service',
     advertise: 'Advertise',
-    copyright: '© 2024 VietHawaii. All rights reserved. Made with Aloha.',
+    copyright: '© 2026 VietHawaii. All rights reserved. Made with Aloha.',
 
     // Admin
     admin_dashboard: 'Admin Dashboard',
