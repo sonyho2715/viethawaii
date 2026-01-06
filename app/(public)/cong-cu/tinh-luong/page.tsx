@@ -5,33 +5,39 @@ import Link from 'next/link';
 import { ArrowLeft, Briefcase, Calculator } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 
-// 2024 Tax brackets (simplified)
+// 2026 Federal tax brackets (single filer)
+// Source: https://taxfoundation.org/data/all/federal/2026-tax-brackets/
 const FEDERAL_TAX_BRACKETS = [
-  { min: 0, max: 11600, rate: 0.10 },
-  { min: 11600, max: 47150, rate: 0.12 },
-  { min: 47150, max: 100525, rate: 0.22 },
-  { min: 100525, max: 191950, rate: 0.24 },
-  { min: 191950, max: Infinity, rate: 0.32 },
+  { min: 0, max: 12400, rate: 0.10 },
+  { min: 12400, max: 50400, rate: 0.12 },
+  { min: 50400, max: 105700, rate: 0.22 },
+  { min: 105700, max: 201775, rate: 0.24 },
+  { min: 201775, max: 256225, rate: 0.32 },
+  { min: 256225, max: 640600, rate: 0.35 },
+  { min: 640600, max: Infinity, rate: 0.37 },
 ];
 
-// Hawaii state tax brackets (2024, single)
+// 2026 Hawaii state tax brackets (single filer)
+// Source: https://nationaltaxreports.com/hawaii-tax-brackets/
 const HAWAII_TAX_BRACKETS = [
-  { min: 0, max: 2400, rate: 0.014 },
-  { min: 2400, max: 4800, rate: 0.032 },
-  { min: 4800, max: 9600, rate: 0.055 },
-  { min: 9600, max: 14400, rate: 0.064 },
-  { min: 14400, max: 19200, rate: 0.068 },
-  { min: 19200, max: 24000, rate: 0.072 },
-  { min: 24000, max: 36000, rate: 0.076 },
-  { min: 36000, max: 48000, rate: 0.079 },
-  { min: 48000, max: 150000, rate: 0.0825 },
-  { min: 150000, max: 175000, rate: 0.09 },
-  { min: 175000, max: 200000, rate: 0.10 },
-  { min: 200000, max: Infinity, rate: 0.11 },
+  { min: 0, max: 9600, rate: 0.014 },
+  { min: 9600, max: 14400, rate: 0.032 },
+  { min: 14400, max: 19200, rate: 0.055 },
+  { min: 19200, max: 24000, rate: 0.064 },
+  { min: 24000, max: 36000, rate: 0.068 },
+  { min: 36000, max: 48000, rate: 0.072 },
+  { min: 48000, max: 125000, rate: 0.076 },
+  { min: 125000, max: 175000, rate: 0.079 },
+  { min: 175000, max: 225000, rate: 0.0825 },
+  { min: 225000, max: 275000, rate: 0.09 },
+  { min: 275000, max: 325000, rate: 0.10 },
+  { min: 325000, max: Infinity, rate: 0.11 },
 ];
 
+// 2026 FICA rates
+// Source: https://www.ssa.gov/oact/cola/cbb.html
 const SOCIAL_SECURITY_RATE = 0.062;
-const SOCIAL_SECURITY_WAGE_CAP = 168600;
+const SOCIAL_SECURITY_WAGE_CAP = 184500; // Updated for 2026
 const MEDICARE_RATE = 0.0145;
 
 function calculateBracketTax(income: number, brackets: typeof FEDERAL_TAX_BRACKETS) {
