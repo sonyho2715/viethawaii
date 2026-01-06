@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { requireAdmin } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { del } from '@vercel/blob';
 
 const updateListingSchema = z.object({
   status: z.enum(['PENDING', 'ACTIVE', 'REJECTED', 'EXPIRED', 'SOLD', 'DELETED']).optional(),
@@ -215,11 +216,12 @@ export async function DELETE(
       );
     }
 
-    // Check if listing exists
+    // Check if listing exists and get images
     const existingListing = await db.listing.findUnique({
       where: { id: listingId },
       include: {
         user: { select: { email: true } },
+        images: true,
       },
     });
 
@@ -230,12 +232,16 @@ export async function DELETE(
       );
     }
 
-    // Delete listing images first (due to foreign key constraint)
-    await db.listingImage.deleteMany({
-      where: { listingId: listingId },
-    });
+    // Delete images from Vercel Blob storage first
+    const blobDeletions = existingListing.images
+      .filter(img => img.imageUrl.includes('blob.vercel-storage.com'))
+      .map(img => del(img.imageUrl).catch(() => {}));
 
-    // Delete the listing
+    if (blobDeletions.length > 0) {
+      await Promise.all(blobDeletions);
+    }
+
+    // Delete listing (cascade will delete image records)
     await db.listing.delete({
       where: { id: listingId },
     });

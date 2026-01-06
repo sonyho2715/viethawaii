@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
+import { del } from '@vercel/blob';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -168,10 +169,10 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
       );
     }
 
-    // Check ownership
+    // Check ownership and get images
     const existing = await db.listing.findUnique({
       where: { id: listingId },
-      select: { userId: true },
+      include: { images: true },
     });
 
     if (!existing) {
@@ -188,10 +189,18 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
       );
     }
 
-    // Soft delete by changing status
-    await db.listing.update({
+    // Delete images from Vercel Blob storage
+    const blobDeletions = existing.images
+      .filter(img => img.imageUrl.includes('blob.vercel-storage.com'))
+      .map(img => del(img.imageUrl).catch(() => {}));
+
+    if (blobDeletions.length > 0) {
+      await Promise.all(blobDeletions);
+    }
+
+    // Hard delete the listing (cascade deletes image records)
+    await db.listing.delete({
       where: { id: listingId },
-      data: { status: 'EXPIRED' },
     });
 
     return NextResponse.json({ success: true, message: 'Listing deleted' });
