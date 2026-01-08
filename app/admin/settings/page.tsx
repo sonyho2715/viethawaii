@@ -45,8 +45,8 @@ export default async function AdminSettingsPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Cai dat he thong</h1>
-        <p className="text-gray-600 mt-1">Quan ly cau hinh website</p>
+        <h1 className="text-2xl font-bold text-gray-900">Cài đặt hệ thống</h1>
+        <p className="text-gray-600 mt-1">Quản lý cấu hình website</p>
       </div>
 
       <SettingsForm settings={settings} isSuperAdmin={isSuperAdmin} />

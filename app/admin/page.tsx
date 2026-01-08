@@ -6,6 +6,8 @@ import {
   TrendingUp,
   Eye,
   UserPlus,
+  Newspaper,
+  BarChart3,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -15,6 +17,10 @@ async function getStats() {
     totalListings,
     pendingListings,
     activeListings,
+    totalArticles,
+    publishedArticles,
+    draftArticles,
+    totalViews,
     newUsersToday,
     newListingsToday,
   ] = await Promise.all([
@@ -22,6 +28,10 @@ async function getStats() {
     db.listing.count(),
     db.listing.count({ where: { status: 'PENDING' } }),
     db.listing.count({ where: { status: 'ACTIVE' } }),
+    db.article.count(),
+    db.article.count({ where: { status: 'PUBLISHED' } }),
+    db.article.count({ where: { status: 'DRAFT' } }),
+    db.article.aggregate({ _sum: { views: true } }),
     db.user.count({
       where: {
         createdAt: {
@@ -43,6 +53,10 @@ async function getStats() {
     totalListings,
     pendingListings,
     activeListings,
+    totalArticles,
+    publishedArticles,
+    draftArticles,
+    totalArticleViews: totalViews._sum.views || 0,
     newUsersToday,
     newListingsToday,
   };
@@ -73,11 +87,23 @@ async function getRecentUsers() {
   });
 }
 
+async function getRecentArticles() {
+  return db.article.findMany({
+    take: 5,
+    orderBy: { createdAt: 'desc' },
+    include: {
+      author: { select: { name: true, email: true } },
+      category: { select: { nameVn: true, color: true } },
+    },
+  });
+}
+
 export default async function AdminDashboard() {
-  const [stats, recentListings, recentUsers] = await Promise.all([
+  const [stats, recentListings, recentUsers, recentArticles] = await Promise.all([
     getStats(),
     getRecentListings(),
     getRecentUsers(),
+    getRecentArticles(),
   ]);
 
   const statCards = [
@@ -103,11 +129,11 @@ export default async function AdminDashboard() {
       href: '/admin/listings/pending',
     },
     {
-      label: 'Đang hiển thị',
-      value: stats.activeListings,
-      icon: Eye,
-      color: 'bg-teal-500',
-      href: '/admin/listings?status=ACTIVE',
+      label: 'Bài viết',
+      value: stats.totalArticles,
+      icon: Newspaper,
+      color: 'bg-purple-500',
+      href: '/admin/articles',
     },
   ];
 
@@ -141,30 +167,62 @@ export default async function AdminDashboard() {
         ))}
       </div>
 
-      {/* Today's Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Stats Row 2 - Today + Articles + Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Today's Stats */}
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-center gap-2 mb-4">
             <TrendingUp className="h-5 w-5 text-green-500" />
             <h2 className="font-semibold text-gray-900">Hôm nay</h2>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="p-4 bg-blue-50 rounded-lg">
+          <div className="space-y-3">
+            <div className="p-3 bg-blue-50 rounded-lg flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <UserPlus className="h-4 w-4 text-blue-600" />
                 <span className="text-sm text-gray-600">Users mới</span>
               </div>
-              <p className="text-2xl font-bold text-gray-900 mt-1">
+              <p className="text-xl font-bold text-gray-900">
                 {stats.newUsersToday}
               </p>
             </div>
-            <div className="p-4 bg-green-50 rounded-lg">
+            <div className="p-3 bg-green-50 rounded-lg flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <FileText className="h-4 w-4 text-green-600" />
                 <span className="text-sm text-gray-600">Tin mới</span>
               </div>
-              <p className="text-2xl font-bold text-gray-900 mt-1">
+              <p className="text-xl font-bold text-gray-900">
                 {stats.newListingsToday}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Article Stats */}
+        <div className="bg-white rounded-xl border border-gray-200 p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <BarChart3 className="h-5 w-5 text-purple-500" />
+            <h2 className="font-semibold text-gray-900">Bài viết</h2>
+          </div>
+          <div className="space-y-3">
+            <div className="p-3 bg-green-50 rounded-lg flex items-center justify-between">
+              <span className="text-sm text-gray-600">Đã đăng</span>
+              <p className="text-xl font-bold text-green-700">
+                {stats.publishedArticles}
+              </p>
+            </div>
+            <div className="p-3 bg-gray-50 rounded-lg flex items-center justify-between">
+              <span className="text-sm text-gray-600">Bản nháp</span>
+              <p className="text-xl font-bold text-gray-700">
+                {stats.draftArticles}
+              </p>
+            </div>
+            <div className="p-3 bg-purple-50 rounded-lg flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Eye className="h-4 w-4 text-purple-600" />
+                <span className="text-sm text-gray-600">Lượt xem</span>
+              </div>
+              <p className="text-xl font-bold text-purple-700">
+                {stats.totalArticleViews.toLocaleString()}
               </p>
             </div>
           </div>
@@ -184,6 +242,13 @@ export default async function AdminDashboard() {
               </span>
             </Link>
             <Link
+              href="/admin/articles/new"
+              className="flex items-center justify-between p-3 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors"
+            >
+              <span className="font-medium text-purple-800">Viết bài mới</span>
+              <span className="text-purple-600">+</span>
+            </Link>
+            <Link
               href="/admin/users"
               className="flex items-center justify-between p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
             >
@@ -195,7 +260,7 @@ export default async function AdminDashboard() {
       </div>
 
       {/* Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Listings */}
         <div className="bg-white rounded-xl border border-gray-200">
           <div className="p-4 border-b border-gray-200 flex justify-between items-center">
@@ -217,7 +282,7 @@ export default async function AdminDashboard() {
                     </p>
                   </div>
                   <span
-                    className={`px-2 py-1 text-xs font-medium rounded ${
+                    className={`ml-2 px-2 py-1 text-xs font-medium rounded whitespace-nowrap ${
                       listing.status === 'ACTIVE'
                         ? 'bg-green-100 text-green-800'
                         : listing.status === 'PENDING'
@@ -233,6 +298,48 @@ export default async function AdminDashboard() {
             {recentListings.length === 0 && (
               <div className="p-8 text-center text-gray-500">
                 Chưa có tin đăng nào
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Recent Articles */}
+        <div className="bg-white rounded-xl border border-gray-200">
+          <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+            <h2 className="font-semibold text-gray-900">Bài viết gần đây</h2>
+            <Link href="/admin/articles" className="text-sm text-teal-600 hover:underline">
+              Xem tất cả
+            </Link>
+          </div>
+          <div className="divide-y divide-gray-100">
+            {recentArticles.map((article) => (
+              <div key={article.id} className="p-4 hover:bg-gray-50">
+                <div className="flex justify-between items-start">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-gray-900 truncate">
+                      {article.titleVn}
+                    </p>
+                    <p className="text-sm text-gray-500">
+                      {article.views.toLocaleString()} lượt xem
+                    </p>
+                  </div>
+                  <span
+                    className={`ml-2 px-2 py-1 text-xs font-medium rounded whitespace-nowrap ${
+                      article.status === 'PUBLISHED'
+                        ? 'bg-green-100 text-green-800'
+                        : article.status === 'DRAFT'
+                        ? 'bg-gray-100 text-gray-800'
+                        : 'bg-red-100 text-red-800'
+                    }`}
+                  >
+                    {article.status === 'PUBLISHED' ? 'Đã đăng' : article.status === 'DRAFT' ? 'Nháp' : 'Lưu trữ'}
+                  </span>
+                </div>
+              </div>
+            ))}
+            {recentArticles.length === 0 && (
+              <div className="p-8 text-center text-gray-500">
+                Chưa có bài viết nào
               </div>
             )}
           </div>
@@ -257,7 +364,7 @@ export default async function AdminDashboard() {
                     <p className="text-sm text-gray-500 truncate">{user.email}</p>
                   </div>
                   <span
-                    className={`px-2 py-1 text-xs font-medium rounded ${
+                    className={`ml-2 px-2 py-1 text-xs font-medium rounded whitespace-nowrap ${
                       user.role === 'SUPERADMIN'
                         ? 'bg-purple-100 text-purple-800'
                         : user.role === 'ADMIN'

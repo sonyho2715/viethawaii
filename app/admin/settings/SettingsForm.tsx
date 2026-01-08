@@ -59,13 +59,13 @@ export function SettingsForm({ settings, isSuperAdmin }: SettingsFormProps) {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || 'Co loi xay ra');
+        throw new Error(data.error || 'Có lỗi xảy ra');
       }
 
-      setMessage({ type: 'success', text: 'Da luu cai dat thanh cong!' });
+      setMessage({ type: 'success', text: 'Đã lưu cài đặt thành công!' });
       router.refresh();
     } catch (err) {
-      setMessage({ type: 'error', text: err instanceof Error ? err.message : 'Co loi xay ra' });
+      setMessage({ type: 'error', text: err instanceof Error ? err.message : 'Có lỗi xảy ra' });
     } finally {
       setIsLoading(false);
     }
@@ -89,12 +89,12 @@ export function SettingsForm({ settings, isSuperAdmin }: SettingsFormProps) {
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200 flex items-center gap-3">
           <Globe className="h-5 w-5 text-teal-600" />
-          <h2 className="text-lg font-semibold text-gray-900">Thong tin chung</h2>
+          <h2 className="text-lg font-semibold text-gray-900">Thông tin chung</h2>
         </div>
         <div className="p-6 space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Ten website
+              Tên website
             </label>
             <input
               type="text"
@@ -104,17 +104,17 @@ export function SettingsForm({ settings, isSuperAdmin }: SettingsFormProps) {
               placeholder="VietHawaii"
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Mo ta (Tieng Viet)
+                Mô tả (Tiếng Việt)
               </label>
               <textarea
                 value={formData.siteDescription}
                 onChange={(e) => handleChange('siteDescription', e.target.value)}
                 rows={3}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                placeholder="Cong dong nguoi Viet tai Hawaii"
+                placeholder="Cộng đồng người Việt tại Hawaii"
               />
             </div>
             <div>
@@ -137,10 +137,10 @@ export function SettingsForm({ settings, isSuperAdmin }: SettingsFormProps) {
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200 flex items-center gap-3">
           <Phone className="h-5 w-5 text-teal-600" />
-          <h2 className="text-lg font-semibold text-gray-900">Thong tin lien he</h2>
+          <h2 className="text-lg font-semibold text-gray-900">Thông tin liên hệ</h2>
         </div>
         <div className="p-6 space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Email
@@ -155,7 +155,7 @@ export function SettingsForm({ settings, isSuperAdmin }: SettingsFormProps) {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                So dien thoai
+                Số điện thoại
               </label>
               <input
                 type="text"
@@ -168,7 +168,7 @@ export function SettingsForm({ settings, isSuperAdmin }: SettingsFormProps) {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Dia chi
+              Địa chỉ
             </label>
             <input
               type="text"
@@ -185,9 +185,9 @@ export function SettingsForm({ settings, isSuperAdmin }: SettingsFormProps) {
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200 flex items-center gap-3">
           <Share2 className="h-5 w-5 text-teal-600" />
-          <h2 className="text-lg font-semibold text-gray-900">Mang xa hoi</h2>
+          <h2 className="text-lg font-semibold text-gray-900">Mạng xã hội</h2>
         </div>
-        <div className="p-6 grid grid-cols-2 gap-4">
+        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Facebook
@@ -255,10 +255,10 @@ export function SettingsForm({ settings, isSuperAdmin }: SettingsFormProps) {
               value={formData.seoTitle}
               onChange={(e) => handleChange('seoTitle', e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-              placeholder="VietHawaii - Cong dong nguoi Viet tai Hawaii"
+              placeholder="VietHawaii - Cộng đồng người Việt tại Hawaii"
             />
             <p className="text-xs text-gray-500 mt-1">
-              {formData.seoTitle.length}/60 ky tu
+              {formData.seoTitle.length}/60 ký tự
             </p>
           </div>
           <div>
@@ -270,10 +270,10 @@ export function SettingsForm({ settings, isSuperAdmin }: SettingsFormProps) {
               onChange={(e) => handleChange('seoDescription', e.target.value)}
               rows={3}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-              placeholder="Rao vat, tin tuc, cong cu tinh toan cho nguoi Viet tai Hawaii"
+              placeholder="Rao vặt, tin tức, công cụ tính toán cho người Việt tại Hawaii"
             />
             <p className="text-xs text-gray-500 mt-1">
-              {formData.seoDescription.length}/160 ky tu
+              {formData.seoDescription.length}/160 ký tự
             </p>
           </div>
         </div>
@@ -283,13 +283,13 @@ export function SettingsForm({ settings, isSuperAdmin }: SettingsFormProps) {
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200 flex items-center gap-3">
           <Settings2 className="h-5 w-5 text-teal-600" />
-          <h2 className="text-lg font-semibold text-gray-900">Tinh nang</h2>
+          <h2 className="text-lg font-semibold text-gray-900">Tính năng</h2>
         </div>
         <div className="p-6 space-y-4">
           <div className="flex items-center justify-between py-3 border-b border-gray-100">
             <div>
-              <p className="font-medium text-gray-900">Rao vat</p>
-              <p className="text-sm text-gray-500">Cho phep dang tin rao vat</p>
+              <p className="font-medium text-gray-900">Rao vặt</p>
+              <p className="text-sm text-gray-500">Cho phép đăng tin rao vặt</p>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input
@@ -303,8 +303,8 @@ export function SettingsForm({ settings, isSuperAdmin }: SettingsFormProps) {
           </div>
           <div className="flex items-center justify-between py-3 border-b border-gray-100">
             <div>
-              <p className="font-medium text-gray-900">Tin tuc</p>
-              <p className="text-sm text-gray-500">Hien thi muc tin tuc</p>
+              <p className="font-medium text-gray-900">Tin tức</p>
+              <p className="text-sm text-gray-500">Hiển thị mục tin tức</p>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input
@@ -318,8 +318,8 @@ export function SettingsForm({ settings, isSuperAdmin }: SettingsFormProps) {
           </div>
           <div className="flex items-center justify-between py-3 border-b border-gray-100">
             <div>
-              <p className="font-medium text-gray-900">Cong cu</p>
-              <p className="text-sm text-gray-500">Hien thi cac cong cu tinh toan</p>
+              <p className="font-medium text-gray-900">Công cụ</p>
+              <p className="text-sm text-gray-500">Hiển thị các công cụ tính toán</p>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input
@@ -333,8 +333,8 @@ export function SettingsForm({ settings, isSuperAdmin }: SettingsFormProps) {
           </div>
           <div className="flex items-center justify-between py-3">
             <div>
-              <p className="font-medium text-red-600">Che do bao tri</p>
-              <p className="text-sm text-gray-500">Tat website tam thoi de bao tri</p>
+              <p className="font-medium text-red-600">Chế độ bảo trì</p>
+              <p className="text-sm text-gray-500">Tắt website tạm thời để bảo trì</p>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input
@@ -366,10 +366,10 @@ export function SettingsForm({ settings, isSuperAdmin }: SettingsFormProps) {
                 value={formData.exchangeRateApiKey}
                 onChange={(e) => handleChange('exchangeRateApiKey', e.target.value)}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent font-mono"
-                placeholder="API key cho ty gia tien te"
+                placeholder="API key cho tỷ giá tiền tệ"
               />
               <p className="text-xs text-gray-500 mt-1">
-                Dung cho cong cu doi tien. De trong neu khong can.
+                Dùng cho công cụ đổi tiền. Để trống nếu không cần.
               </p>
             </div>
           </div>
@@ -388,7 +388,7 @@ export function SettingsForm({ settings, isSuperAdmin }: SettingsFormProps) {
           ) : (
             <Save className="h-5 w-5" />
           )}
-          Luu cai dat
+          Lưu cài đặt
         </button>
       </div>
     </form>

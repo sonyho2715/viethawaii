@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signOut } from 'next-auth/react';
@@ -14,6 +15,8 @@ import {
   Newspaper,
   FolderTree,
   Shield,
+  Menu,
+  X,
 } from 'lucide-react';
 
 interface AdminSidebarProps {
@@ -36,12 +39,13 @@ const menuItems = [
 
 export default function AdminSidebar({ user }: AdminSidebarProps) {
   const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-gray-900 text-white flex flex-col">
+  const SidebarContent = () => (
+    <>
       {/* Logo */}
       <div className="p-6 border-b border-gray-800">
-        <Link href="/admin" className="flex items-center gap-3">
+        <Link href="/admin" className="flex items-center gap-3" onClick={() => setIsMobileMenuOpen(false)}>
           <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-teal-500 to-blue-500 flex items-center justify-center">
             <Shield className="h-6 w-6 text-white" />
           </div>
@@ -62,6 +66,7 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
             <Link
               key={item.href}
               href={item.href}
+              onClick={() => setIsMobileMenuOpen(false)}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                 isActive
                   ? 'bg-teal-600 text-white'
@@ -79,6 +84,7 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
       <div className="p-4 border-t border-gray-800 space-y-3">
         <Link
           href="/"
+          onClick={() => setIsMobileMenuOpen(false)}
           className="flex items-center gap-3 px-4 py-2 text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
         >
           <Home className="h-5 w-5" />
@@ -101,6 +107,49 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
           <span className="text-sm">Đăng xuất</span>
         </button>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile Header */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-40 bg-gray-900 border-b border-gray-800 px-4 py-3 flex items-center justify-between">
+        <Link href="/admin" className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-teal-500 to-blue-500 flex items-center justify-center">
+            <Shield className="h-5 w-5 text-white" />
+          </div>
+          <span className="font-bold text-white">Admin</span>
+        </Link>
+        <button
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          className="p-2 text-gray-400 hover:text-white transition-colors"
+          aria-label="Toggle menu"
+        >
+          {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </button>
+      </div>
+
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div
+          className="lg:hidden fixed inset-0 z-30 bg-black/50"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Mobile Sidebar */}
+      <aside
+        className={`lg:hidden fixed top-14 left-0 bottom-0 z-40 w-64 bg-gray-900 text-white flex flex-col transform transition-transform duration-300 ease-in-out ${
+          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        <SidebarContent />
+      </aside>
+
+      {/* Desktop Sidebar */}
+      <aside className="hidden lg:flex fixed left-0 top-0 h-screen w-64 bg-gray-900 text-white flex-col">
+        <SidebarContent />
+      </aside>
+    </>
   );
 }

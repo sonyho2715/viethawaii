@@ -26,8 +26,9 @@ export default async function AdminLayout({
         <AdminSidebar user={session.user} />
 
         {/* Main Content */}
-        <main className="flex-1 ml-64">
-          <div className="p-8">
+        <main className="flex-1 lg:ml-64">
+          {/* Add top padding on mobile for the fixed header */}
+          <div className="p-4 pt-20 lg:p-8 lg:pt-8">
             {children}
           </div>
         </main>
