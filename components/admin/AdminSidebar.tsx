@@ -17,6 +17,10 @@ import {
   Shield,
   Menu,
   X,
+  Flag,
+  Calendar,
+  Tag,
+  BarChart3,
 } from 'lucide-react';
 
 interface AdminSidebarProps {
@@ -32,8 +36,12 @@ const menuItems = [
   { href: '/admin/users', label: 'Quản lý Users', icon: Users },
   { href: '/admin/listings', label: 'Tất cả Tin đăng', icon: FileText },
   { href: '/admin/listings/pending', label: 'Chờ duyệt', icon: Clock },
+  { href: '/admin/reports', label: 'Báo cáo vi phạm', icon: Flag },
+  { href: '/admin/events', label: 'Sự kiện', icon: Calendar },
+  { href: '/admin/coupons', label: 'Khuyến mãi', icon: Tag },
   { href: '/admin/articles', label: 'Tin tức / Bài viết', icon: Newspaper },
   { href: '/admin/categories', label: 'Danh mục', icon: FolderTree },
+  { href: '/admin/analytics', label: 'Thống kê', icon: BarChart3 },
   { href: '/admin/settings', label: 'Cài đặt', icon: Settings },
 ];
 

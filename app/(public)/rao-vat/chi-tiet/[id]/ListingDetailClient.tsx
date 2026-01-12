@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
@@ -29,14 +29,18 @@ import {
   Mail,
   MessageCircle,
   Heart,
-  Share2,
-  Flag,
   ShoppingBag,
   User,
   Calendar,
   Tag,
   X,
+  CheckCircle2,
+  Copy,
+  Edit,
+  Star,
 } from 'lucide-react';
+import ReportButton from '@/components/public/ReportButton';
+import ShareButtons from '@/components/public/ShareButtons';
 
 // Serialized types for client component (Date → string, Decimal → number)
 interface SerializedUser {
@@ -91,15 +95,120 @@ interface ListingDetailClientProps {
 }
 
 export default function ListingDetailClient({
-  listing,
+  listing: initialListing,
   relatedListings,
   isOwner = false,
 }: ListingDetailClientProps) {
   const { t, language } = useLanguage();
+  const [listing, setListing] = useState(initialListing);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showPhone, setShowPhone] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  // Check if listing is saved on mount
+  useEffect(() => {
+    async function checkSaved() {
+      try {
+        const res = await fetch(`/api/saved?listingId=${listing.id}`);
+        if (res.ok) {
+          const data = await res.json();
+          setIsSaved(data.isSaved);
+        }
+      } catch (err) {
+        console.error('Error checking saved status:', err);
+      }
+    }
+    checkSaved();
+  }, [listing.id]);
+
+  // Toggle save handler
+  const handleToggleSave = async () => {
+    if (isSaving) return;
+    setIsSaving(true);
+
+    try {
+      if (isSaved) {
+        const res = await fetch(`/api/saved?listingId=${listing.id}`, {
+          method: 'DELETE',
+        });
+        if (res.ok) {
+          setIsSaved(false);
+        }
+      } else {
+        const res = await fetch('/api/saved', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ listingId: listing.id }),
+        });
+        if (res.ok) {
+          setIsSaved(true);
+        } else {
+          const data = await res.json();
+          if (data.error === 'Unauthorized') {
+            alert(language === 'vn' ? 'Vui lòng đăng nhập để lưu tin' : 'Please login to save listings');
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Error toggling save:', err);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Mark as Sold handler
+  const handleMarkAsSold = async () => {
+    if (isUpdating) return;
+    setIsUpdating(true);
+
+    try {
+      const newStatus = listing.status === 'SOLD' ? 'ACTIVE' : 'SOLD';
+      const response = await fetch(`/api/listings/${listing.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (response.ok) {
+        setListing((prev) => ({ ...prev, status: newStatus }));
+      } else {
+        const data = await response.json();
+        alert(data.error || 'Failed to update listing');
+      }
+    } catch {
+      alert('Failed to update listing');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  // Duplicate listing handler
+  const handleDuplicate = async () => {
+    if (isUpdating) return;
+    setIsUpdating(true);
+
+    try {
+      const response = await fetch(`/api/listings/${listing.id}/duplicate`, {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.data) {
+        // Redirect to edit the duplicated listing
+        window.location.href = `/tai-khoan/tin-dang/${data.data.id}/sua`;
+      } else {
+        alert(data.error || 'Failed to duplicate listing');
+      }
+    } catch {
+      alert('Failed to duplicate listing');
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   const images = listing.images;
   const primaryImage = images[currentImageIndex] || images[0];
@@ -130,21 +239,16 @@ export default function ListingDetailClient({
     }).format(new Date(dateStr));
   };
 
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: listing.title,
-          text: listing.description?.slice(0, 100),
-          url: window.location.href,
-        });
-      } catch {
-        // User cancelled or error
-      }
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-      alert(language === 'vn' ? 'Đã sao chép link!' : 'Link copied!');
-    }
+  // Get preferred contact method label
+  const getPreferredContactLabel = () => {
+    if (!listing.preferredContact) return null;
+    const labels: Record<string, { vn: string; en: string }> = {
+      phone: { vn: 'Goi dien', en: 'Phone' },
+      zalo: { vn: 'Zalo', en: 'Zalo' },
+      email: { vn: 'Email', en: 'Email' },
+      message: { vn: 'Nhan tin', en: 'Message' },
+    };
+    return labels[listing.preferredContact] || null;
   };
 
   const nextImage = () => {
@@ -283,10 +387,19 @@ export default function ListingDetailClient({
                   </div>
                 )}
 
+                {/* Sold Overlay */}
+                {listing.status === 'SOLD' && (
+                  <div className="absolute inset-0 bg-black/40 flex items-center justify-center pointer-events-none">
+                    <div className="bg-red-600 text-white px-8 py-3 text-2xl font-bold tracking-wider transform -rotate-12 shadow-lg">
+                      {language === 'vn' ? 'DA BAN' : 'SOLD'}
+                    </div>
+                  </div>
+                )}
+
                 {/* Featured Badge */}
-                {listing.isFeatured && (
+                {listing.isFeatured && listing.status !== 'SOLD' && (
                   <Badge className="absolute top-4 left-4 bg-yellow-500">
-                    {language === 'vn' ? 'Nổi bật' : 'Featured'}
+                    {language === 'vn' ? 'Noi bat' : 'Featured'}
                   </Badge>
                 )}
 
@@ -383,24 +496,66 @@ export default function ListingDetailClient({
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex items-center gap-3 mt-6 pt-6 border-t">
+                <div className="flex flex-wrap items-center gap-3 mt-6 pt-6 border-t">
+                  {/* Owner Actions */}
+                  {isOwner && (
+                    <>
+                      {(listing.status === 'ACTIVE' || listing.status === 'SOLD') && (
+                        <Button
+                          variant={listing.status === 'SOLD' ? 'outline' : 'default'}
+                          size="sm"
+                          onClick={handleMarkAsSold}
+                          disabled={isUpdating}
+                          className={listing.status === 'SOLD' ? '' : 'bg-green-600 hover:bg-green-700'}
+                        >
+                          <CheckCircle2 className="h-4 w-4 mr-2" />
+                          {listing.status === 'SOLD'
+                            ? (language === 'vn' ? 'Dong lai' : 'Reactivate')
+                            : (language === 'vn' ? 'Danh dau da ban' : 'Mark as Sold')}
+                        </Button>
+                      )}
+                      <Button variant="outline" size="sm" asChild>
+                        <Link href={`/tai-khoan/tin-dang/${listing.id}/sua`}>
+                          <Edit className="h-4 w-4 mr-2" />
+                          {language === 'vn' ? 'Sua tin' : 'Edit'}
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleDuplicate}
+                        disabled={isUpdating}
+                      >
+                        <Copy className="h-4 w-4 mr-2" />
+                        {language === 'vn' ? 'Nhan ban' : 'Duplicate'}
+                      </Button>
+                    </>
+                  )}
+
+                  {/* Public Actions */}
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => setIsSaved(!isSaved)}
+                    onClick={handleToggleSave}
+                    disabled={isSaving}
                     className={isSaved ? 'text-red-600 border-red-600' : ''}
                   >
                     <Heart className={`h-4 w-4 mr-2 ${isSaved ? 'fill-current' : ''}`} />
-                    {isSaved ? (language === 'vn' ? 'Đã lưu' : 'Saved') : (language === 'vn' ? 'Lưu tin' : 'Save')}
+                    {isSaving ? '...' : isSaved ? (language === 'vn' ? 'Đã lưu' : 'Saved') : (language === 'vn' ? 'Lưu tin' : 'Save')}
                   </Button>
-                  <Button variant="outline" size="sm" onClick={handleShare}>
-                    <Share2 className="h-4 w-4 mr-2" />
-                    {language === 'vn' ? 'Chia sẻ' : 'Share'}
-                  </Button>
-                  <Button variant="outline" size="sm" className="text-gray-500">
-                    <Flag className="h-4 w-4 mr-2" />
-                    {language === 'vn' ? 'Báo cáo' : 'Report'}
-                  </Button>
+
+                  <ShareButtons
+                    title={listing.title}
+                    description={listing.description || undefined}
+                  />
+
+                  {!isOwner && (
+                    <ReportButton
+                      itemType="LISTING"
+                      itemId={listing.id}
+                      itemTitle={listing.title}
+                    />
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -411,9 +566,18 @@ export default function ListingDetailClient({
             {/* Contact Card */}
             <Card>
               <CardContent className="p-6">
-                <h3 className="font-semibold mb-4">
-                  {language === 'vn' ? 'Thông tin liên hệ' : 'Contact Information'}
-                </h3>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold">
+                    {language === 'vn' ? 'Thong tin lien he' : 'Contact Information'}
+                  </h3>
+                  {/* Preferred Contact Badge */}
+                  {listing.preferredContact && getPreferredContactLabel() && (
+                    <Badge variant="secondary" className="bg-teal-100 text-teal-800">
+                      <Star className="h-3 w-3 mr-1" />
+                      {language === 'vn' ? getPreferredContactLabel()?.vn : getPreferredContactLabel()?.en}
+                    </Badge>
+                  )}
+                </div>
 
                 {/* Seller Info */}
                 <div className="flex items-center gap-3 mb-4 pb-4 border-b">
@@ -435,27 +599,51 @@ export default function ListingDetailClient({
                 <div className="space-y-3">
                   {listing.contactPhone && (
                     <Button
-                      variant="default"
-                      className="w-full bg-green-600 hover:bg-green-700"
+                      variant={listing.preferredContact === 'phone' ? 'default' : 'outline'}
+                      className={`w-full ${listing.preferredContact === 'phone' ? 'bg-green-600 hover:bg-green-700 ring-2 ring-green-300' : ''}`}
                       onClick={() => setShowPhone(!showPhone)}
                     >
                       <Phone className="h-4 w-4 mr-2" />
-                      {showPhone ? listing.contactPhone : (language === 'vn' ? 'Hiện số điện thoại' : 'Show phone number')}
+                      {showPhone ? listing.contactPhone : (language === 'vn' ? 'Hien so dien thoai' : 'Show phone number')}
+                      {listing.preferredContact === 'phone' && <Star className="h-3 w-3 ml-2 fill-current" />}
                     </Button>
                   )}
 
-                  {listing.contactEmail && (
-                    <Button variant="outline" className="w-full" asChild>
-                      <a href={`mailto:${listing.contactEmail}?subject=${encodeURIComponent(listing.title)}`}>
-                        <Mail className="h-4 w-4 mr-2" />
-                        {language === 'vn' ? 'Gửi email' : 'Send email'}
+                  {listing.zaloNumber && (
+                    <Button
+                      variant={listing.preferredContact === 'zalo' ? 'default' : 'outline'}
+                      className={`w-full ${listing.preferredContact === 'zalo' ? 'bg-blue-600 hover:bg-blue-700 ring-2 ring-blue-300' : ''}`}
+                      asChild
+                    >
+                      <a href={`https://zalo.me/${listing.zaloNumber}`} target="_blank" rel="noopener noreferrer">
+                        <MessageCircle className="h-4 w-4 mr-2" />
+                        Zalo: {listing.zaloNumber}
+                        {listing.preferredContact === 'zalo' && <Star className="h-3 w-3 ml-2 fill-current" />}
                       </a>
                     </Button>
                   )}
 
-                  <Button variant="outline" className="w-full">
+                  {listing.contactEmail && (
+                    <Button
+                      variant={listing.preferredContact === 'email' ? 'default' : 'outline'}
+                      className={`w-full ${listing.preferredContact === 'email' ? 'bg-teal-600 hover:bg-teal-700 ring-2 ring-teal-300' : ''}`}
+                      asChild
+                    >
+                      <a href={`mailto:${listing.contactEmail}?subject=${encodeURIComponent(listing.title)}`}>
+                        <Mail className="h-4 w-4 mr-2" />
+                        {language === 'vn' ? 'Gui email' : 'Send email'}
+                        {listing.preferredContact === 'email' && <Star className="h-3 w-3 ml-2 fill-current" />}
+                      </a>
+                    </Button>
+                  )}
+
+                  <Button
+                    variant={listing.preferredContact === 'message' ? 'default' : 'outline'}
+                    className={`w-full ${listing.preferredContact === 'message' ? 'bg-purple-600 hover:bg-purple-700 ring-2 ring-purple-300' : ''}`}
+                  >
                     <MessageCircle className="h-4 w-4 mr-2" />
-                    {language === 'vn' ? 'Nhắn tin' : 'Message'}
+                    {language === 'vn' ? 'Nhan tin' : 'Message'}
+                    {listing.preferredContact === 'message' && <Star className="h-3 w-3 ml-2 fill-current" />}
                   </Button>
                 </div>
               </CardContent>

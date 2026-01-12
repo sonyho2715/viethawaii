@@ -12,12 +12,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import NotificationBell from '@/components/public/NotificationBell';
 import {
   Search,
   Menu,
   X,
   Globe,
-  Bell,
   PlusCircle,
   Home,
   Briefcase,
@@ -29,13 +29,18 @@ import {
   Settings,
   LogOut,
   LayoutDashboard,
+  Wrench,
+  Calendar,
+  Tag,
 } from 'lucide-react';
 
 const MOBILE_CATEGORIES = [
-  { id: 'housing', labelEn: 'Housing', labelVn: 'Nhà ở', icon: Home, href: '/rao-vat/nha-o' },
-  { id: 'jobs', labelEn: 'Jobs', labelVn: 'Việc làm', icon: Briefcase, href: '/rao-vat/viec-lam' },
-  { id: 'market', labelEn: 'Marketplace', labelVn: 'Chợ trời', icon: ShoppingBag, href: '/rao-vat/cho-troi' },
-  { id: 'community', labelEn: 'Community', labelVn: 'Cộng đồng', icon: MessageCircle, href: '/rao-vat/cong-dong' },
+  { id: 'classifieds', labelEn: 'Classifieds', labelVn: 'Rao vặt', icon: ShoppingBag, href: '/rao-vat' },
+  { id: 'jobs', labelEn: 'Jobs', labelVn: 'Việc làm', icon: Briefcase, href: '/viec-lam' },
+  { id: 'housing', labelEn: 'Housing', labelVn: 'Nhà ở', icon: Home, href: '/nha-o' },
+  { id: 'services', labelEn: 'Services', labelVn: 'Dịch vụ', icon: Wrench, href: '/dich-vu' },
+  { id: 'events', labelEn: 'Events', labelVn: 'Sự kiện', icon: Calendar, href: '/su-kien' },
+  { id: 'deals', labelEn: 'Deals', labelVn: 'Khuyến mãi', icon: Tag, href: '/khuyen-mai' },
 ];
 
 export default function Header() {
@@ -108,10 +113,7 @@ export default function Header() {
                 </Link>
               </Button>
 
-              <button className="p-2 text-gray-400 hover:text-gray-600 relative">
-                <Bell size={20} />
-                <span className="absolute top-1.5 right-1.5 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
-              </button>
+              {session?.user && <NotificationBell />}
 
               {/* User Menu */}
               {session?.user ? (

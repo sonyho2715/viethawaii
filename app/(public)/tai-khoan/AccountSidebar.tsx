@@ -14,6 +14,8 @@ import {
   Settings,
   LogOut,
   Plus,
+  Calendar,
+  BarChart3,
 } from 'lucide-react';
 import type { User as NextAuthUser } from 'next-auth';
 
@@ -39,10 +41,22 @@ export default function AccountSidebar({ user }: AccountSidebarProps) {
       labelEn: 'My Listings',
     },
     {
+      href: '/tai-khoan/su-kien',
+      icon: Calendar,
+      labelVn: 'Sự kiện của tôi',
+      labelEn: 'My Events',
+    },
+    {
       href: '/tai-khoan/da-luu',
       icon: Heart,
       labelVn: 'Đã lưu',
       labelEn: 'Saved',
+    },
+    {
+      href: '/tai-khoan/analytics',
+      icon: BarChart3,
+      labelVn: 'Thống kê',
+      labelEn: 'Analytics',
     },
     {
       href: '/tai-khoan/cai-dat',

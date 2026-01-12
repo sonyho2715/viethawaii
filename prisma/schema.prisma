@@ -40,6 +40,10 @@ model User {
   transactions    Transaction[]
   businesses      Business[]
   adminLogs       AdminLog[]
+  events          Event[]
+  couponClaims    CouponClaim[]
+  notifications   Notification[]  @relation("NotificationRecipient")
+  actedNotifications Notification[] @relation("NotificationActor")
 }
 
 model Account {
@@ -142,6 +146,27 @@ model Listing {
 
   views           Int       @default(0)
 
+  // Listing type for specialized sections
+  listingType     ListingType @default(GENERAL)
+
+  // Job-specific fields (optional)
+  jobType         String?       // full-time, part-time, contract
+  salary          String?       // salary range text
+  benefits        String?       @db.Text
+
+  // Housing-specific fields (optional)
+  bedrooms        Int?
+  bathrooms       Int?
+  sqft            Int?
+  petFriendly     Boolean?
+  utilities       String?       // included/not included
+  moveInDate      DateTime?
+
+  // Service-specific fields (optional)
+  serviceArea     String?
+  availability    String?
+  experience      String?
+
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
   approvedAt      DateTime?
@@ -156,8 +181,10 @@ model Listing {
   reviews         Review[]
   reports         Report[]
   inquiries       Inquiry[]
+  viewHistory     ListingView[]
 
   @@index([userId])
+  @@index([listingType])
   @@index([categoryId])
   @@index([status])
   @@index([isFeatured])
@@ -196,6 +223,13 @@ enum PriceType {
   FREE
 }
 
+enum ListingType {
+  GENERAL       // Rao vặt (existing classifieds)
+  JOB           // Việc làm
+  HOUSING       // Nhà ở
+  SERVICE       // Dịch vụ
+}
+
 enum ListingStatus {
   PENDING
   ACTIVE
@@ -223,6 +257,7 @@ model Neighborhood {
 
   listings            Listing[]
   businesses          Business[]
+  events              Event[]
 }
 
 // ==================== ARTICLES / CONTENT ====================
@@ -432,6 +467,7 @@ model Business {
   owner           User         @relation(fields: [ownerId], references: [id])
   neighborhood    Neighborhood? @relation(fields: [neighborhoodId], references: [id])
   reviews         BusinessReview[]
+  coupons         Coupon[]
 
   @@index([category])
   @@index([tier])
@@ -456,6 +492,130 @@ enum BusinessTier {
   FREE
   ENHANCED
   PREMIUM
+}
+
+// ==================== EVENTS ====================
+
+model Event {
+  id              Int           @id @default(autoincrement())
+  userId          String
+  title           String
+  titleEn         String?
+  description     String?       @db.Text
+  descriptionEn   String?       @db.Text
+  eventType       EventType
+  startDate       DateTime
+  endDate         DateTime?
+  isAllDay        Boolean       @default(false)
+  isRecurring     Boolean       @default(false)
+  recurrenceRule  String?       // iCal RRULE format
+  location        String?
+  address         String?
+  neighborhoodId  Int?
+  lat             Decimal?      @db.Decimal(10, 8)
+  lng             Decimal?      @db.Decimal(11, 8)
+  contactPhone    String?
+  contactEmail    String?
+  website         String?
+  imageUrl        String?
+  ticketUrl       String?
+  price           Decimal?      @db.Decimal(10, 2)
+  isFree          Boolean       @default(true)
+  status          EventStatus   @default(PENDING)
+  views           Int           @default(0)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  user            User          @relation(fields: [userId], references: [id])
+  neighborhood    Neighborhood? @relation(fields: [neighborhoodId], references: [id])
+
+  @@index([userId])
+  @@index([eventType])
+  @@index([status])
+  @@index([startDate])
+}
+
+enum EventType {
+  FESTIVAL        // Tết, Vietnamese festivals
+  COMMUNITY       // Community meetups
+  RELIGIOUS       // Church/temple events
+  CULTURAL        // Cultural events
+  BUSINESS        // Business networking
+  OTHER
+}
+
+enum EventStatus {
+  PENDING
+  APPROVED
+  CANCELLED
+  COMPLETED
+}
+
+// ==================== COUPONS ====================
+
+model Coupon {
+  id              Int           @id @default(autoincrement())
+  businessId      Int
+  title           String
+  titleEn         String?
+  description     String?       @db.Text
+  code            String?
+  discountType    DiscountType
+  discountValue   Decimal       @db.Decimal(10, 2)
+  minPurchase     Decimal?      @db.Decimal(10, 2)
+  maxUses         Int?
+  usedCount       Int           @default(0)
+  startDate       DateTime
+  endDate         DateTime
+  imageUrl        String?
+  terms           String?       @db.Text
+  isActive        Boolean       @default(true)
+  createdAt       DateTime      @default(now())
+
+  business        Business      @relation(fields: [businessId], references: [id])
+  claims          CouponClaim[]
+
+  @@index([businessId])
+  @@index([endDate])
+  @@index([isActive])
+}
+
+model CouponClaim {
+  id        Int       @id @default(autoincrement())
+  couponId  Int
+  userId    String
+  claimedAt DateTime  @default(now())
+  usedAt    DateTime?
+
+  coupon    Coupon    @relation(fields: [couponId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@unique([couponId, userId])
+  @@index([couponId])
+  @@index([userId])
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED_AMOUNT
+  FREE_ITEM
+}
+
+// ==================== LISTING ANALYTICS ====================
+
+model ListingView {
+  id        Int      @id @default(autoincrement())
+  listingId Int
+  userId    String?
+  sessionId String?
+  referrer  String?
+  viewedAt  DateTime @default(now())
+
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId, viewedAt])
+  @@index([listingId])
+  @@index([viewedAt(sort: Desc)])
 }
 
 // ==================== MONETIZATION ====================
@@ -541,4 +701,47 @@ model SiteSetting {
   value     Json
   updatedBy String?
   updatedAt DateTime @default(now())
+}
+
+// ==================== NOTIFICATIONS ====================
+
+model Notification {
+  id              Int              @id @default(autoincrement())
+  userId          String           // User who receives the notification
+  type            NotificationType
+  title           String
+  titleEn         String?
+  message         String
+  messageEn       String?
+
+  // Reference to related entity
+  referenceType   String?          // 'listing', 'event', 'coupon', etc.
+  referenceId     Int?
+  referenceUrl    String?          // Direct URL to navigate to
+
+  // Actor (who triggered the notification)
+  actorId         String?
+  actorName       String?
+
+  isRead          Boolean          @default(false)
+  readAt          DateTime?
+  createdAt       DateTime         @default(now())
+
+  user            User             @relation("NotificationRecipient", fields: [userId], references: [id], onDelete: Cascade)
+  actor           User?            @relation("NotificationActor", fields: [actorId], references: [id])
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt(sort: Desc)])
+}
+
+enum NotificationType {
+  LISTING_APPROVED      // Your listing was approved
+  LISTING_REJECTED      // Your listing was rejected
+  LISTING_SAVED         // Someone saved your listing
+  LISTING_INQUIRY       // Someone inquired about your listing
+  LISTING_EXPIRING      // Your listing is about to expire
+  EVENT_APPROVED        // Your event was approved
+  EVENT_REMINDER        // Reminder for upcoming event
+  COUPON_NEW            // New coupon from a business you follow
+  SYSTEM                // System announcements
 }

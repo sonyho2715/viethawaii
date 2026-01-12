@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { requireAdmin } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { del } from '@vercel/blob';
+import { notifyListingApproved, notifyListingRejected } from '@/lib/notifications';
 
 const updateListingSchema = z.object({
   status: z.enum(['PENDING', 'ACTIVE', 'REJECTED', 'EXPIRED', 'SOLD', 'DELETED']).optional(),
@@ -167,6 +168,23 @@ export async function PATCH(
         },
       },
     });
+
+    // Send notification to listing owner
+    if (validated.status === 'ACTIVE' && existingListing.status !== 'ACTIVE') {
+      await notifyListingApproved(
+        listing.userId,
+        listing.id,
+        listing.title,
+        listing.listingType
+      );
+    } else if (validated.status === 'REJECTED' && existingListing.status !== 'REJECTED') {
+      await notifyListingRejected(
+        listing.userId,
+        listing.id,
+        listing.title,
+        validated.rejectionReason
+      );
+    }
 
     return NextResponse.json({ success: true, data: listing });
   } catch (error) {

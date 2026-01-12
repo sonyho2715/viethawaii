@@ -76,6 +76,91 @@ const updateListingSchema = z.object({
   hidePhone: z.boolean().optional(),
 });
 
+const patchStatusSchema = z.object({
+  status: z.enum(['SOLD', 'ACTIVE']),
+});
+
+// PATCH - Update status only (Mark as Sold / Reactivate)
+export async function PATCH(req: NextRequest, { params }: RouteParams) {
+  try {
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    const { id } = await params;
+    const listingId = parseInt(id, 10);
+
+    if (isNaN(listingId)) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid listing ID' },
+        { status: 400 }
+      );
+    }
+
+    // Check ownership
+    const existing = await db.listing.findUnique({
+      where: { id: listingId },
+      select: { userId: true, status: true },
+    });
+
+    if (!existing) {
+      return NextResponse.json(
+        { success: false, error: 'Listing not found' },
+        { status: 404 }
+      );
+    }
+
+    if (existing.userId !== session.user.id) {
+      return NextResponse.json(
+        { success: false, error: 'Forbidden' },
+        { status: 403 }
+      );
+    }
+
+    const body = await req.json();
+    const validated = patchStatusSchema.parse(body);
+
+    // Only allow changing status from ACTIVE to SOLD, or SOLD to ACTIVE
+    if (validated.status === 'SOLD' && existing.status !== 'ACTIVE') {
+      return NextResponse.json(
+        { success: false, error: 'Can only mark active listings as sold' },
+        { status: 400 }
+      );
+    }
+
+    if (validated.status === 'ACTIVE' && existing.status !== 'SOLD') {
+      return NextResponse.json(
+        { success: false, error: 'Can only reactivate sold listings' },
+        { status: 400 }
+      );
+    }
+
+    const listing = await db.listing.update({
+      where: { id: listingId },
+      data: { status: validated.status },
+    });
+
+    return NextResponse.json({ success: true, data: listing });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid input', details: error.issues },
+        { status: 400 }
+      );
+    }
+
+    console.error('Patch listing status error:', error);
+    return NextResponse.json(
+      { success: false, error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
 export async function PUT(req: NextRequest, { params }: RouteParams) {
   try {
     const session = await auth();

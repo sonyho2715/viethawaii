@@ -77,6 +77,39 @@ export interface ListingWithRelations {
   _count?: {
     savedBy: number;
   };
+  // Listing type
+  listingType?: string;
+  // Job-specific fields
+  jobType?: string | null;
+  salary?: string | null;
+  benefits?: string | null;
+  // Housing-specific fields
+  bedrooms?: number | null;
+  bathrooms?: number | null;
+  sqft?: number | null;
+  petFriendly?: boolean | null;
+  utilities?: string | null;
+  moveInDate?: string | null;
+  // Service-specific fields
+  serviceArea?: string | null;
+  availability?: string | null;
+  experience?: string | null;
+  // Extended relations (optional)
+  neighborhood?: {
+    id: number;
+    nameVn: string;
+    nameEn: string | null;
+    slug: string;
+  } | null;
+  user?: {
+    id: string;
+    name: string | null;
+    image: string | null;
+    createdAt: string;
+    _count?: {
+      listings: number;
+    };
+  };
 }
 
 interface ListingCardProps {

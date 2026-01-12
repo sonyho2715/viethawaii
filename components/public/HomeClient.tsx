@@ -33,8 +33,46 @@ export default function HomeClient({
             <Sidebar categories={categories} />
           </aside>
 
-          {/* Center Content - News + Listings */}
+          {/* Center Content - Listings + News */}
           <main className="lg:col-span-6 space-y-8">
+            {/* Latest Listings - First */}
+            <section>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-gray-800 flex items-center">
+                  <ShoppingBag size={20} className="mr-2 text-teal-600" />
+                  {language === 'vn' ? 'Tin Mới Nhất' : 'Latest Listings'}
+                </h2>
+                <Link
+                  href="/rao-vat"
+                  className="text-teal-600 text-sm font-medium hover:underline flex items-center"
+                >
+                  {language === 'vn' ? 'Xem tất cả' : 'View all'}
+                  <ArrowRight size={14} className="ml-1" />
+                </Link>
+              </div>
+              {latestListings.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {latestListings.slice(0, 9).map((listing) => (
+                    <ListingCard key={listing.id} listing={listing} />
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
+                  <ShoppingBag className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-500 mb-4">
+                    {language === 'vn'
+                      ? 'Chưa có tin đăng nào. Hãy là người đầu tiên!'
+                      : 'No listings yet. Be the first to post!'}
+                  </p>
+                  <Button asChild className="bg-teal-600 hover:bg-teal-700">
+                    <Link href="/rao-vat/dang-tin">
+                      {language === 'vn' ? 'Đăng Tin Ngay' : 'Post Now'}
+                    </Link>
+                  </Button>
+                </div>
+              )}
+            </section>
+
             {/* News Section */}
             <section>
               <div className="flex items-center justify-between mb-4">
@@ -91,44 +129,6 @@ export default function HomeClient({
                 </div>
               </section>
             )}
-
-            {/* Latest Listings */}
-            <section>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold text-gray-800 flex items-center">
-                  <ShoppingBag size={20} className="mr-2 text-teal-600" />
-                  {language === 'vn' ? 'Tin Mới Nhất' : 'Latest Listings'}
-                </h2>
-                <Link
-                  href="/rao-vat"
-                  className="text-teal-600 text-sm font-medium hover:underline flex items-center"
-                >
-                  {language === 'vn' ? 'Xem tất cả' : 'View all'}
-                  <ArrowRight size={14} className="ml-1" />
-                </Link>
-              </div>
-              {latestListings.length > 0 ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {latestListings.slice(0, 9).map((listing) => (
-                    <ListingCard key={listing.id} listing={listing} />
-                  ))}
-                </div>
-              ) : (
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
-                  <ShoppingBag className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                  <p className="text-gray-500 mb-4">
-                    {language === 'vn'
-                      ? 'Chưa có tin đăng nào. Hãy là người đầu tiên!'
-                      : 'No listings yet. Be the first to post!'}
-                  </p>
-                  <Button asChild className="bg-teal-600 hover:bg-teal-700">
-                    <Link href="/rao-vat/dang-tin">
-                      {language === 'vn' ? 'Đăng Tin Ngay' : 'Post Now'}
-                    </Link>
-                  </Button>
-                </div>
-              )}
-            </section>
 
             {/* CTA Banner */}
             <section className="bg-gradient-to-r from-teal-600 to-blue-700 rounded-xl shadow-md p-6 text-white text-center">

@@ -63,11 +63,11 @@ export default function Widgets() {
     fetchWeather();
   }, []);
 
-  // Fetch exchange rate from exchangerate-api (free tier)
+  // Fetch exchange rate from exchangerate-api (free tier, updates daily)
   useEffect(() => {
     const fetchExchangeRate = async () => {
       try {
-        const res = await fetch('https://open.er-api.com/v6/latest/USD');
+        const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
         const data = await res.json();
         if (data.rates?.VND) {
           setExchangeRate({ rate: Math.round(data.rates.VND) });
