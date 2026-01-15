@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 import Providers from '@/components/Providers';
 import Header from '@/components/public/Header';
 import Footer from '@/components/public/Footer';
+import CookieConsent from '@/components/public/CookieConsent';
 
 const inter = Inter({
   subsets: ['latin', 'vietnamese'],
@@ -14,6 +16,9 @@ export const metadata: Metadata = {
   title: {
     default: 'VietHawaii - Cộng đồng Việt Nam tại Hawaii',
     template: '%s | VietHawaii',
+  },
+  other: {
+    'google-adsense-account': 'ca-pub-2908205543829494',
   },
   description:
     'Nền tảng kết nối cộng đồng Việt Nam tại Hawaii. Rao vặt, tin tức, hướng dẫn và công cụ hữu ích.',
@@ -94,12 +99,19 @@ export default function RootLayout({
   return (
     <html lang="vi" suppressHydrationWarning>
       <body className={`${inter.variable} font-sans antialiased`}>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2908205543829494"
+          crossOrigin="anonymous"
+          strategy="beforeInteractive"
+        />
         <Providers>
           <div className="flex min-h-screen flex-col">
             <Header />
             <main className="flex-1">{children}</main>
             <Footer />
           </div>
+          <CookieConsent />
         </Providers>
       </body>
     </html>

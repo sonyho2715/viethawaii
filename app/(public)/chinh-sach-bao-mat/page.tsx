@@ -123,7 +123,31 @@ export default function PrivacyPolicyPage() {
 
         <section className="mb-8">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            7. Cookies
+            7. Quảng cáo (Advertising)
+          </h2>
+          <p className="text-gray-600 mb-4">
+            Website sử dụng Google AdSense để hiển thị quảng cáo. Google và các đối tác quảng cáo có thể:
+          </p>
+          <ul className="list-disc pl-6 text-gray-600 space-y-1">
+            <li>Sử dụng cookies để hiển thị quảng cáo dựa trên lịch sử truy cập của bạn</li>
+            <li>Thu thập dữ liệu ẩn danh về cách bạn tương tác với quảng cáo</li>
+            <li>Hiển thị quảng cáo cá nhân hóa dựa trên sở thích của bạn</li>
+          </ul>
+          <p className="text-gray-600 mt-4">
+            Bạn có thể tắt quảng cáo cá nhân hóa tại:{' '}
+            <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-teal-600 hover:underline">
+              Google Ads Settings
+            </a>
+          </p>
+          <p className="text-gray-500 text-sm italic mt-2">
+            We use Google AdSense to display advertisements. Google and advertising partners may use cookies
+            to serve ads based on your browsing history. You can opt out of personalized advertising at Google Ads Settings.
+          </p>
+        </section>
+
+        <section className="mb-8">
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">
+            8. Cookies
           </h2>
           <p className="text-gray-600 mb-4">
             Website sử dụng cookies để:
@@ -132,6 +156,7 @@ export default function PrivacyPolicyPage() {
             <li>Duy trì phiên đăng nhập</li>
             <li>Lưu tùy chọn ngôn ngữ</li>
             <li>Phân tích lưu lượng truy cập (Google Analytics)</li>
+            <li>Hiển thị quảng cáo phù hợp (Google AdSense)</li>
           </ul>
           <p className="text-gray-600 mt-4">
             Bạn có thể tắt cookies trong cài đặt trình duyệt, nhưng một số tính năng có thể không hoạt động.
@@ -140,7 +165,7 @@ export default function PrivacyPolicyPage() {
 
         <section className="mb-8">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            8. Thay đổi chính sách
+            9. Thay đổi chính sách
           </h2>
           <p className="text-gray-600">
             Chúng tôi có thể cập nhật chính sách này theo thời gian.
@@ -151,7 +176,7 @@ export default function PrivacyPolicyPage() {
 
         <section>
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            9. Liên hệ
+            10. Liên hệ
           </h2>
           <p className="text-gray-600 mb-4">
             Nếu có câu hỏi về chính sách bảo mật, vui lòng liên hệ:

@@ -149,6 +149,11 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/hoi-dap" className="hover:text-white transition-colors">
+                  {language === 'vn' ? 'Hỏi đáp (FAQ)' : 'FAQ'}
+                </Link>
+              </li>
+              <li>
                 <Link href="/quang-cao" className="hover:text-white transition-colors">
                   {t.advertise}
                 </Link>
