@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import {
   Check,
   X,
@@ -176,11 +177,13 @@ export default function PendingListingCard({
           {/* Images */}
           <div>
             {listing.images.length > 0 ? (
-              <div className="relative">
-                <img
+              <div className="relative h-80">
+                <Image
                   src={listing.images[currentImageIndex].imageUrl}
                   alt={listing.title}
-                  className="w-full h-80 object-cover rounded-lg"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover rounded-lg"
                 />
                 {listing.images.length > 1 && (
                   <>
@@ -215,16 +218,18 @@ export default function PendingListingCard({
                   <button
                     key={img.id}
                     onClick={() => setCurrentImageIndex(idx)}
-                    className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 ${
+                    className={`relative flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 ${
                       idx === currentImageIndex
                         ? 'border-teal-500'
                         : 'border-transparent'
                     }`}
                   >
-                    <img
+                    <Image
                       src={img.imageUrl}
-                      alt=""
-                      className="w-full h-full object-cover"
+                      alt={`Thumbnail ${idx + 1}`}
+                      fill
+                      sizes="64px"
+                      className="object-cover"
                     />
                   </button>
                 ))}

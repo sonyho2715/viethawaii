@@ -1,5 +1,6 @@
 import { db } from '@/lib/db';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Search, Filter, ExternalLink, Calendar, PartyPopper, Users, Church, Palette, Briefcase, CalendarDays } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import EventActions from './EventActions';
@@ -173,11 +174,15 @@ export default async function AdminEventsPage({
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       {event.imageUrl ? (
-                        <img
-                          src={event.imageUrl}
-                          alt=""
-                          className="w-12 h-12 rounded-lg object-cover"
-                        />
+                        <div className="relative w-12 h-12 flex-shrink-0">
+                          <Image
+                            src={event.imageUrl}
+                            alt={event.title}
+                            fill
+                            sizes="48px"
+                            className="rounded-lg object-cover"
+                          />
+                        </div>
                       ) : (
                         <div className="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center">
                           <TypeIcon className="h-6 w-6 text-orange-600" />

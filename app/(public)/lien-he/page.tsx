@@ -108,15 +108,18 @@ export default function ContactPage() {
           <form
             onSubmit={handleSubmit}
             className="bg-white rounded-xl border border-gray-200 p-6"
+            aria-label={language === 'vn' ? 'Biểu mẫu liên hệ' : 'Contact form'}
           >
             <div className="grid sm:grid-cols-2 gap-4 mb-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="contact-name" className="block text-sm font-medium text-gray-700 mb-1">
                   {language === 'vn' ? 'Họ tên' : 'Name'} *
                 </label>
                 <input
+                  id="contact-name"
                   type="text"
                   required
+                  aria-required="true"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
@@ -124,12 +127,14 @@ export default function ContactPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="contact-email" className="block text-sm font-medium text-gray-700 mb-1">
                   Email *
                 </label>
                 <input
+                  id="contact-email"
                   type="email"
                   required
+                  aria-required="true"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
@@ -139,11 +144,13 @@ export default function ContactPage() {
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="contact-subject" className="block text-sm font-medium text-gray-700 mb-1">
                 {language === 'vn' ? 'Chủ đề' : 'Subject'} *
               </label>
               <select
+                id="contact-subject"
                 required
+                aria-required="true"
                 value={formData.subject}
                 onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                 className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
@@ -173,11 +180,13 @@ export default function ContactPage() {
             </div>
 
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="contact-message" className="block text-sm font-medium text-gray-700 mb-1">
                 {language === 'vn' ? 'Nội dung' : 'Message'} *
               </label>
               <textarea
+                id="contact-message"
                 required
+                aria-required="true"
                 rows={5}
                 value={formData.message}
                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}

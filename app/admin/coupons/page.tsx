@@ -1,5 +1,6 @@
 import { db } from '@/lib/db';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Search, Filter, ExternalLink, Tag, Store, Percent, DollarSign, Gift } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import CouponActions from './CouponActions';
@@ -183,11 +184,15 @@ export default async function AdminCouponsPage({
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       {coupon.imageUrl ? (
-                        <img
-                          src={coupon.imageUrl}
-                          alt=""
-                          className="w-12 h-12 rounded-lg object-cover"
-                        />
+                        <div className="relative w-12 h-12 flex-shrink-0">
+                          <Image
+                            src={coupon.imageUrl}
+                            alt={coupon.title}
+                            fill
+                            sizes="48px"
+                            className="rounded-lg object-cover"
+                          />
+                        </div>
                       ) : (
                         <div className="w-12 h-12 rounded-lg bg-rose-100 flex items-center justify-center">
                           <TypeIcon className="h-6 w-6 text-rose-600" />

@@ -130,7 +130,7 @@ export default function RegisterPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4" aria-label="Registration form">
             {/* Honeypot field - hidden from users, bots will fill it */}
             <input
               type="text"
@@ -144,7 +144,7 @@ export default function RegisterPage() {
             />
 
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-600">
+              <div role="alert" className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-600">
                 <AlertCircle className="h-4 w-4 flex-shrink-0" />
                 <span className="text-sm">{error}</span>
               </div>
@@ -206,7 +206,7 @@ export default function RegisterPage() {
 
               {/* Password Requirements */}
               {password && (
-                <div className="mt-2 space-y-1 text-xs">
+                <div className="mt-2 space-y-1 text-xs" aria-live="polite" aria-label="Password requirements">
                   <PasswordCheck
                     valid={passwordChecks.length}
                     text={language === 'vn' ? 'Ít nhất 8 ký tự' : 'At least 8 characters'}

@@ -1,5 +1,6 @@
 import { db } from '@/lib/db';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Search, Filter, Eye, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ListingActions from './ListingActions';
@@ -162,11 +163,15 @@ export default async function AdminListingsPage({
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     {listing.images[0] ? (
-                      <img
-                        src={listing.images[0].imageUrl}
-                        alt=""
-                        className="w-12 h-12 rounded-lg object-cover"
-                      />
+                      <div className="relative w-12 h-12 flex-shrink-0">
+                        <Image
+                          src={listing.images[0].imageUrl}
+                          alt={listing.title}
+                          fill
+                          sizes="48px"
+                          className="rounded-lg object-cover"
+                        />
+                      </div>
                     ) : (
                       <div className="w-12 h-12 rounded-lg bg-gray-100 flex items-center justify-center">
                         <Eye className="h-5 w-5 text-gray-400" />
