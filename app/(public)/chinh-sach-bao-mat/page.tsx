@@ -28,7 +28,7 @@ export default function PrivacyPolicyPage() {
             1. Giới thiệu
           </h2>
           <p className="text-gray-600 mb-4">
-            VietHawaii ("chúng tôi", "của chúng tôi") cam kết bảo vệ quyền riêng tư của bạn.
+            VietHawaii (&quot;chúng tôi&quot;, &quot;của chúng tôi&quot;) cam kết bảo vệ quyền riêng tư của bạn.
             Chính sách bảo mật này giải thích cách chúng tôi thu thập, sử dụng, và bảo vệ
             thông tin cá nhân của bạn khi sử dụng website viethawaii.com.
           </p>

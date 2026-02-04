@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -22,7 +22,6 @@ import {
   Bed,
   Bath,
   Square,
-  DollarSign,
   Clock,
   ChevronLeft,
   ChevronRight,
@@ -92,7 +91,6 @@ export default function HousingClient({
     sort: searchParams.sort || 'newest',
   });
 
-  const mainCategories = categories.filter(c => !c.parentId);
   const subCategories = categories.filter(c => c.parentId);
 
   const updateFilters = (key: string, value: string) => {

@@ -124,7 +124,7 @@ const STEPS = [
 export default function PostServiceClient({
   categories,
   neighborhoods,
-  userId,
+  userId: _userId,
 }: PostServiceClientProps) {
   const router = useRouter();
   const { language } = useLanguage();

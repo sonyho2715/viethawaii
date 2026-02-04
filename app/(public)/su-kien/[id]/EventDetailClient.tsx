@@ -167,7 +167,6 @@ export default function EventDetailClient({
 
   const handleShare = (platform: string) => {
     const encodedUrl = encodeURIComponent(shareUrl);
-    const encodedTitle = encodeURIComponent(shareTitle);
 
     switch (platform) {
       case 'facebook':

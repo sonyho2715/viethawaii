@@ -136,7 +136,7 @@ export default function Widgets() {
   };
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [_error, setError] = useState<string | null>(null);
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();

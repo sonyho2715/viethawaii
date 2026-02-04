@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
@@ -65,7 +65,6 @@ export default function SearchClient({
   searchParams,
 }: SearchClientProps) {
   const router = useRouter();
-  const urlSearchParams = useSearchParams();
   const { language } = useLanguage();
   const [showFilters, setShowFilters] = useState(false);
 

@@ -7,7 +7,6 @@ import { useLanguage } from '@/context/LanguageContext';
 
 const HAWAII_TZ = 'Pacific/Honolulu';
 const VIETNAM_TZ = 'Asia/Ho_Chi_Minh';
-const TIME_DIFF_HOURS = 17; // Vietnam is 17 hours ahead of Hawaii
 
 export default function TimezoneConverterPage() {
   const { language } = useLanguage();

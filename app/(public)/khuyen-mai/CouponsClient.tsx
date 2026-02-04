@@ -101,7 +101,7 @@ export default function CouponsClient({
   categories,
   pagination,
   searchParams,
-  isLoggedIn,
+  isLoggedIn: _isLoggedIn,
 }: CouponsClientProps) {
   const router = useRouter();
   const currentSearchParams = useSearchParams();

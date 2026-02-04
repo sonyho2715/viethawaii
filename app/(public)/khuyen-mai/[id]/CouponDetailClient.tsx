@@ -120,7 +120,6 @@ export default function CouponDetailClient({
   const isSoldOut = coupon.maxUses && coupon.usedCount >= coupon.maxUses;
 
   const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
-  const shareTitle = language === 'vn' ? coupon.title : coupon.titleEn || coupon.title;
 
   const handleShare = (platform: string) => {
     const encodedUrl = encodeURIComponent(shareUrl);

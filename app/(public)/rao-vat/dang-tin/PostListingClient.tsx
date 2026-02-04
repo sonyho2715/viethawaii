@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+// RadioGroup components available if needed for price type selection
 import {
   Select,
   SelectContent,
@@ -115,10 +115,10 @@ const STEPS = [
 export default function PostListingClient({
   categories,
   neighborhoods,
-  userId,
+  userId: _userId,
 }: PostListingClientProps) {
   const router = useRouter();
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -141,7 +141,6 @@ export default function PostListingClient({
   // Get main categories and subcategories
   const mainCategories = categories.filter(c => !c.parentId);
   const categoryIdNum = formData.categoryId ? parseInt(formData.categoryId, 10) : null;
-  const selectedMainCategory = categories.find(c => c.id === categoryIdNum);
   const selectedSubCategory = categories.find(c => c.id === categoryIdNum && c.parentId);
   const parentCategory = selectedSubCategory
     ? categories.find(c => c.id === selectedSubCategory.parentId)

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Briefcase, Calculator } from 'lucide-react';
+import { ArrowLeft, Briefcase } from 'lucide-react';
 import { useLanguage } from '@/context/LanguageContext';
 
 // 2026 Federal tax brackets (single filer)

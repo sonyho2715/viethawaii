@@ -119,7 +119,7 @@ const STEPS = [
 export default function PostJobClient({
   categories,
   neighborhoods,
-  userId,
+  userId: _userId,
 }: PostJobClientProps) {
   const router = useRouter();
   const { language } = useLanguage();

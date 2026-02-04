@@ -36,7 +36,6 @@ import {
   Bath,
   Square,
   PawPrint,
-  Zap,
   Calendar,
   Building2,
 } from 'lucide-react';
@@ -132,7 +131,7 @@ const STEPS = [
 export default function PostHousingClient({
   categories,
   neighborhoods,
-  userId,
+  userId: _userId,
 }: PostHousingClientProps) {
   const router = useRouter();
   const { language } = useLanguage();

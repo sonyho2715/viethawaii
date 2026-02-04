@@ -24,6 +24,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
     // Load saved language preference
     const saved = localStorage.getItem(LANGUAGE_KEY) as Language | null;

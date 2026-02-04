@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/context/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -45,7 +44,6 @@ export default function HousingDetailClient({
   relatedListings,
   isOwner,
 }: HousingDetailClientProps) {
-  const router = useRouter();
   const { language } = useLanguage();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showPhone, setShowPhone] = useState(false);
@@ -76,11 +74,6 @@ export default function HousingDetailClient({
     });
   };
 
-  const getBedroomText = (bedrooms: number | null) => {
-    if (bedrooms === null) return null;
-    if (bedrooms === 0) return 'Studio';
-    return `${bedrooms} ${language === 'vn' ? 'phòng ngủ' : 'bedroom'}${bedrooms > 1 && language !== 'vn' ? 's' : ''}`;
-  };
 
   const handlePrint = () => {
     window.print();

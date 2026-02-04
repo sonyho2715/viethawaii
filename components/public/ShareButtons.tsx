@@ -39,7 +39,8 @@ export default function ShareButtons({
   const shareUrl = url || (typeof window !== 'undefined' ? window.location.href : '');
   const encodedUrl = encodeURIComponent(shareUrl);
   const encodedTitle = encodeURIComponent(title);
-  const encodedDescription = encodeURIComponent(description || '');
+  // encodedDescription available for future Twitter/LinkedIn share links
+  const _encodedDescription = encodeURIComponent(description || '');
 
   const shareLinks = [
     {
@@ -88,6 +89,7 @@ export default function ShareButtons({
   const handleShare = (link: typeof shareLinks[0]) => {
     // Try native share first for mobile
     if (link.name === 'Messenger' && /iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+      // eslint-disable-next-line react-hooks/immutability
       window.location.href = link.url;
       // Fallback after delay if app not installed
       setTimeout(() => {

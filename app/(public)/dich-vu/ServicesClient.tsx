@@ -26,12 +26,10 @@ import {
   Filter,
   X,
   Star,
-  Phone,
   Scale,
   Calculator,
   Languages,
   Hammer,
-  User,
 } from 'lucide-react';
 import type { SerializedCategory, SerializedNeighborhood, ListingWithRelations } from '@/components/public/ListingCard';
 
