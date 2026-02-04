@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import { db } from '@/lib/db';
-import { checkRateLimit, getClientIP, RATE_LIMITS } from '@/lib/rate-limit';
+import { checkRateLimit, getClientIP } from '@/lib/rate-limit';
 
 const registerSchema = z.object({
   name: z.string().min(2).max(100),
@@ -19,9 +19,9 @@ const registerSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    // Rate limiting
+    // Rate limiting using Redis in production
     const clientIP = getClientIP(req);
-    const rateLimit = checkRateLimit(`register:${clientIP}`, RATE_LIMITS.register);
+    const rateLimit = await checkRateLimit(clientIP, 'register');
 
     if (!rateLimit.success) {
       const retryAfter = Math.ceil((rateLimit.resetAt - Date.now()) / 1000);

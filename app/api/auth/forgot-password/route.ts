@@ -1,43 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { sendEmail, getPasswordResetEmail } from '@/lib/email';
+import { checkRateLimit, getClientIP } from '@/lib/rate-limit';
 import crypto from 'crypto';
-
-// Rate limiting: Track requests by IP
-const rateLimitMap = new Map<string, { count: number; lastRequest: number }>();
-const RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour
-const MAX_REQUESTS_PER_WINDOW = 3;
-
-function checkRateLimit(ip: string): boolean {
-  const now = Date.now();
-  const record = rateLimitMap.get(ip);
-
-  if (!record || now - record.lastRequest > RATE_LIMIT_WINDOW) {
-    rateLimitMap.set(ip, { count: 1, lastRequest: now });
-    return true;
-  }
-
-  if (record.count >= MAX_REQUESTS_PER_WINDOW) {
-    return false;
-  }
-
-  record.count++;
-  record.lastRequest = now;
-  return true;
-}
 
 export async function POST(request: NextRequest) {
   try {
-    // Get IP for rate limiting
-    const ip = request.headers.get('x-forwarded-for')?.split(',')[0] ||
-               request.headers.get('x-real-ip') ||
-               'unknown';
+    // Rate limiting using Redis in production
+    const ip = getClientIP(request);
+    const rateLimit = await checkRateLimit(ip, 'forgotPassword');
 
-    // Check rate limit
-    if (!checkRateLimit(ip)) {
+    if (!rateLimit.success) {
+      const retryAfter = Math.ceil((rateLimit.resetAt - Date.now()) / 1000);
       return NextResponse.json(
-        { success: false, error: 'Quá nhiều yêu cầu. Vui lòng thử lại sau 1 giờ.' },
-        { status: 429 }
+        { success: false, error: 'Quá nhiều yêu cầu. Vui lòng thử lại sau.' },
+        { status: 429, headers: { 'Retry-After': String(retryAfter) } }
       );
     }
 

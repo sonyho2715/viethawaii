@@ -15,6 +15,7 @@ function getResend(): Resend {
 }
 
 const FROM_EMAIL = process.env.FROM_EMAIL || 'VietHawaii <noreply@viethawaii.com>';
+const REPLY_TO_EMAIL = process.env.REPLY_TO_EMAIL || 'mrsonyho@gmail.com';
 
 interface SendEmailOptions {
   to: string;
@@ -30,6 +31,7 @@ export async function sendEmail({ to, subject, html }: SendEmailOptions) {
       to,
       subject,
       html,
+      replyTo: REPLY_TO_EMAIL,
     });
 
     if (error) {

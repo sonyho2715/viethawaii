@@ -107,7 +107,7 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
 
     // Check authorization
     const isOwner = existingEvent.userId === session.user.id;
-    const isAdmin = session.user.role === 'ADMIN';
+    const isAdmin = session.user.role === 'ADMIN' || session.user.role === 'SUPERADMIN';
 
     if (!isOwner && !isAdmin) {
       return NextResponse.json(
@@ -198,7 +198,7 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
 
     // Check authorization
     const isOwner = existingEvent.userId === session.user.id;
-    const isAdmin = session.user.role === 'ADMIN';
+    const isAdmin = session.user.role === 'ADMIN' || session.user.role === 'SUPERADMIN';
 
     if (!isOwner && !isAdmin) {
       return NextResponse.json(

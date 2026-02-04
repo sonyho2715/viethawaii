@@ -1,6 +1,7 @@
 import NextAuth from 'next-auth';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import Credentials from 'next-auth/providers/credentials';
+import Google from 'next-auth/providers/google';
 import bcrypt from 'bcryptjs';
 import { db } from './db';
 import type { Role } from '@prisma/client';
@@ -25,9 +26,9 @@ declare module 'next-auth' {
 
 declare module '@auth/core/jwt' {
   interface JWT {
-    id: string;
-    role: Role;
-    preferredLang: string;
+    id?: string;
+    role?: Role;
+    preferredLang?: string;
   }
 }
 
@@ -41,6 +42,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     error: '/dang-nhap',
   },
   providers: [
+    // Google OAuth provider
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      allowDangerousEmailAccountLinking: true, // Allow linking to existing accounts
+    }),
+    // Email/password credentials provider
     Credentials({
       name: 'credentials',
       credentials: {
@@ -87,12 +95,60 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async signIn({ user, account }) {
+      // For OAuth sign-ins, update user profile with OAuth data
+      if (account?.provider === 'google' && user.email) {
+        const existingUser = await db.user.findUnique({
+          where: { email: user.email.toLowerCase() },
+        });
+
+        if (existingUser) {
+          // Update user with Google profile data if missing
+          await db.user.update({
+            where: { id: existingUser.id },
+            data: {
+              lastLogin: new Date(),
+              ...(user.name && !existingUser.name ? { name: user.name } : {}),
+              ...(user.image && !existingUser.image ? { image: user.image } : {}),
+            },
+          });
+        }
+      }
+      return true;
+    },
+    async jwt({ token, user, account, trigger }) {
+      // Initial sign-in
       if (user) {
         token.id = user.id as string;
-        token.role = user.role;
-        token.preferredLang = user.preferredLang;
+        token.role = user.role || 'USER';
+        token.preferredLang = user.preferredLang || 'vn';
       }
+
+      // Fetch user data from database for OAuth users
+      if (account?.provider === 'google' && token.email) {
+        const dbUser = await db.user.findUnique({
+          where: { email: token.email.toLowerCase() },
+          select: { id: true, role: true, preferredLang: true },
+        });
+        if (dbUser) {
+          token.id = dbUser.id;
+          token.role = dbUser.role;
+          token.preferredLang = dbUser.preferredLang;
+        }
+      }
+
+      // Refresh user data when session is updated
+      if (trigger === 'update' && token.id) {
+        const dbUser = await db.user.findUnique({
+          where: { id: token.id as string },
+          select: { role: true, preferredLang: true },
+        });
+        if (dbUser) {
+          token.role = dbUser.role;
+          token.preferredLang = dbUser.preferredLang;
+        }
+      }
+
       return token;
     },
     async session({ session, token }) {
@@ -102,6 +158,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.preferredLang = token.preferredLang as string;
       }
       return session;
+    },
+  },
+  events: {
+    // Create user with default role when signing up via OAuth
+    async createUser({ user }) {
+      if (user.id) {
+        await db.user.update({
+          where: { id: user.id },
+          data: {
+            role: 'USER',
+            preferredLang: 'vn',
+          },
+        });
+      }
     },
   },
 });

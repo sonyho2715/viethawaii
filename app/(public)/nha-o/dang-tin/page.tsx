@@ -5,6 +5,9 @@ import { serializeArray } from '@/lib/serialize';
 import PostHousingClient, { type Category, type Neighborhood } from './PostHousingClient';
 import type { Metadata } from 'next';
 
+// Prevent static generation since this page requires authentication
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Đăng tin cho thuê nhà - VietHawaii',
   description: 'Đăng tin cho thuê phòng, căn hộ, nhà nguyên căn trong cộng đồng Việt Hawaii.',

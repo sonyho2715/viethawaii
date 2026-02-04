@@ -5,6 +5,9 @@ import { serializeArray } from '@/lib/serialize';
 import PostServiceClient, { type Category, type Neighborhood } from './PostServiceClient';
 import type { Metadata } from 'next';
 
+// Prevent static generation since this page requires authentication
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Đăng dịch vụ - VietHawaii',
   description: 'Đăng dịch vụ của bạn để tiếp cận cộng đồng Việt Hawaii.',

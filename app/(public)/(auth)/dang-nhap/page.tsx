@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Mail, Lock } from 'lucide-react';
+import { GoogleSignInButton } from './GoogleSignInButton';
 
 interface LoginPageProps {
   searchParams: Promise<{ callbackUrl?: string; error?: string }>;
@@ -15,9 +16,14 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
   const displayError = errorParam === 'CredentialsSignin'
     ? 'Email hoặc mật khẩu không đúng'
-    : errorParam
-      ? 'Đã xảy ra lỗi. Vui lòng thử lại.'
-      : null;
+    : errorParam === 'OAuthAccountNotLinked'
+      ? 'Email này đã được sử dụng với phương thức đăng nhập khác'
+      : errorParam
+        ? 'Đã xảy ra lỗi. Vui lòng thử lại.'
+        : null;
+
+  // Check if Google OAuth is configured
+  const hasGoogleOAuth = !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 px-4">
@@ -29,6 +35,30 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {displayError && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-600">
+              <span className="text-sm">{displayError}</span>
+            </div>
+          )}
+
+          {/* Google Sign-In Button */}
+          {hasGoogleOAuth && (
+            <>
+              <GoogleSignInButton callbackUrl={callbackUrl} />
+
+              <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t border-gray-300" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-white px-2 text-gray-500">
+                    hoặc đăng nhập với email
+                  </span>
+                </div>
+              </div>
+            </>
+          )}
+
           <form action="/api/auth/login" method="POST" className="space-y-4">
             <input type="hidden" name="callbackUrl" value={callbackUrl} />
             {/* Honeypot field - hidden from users, bots will fill it */}
@@ -41,12 +71,6 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
               aria-hidden="true"
             />
 
-            {displayError && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-600">
-                <span className="text-sm">{displayError}</span>
-              </div>
-            )}
-
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <div className="relative">
@@ -58,6 +82,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
                   placeholder="your@email.com"
                   className="pl-10"
                   required
+                  autoComplete="email"
                 />
               </div>
             </div>
@@ -81,6 +106,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
                   placeholder="••••••••"
                   className="pl-10"
                   required
+                  autoComplete="current-password"
                 />
               </div>
             </div>

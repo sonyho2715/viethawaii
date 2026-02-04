@@ -44,6 +44,10 @@ model User {
   couponClaims    CouponClaim[]
   notifications   Notification[]  @relation("NotificationRecipient")
   actedNotifications Notification[] @relation("NotificationActor")
+
+  @@index([email])
+  @@index([role])
+  @@index([createdAt(sort: Desc)])
 }
 
 model Account {
@@ -350,6 +354,9 @@ enum ArticleStatus {
   SCHEDULED
   ARCHIVED
 }
+
+// Additional indexes for Article performance
+// Note: Main indexes are defined in the Article model above
 
 // ==================== SAVED ITEMS ====================
 

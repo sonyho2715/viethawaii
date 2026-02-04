@@ -5,6 +5,9 @@ import { serializeArray } from '@/lib/serialize';
 import PostJobClient, { type Category, type Neighborhood } from './PostJobClient';
 import type { Metadata } from 'next';
 
+// Prevent static generation since this page requires authentication
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Đăng tin tuyển dụng - VietHawaii',
   description: 'Đăng tin tuyển dụng miễn phí. Tìm nhân viên trong cộng đồng Việt Hawaii.',

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
-import { checkRateLimit, getClientIP, RATE_LIMITS } from '@/lib/rate-limit';
+import { checkRateLimit, getClientIP } from '@/lib/rate-limit';
 
 const createListingSchema = z.object({
   categoryId: z.number().int(),
@@ -22,9 +22,9 @@ const createListingSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    // Rate limiting
+    // Rate limiting using Redis in production
     const clientIP = getClientIP(req);
-    const rateLimit = checkRateLimit(`listing:${clientIP}`, RATE_LIMITS.createListing);
+    const rateLimit = await checkRateLimit(clientIP, 'createListing');
 
     if (!rateLimit.success) {
       const retryAfter = Math.ceil((rateLimit.resetAt - Date.now()) / 1000);

@@ -5,6 +5,9 @@ import { serializeArray } from '@/lib/serialize';
 import PostEventClient, { type Neighborhood } from './PostEventClient';
 import type { Metadata } from 'next';
 
+// Prevent static generation since this page requires authentication
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Đăng sự kiện - VietHawaii',
   description: 'Đăng sự kiện để chia sẻ với cộng đồng Việt Hawaii.',

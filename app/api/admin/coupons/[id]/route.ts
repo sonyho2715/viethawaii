@@ -10,10 +10,10 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
   try {
     const session = await auth();
 
-    if (!session?.user?.id || session.user.role !== 'ADMIN') {
+    if (!session?.user?.id || (session.user.role !== 'ADMIN' && session.user.role !== 'SUPERADMIN')) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
+        { error: 'Forbidden' },
+        { status: 403 }
       );
     }
 
@@ -49,10 +49,10 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
   try {
     const session = await auth();
 
-    if (!session?.user?.id || session.user.role !== 'ADMIN') {
+    if (!session?.user?.id || (session.user.role !== 'ADMIN' && session.user.role !== 'SUPERADMIN')) {
       return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
+        { error: 'Forbidden' },
+        { status: 403 }
       );
     }
 

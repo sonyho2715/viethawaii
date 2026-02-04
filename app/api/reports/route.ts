@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { db } from '@/lib/db';
 import { z } from 'zod';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 const reportSchema = z.object({
   itemType: z.enum(['LISTING', 'ARTICLE', 'USER']),
@@ -9,29 +10,6 @@ const reportSchema = z.object({
   reason: z.string().min(1).max(50),
   details: z.string().max(500).optional(),
 });
-
-// Rate limiting
-const rateLimitMap = new Map<string, { count: number; lastRequest: number }>();
-const RATE_LIMIT_WINDOW = 60 * 60 * 1000; // 1 hour
-const MAX_REPORTS_PER_WINDOW = 10;
-
-function checkRateLimit(userId: string): boolean {
-  const now = Date.now();
-  const record = rateLimitMap.get(userId);
-
-  if (!record || now - record.lastRequest > RATE_LIMIT_WINDOW) {
-    rateLimitMap.set(userId, { count: 1, lastRequest: now });
-    return true;
-  }
-
-  if (record.count >= MAX_REPORTS_PER_WINDOW) {
-    return false;
-  }
-
-  record.count++;
-  record.lastRequest = now;
-  return true;
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -44,11 +22,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check rate limit
-    if (!checkRateLimit(session.user.id)) {
+    // Rate limiting using Redis in production (keyed by user ID for reports)
+    const rateLimit = await checkRateLimit(`report:${session.user.id}`, 'api');
+
+    if (!rateLimit.success) {
+      const retryAfter = Math.ceil((rateLimit.resetAt - Date.now()) / 1000);
       return NextResponse.json(
         { success: false, error: 'Too many reports. Please try again later.' },
-        { status: 429 }
+        { status: 429, headers: { 'Retry-After': String(retryAfter) } }
       );
     }
 

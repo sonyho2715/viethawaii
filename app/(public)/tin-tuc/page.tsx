@@ -8,8 +8,8 @@ export const metadata: Metadata = {
   description: 'Tin tức và hướng dẫn hữu ích cho cộng đồng Việt Nam tại Hawaii.',
 };
 
-// Revalidate every 60 seconds
-export const revalidate = 60;
+// Force dynamic rendering since this page uses searchParams
+export const dynamic = 'force-dynamic';
 
 interface PageProps {
   searchParams: Promise<{ category?: string }>;

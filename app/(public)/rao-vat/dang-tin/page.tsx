@@ -5,6 +5,9 @@ import { serializeArray } from '@/lib/serialize';
 import PostListingClient, { type Category, type Neighborhood } from './PostListingClient';
 import type { Metadata } from 'next';
 
+// Prevent static generation since this page requires authentication
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Đăng tin - VietHawaii',
   description: 'Đăng tin rao vặt miễn phí. Bán đồ, tìm việc, cho thuê nhà và nhiều hơn nữa.',

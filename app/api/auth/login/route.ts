@@ -3,12 +3,12 @@
 import { signIn } from '@/lib/auth';
 import { AuthError } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
-import { checkRateLimit, getClientIP, RATE_LIMITS } from '@/lib/rate-limit';
+import { checkRateLimit, getClientIP } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
-  // Rate limiting
+  // Rate limiting using Redis in production
   const clientIP = getClientIP(request);
-  const rateLimit = checkRateLimit(`login:${clientIP}`, RATE_LIMITS.login);
+  const rateLimit = await checkRateLimit(clientIP, 'login');
 
   if (!rateLimit.success) {
     const retryAfter = Math.ceil((rateLimit.resetAt - Date.now()) / 1000);
