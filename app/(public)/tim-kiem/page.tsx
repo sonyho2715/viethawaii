@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import { db } from '@/lib/db';
+import { serializeArray } from '@/lib/serialize';
 import SearchClient from './SearchClient';
 import type { Metadata } from 'next';
 
@@ -141,9 +142,9 @@ export default async function SearchPage({ searchParams }: PageProps) {
   return (
     <Suspense fallback={<SearchLoadingSkeleton />}>
       <SearchClient
-        categories={categories}
-        neighborhoods={neighborhoods}
-        listings={listings}
+        categories={serializeArray(categories)}
+        neighborhoods={serializeArray(neighborhoods)}
+        listings={serializeArray(listings)}
         pagination={pagination}
         searchParams={params}
       />
