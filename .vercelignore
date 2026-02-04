@@ -1,0 +1,12 @@
+# Ignore local environment files
+.env
+.env.local
+.env.development
+.env.production
+
+# Ignore test files for production
+__tests__
+e2e
+*.test.ts
+*.test.tsx
+*.spec.ts

@@ -4,7 +4,8 @@ import { Resend } from 'resend';
 import { db } from '@/lib/db';
 import { checkRateLimit, getClientIP } from '@/lib/rate-limit';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Initialize Resend only if API key is available
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 const subscribeSchema = z.object({
   email: z.string().email('Email không hợp lệ'),
@@ -62,7 +63,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Add to Resend audience (if configured)
-    if (process.env.RESEND_AUDIENCE_ID) {
+    if (resend && process.env.RESEND_AUDIENCE_ID) {
       try {
         await resend.contacts.create({
           email: normalizedEmail,
@@ -74,9 +75,10 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Send welcome email
-    try {
-      await resend.emails.send({
+    // Send welcome email (only if Resend is configured)
+    if (resend) {
+      try {
+        await resend.emails.send({
         from: process.env.FROM_EMAIL || 'VietHawaii <noreply@viethawaii.com>',
         to: normalizedEmail,
         subject: 'Chào mừng bạn đến với VietHawaii! 🌺',
@@ -117,9 +119,10 @@ export async function POST(request: NextRequest) {
           </div>
         `,
       });
-    } catch (error) {
-      console.error('Failed to send welcome email:', error);
-      // Don't fail the request if email fails
+      } catch (error) {
+        console.error('Failed to send welcome email:', error);
+        // Don't fail the request if email fails
+      }
     }
 
     return NextResponse.json({
