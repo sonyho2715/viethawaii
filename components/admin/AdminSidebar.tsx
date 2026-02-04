@@ -67,8 +67,20 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
         {menuItems.map((item) => {
-          const isActive = pathname === item.href ||
-            (item.href !== '/admin' && pathname.startsWith(item.href));
+          // Check if another menu item is a more specific match
+          const hasMoreSpecificMatch = menuItems.some(
+            (other) =>
+              other.href !== item.href &&
+              other.href.startsWith(item.href) &&
+              pathname.startsWith(other.href)
+          );
+
+          // Active if exact match, or starts with href (for child pages) and no more specific match
+          const isActive =
+            pathname === item.href ||
+            (!hasMoreSpecificMatch &&
+              item.href !== '/admin' &&
+              pathname.startsWith(item.href + '/'));
 
           return (
             <Link
