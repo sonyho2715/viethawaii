@@ -176,6 +176,8 @@ export default function NotificationBell() {
         onClick={() => setIsOpen(!isOpen)}
         className="p-2 text-gray-400 hover:text-gray-600 relative transition-colors"
         aria-label={language === 'vn' ? 'Thông báo' : 'Notifications'}
+        aria-expanded={isOpen}
+        aria-haspopup="true"
       >
         <Bell size={20} />
         {unreadCount > 0 && (
@@ -266,6 +268,7 @@ export default function NotificationBell() {
                         <button
                           onClick={(e) => deleteNotification(notification.id, e)}
                           className="p-1 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                          aria-label={language === 'vn' ? 'Xóa thông báo' : 'Delete notification'}
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>

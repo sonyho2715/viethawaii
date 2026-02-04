@@ -143,6 +143,9 @@ export const translations = {
     description_required: 'Vui lòng nhập mô tả',
 
     // Messages
+    saved_successfully: 'Đã lưu thành công',
+    something_went_wrong: 'Có lỗi xảy ra',
+    password_changed: 'Đã đổi mật khẩu thành công',
     login_success: 'Đăng nhập thành công!',
     login_error: 'Email hoặc mật khẩu không đúng',
     register_success: 'Đăng ký thành công!',
@@ -323,6 +326,9 @@ export const translations = {
     description_required: 'Please enter a description',
 
     // Messages
+    saved_successfully: 'Saved successfully',
+    something_went_wrong: 'Something went wrong',
+    password_changed: 'Password changed successfully',
     login_success: 'Login successful!',
     login_error: 'Invalid email or password',
     register_success: 'Registration successful!',

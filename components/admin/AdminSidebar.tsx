@@ -87,6 +87,7 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
               key={item.href}
               href={item.href}
               onClick={() => setIsMobileMenuOpen(false)}
+              aria-current={isActive ? 'page' : undefined}
               className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
                 isActive
                   ? 'bg-teal-600 text-white'
@@ -143,7 +144,8 @@ export default function AdminSidebar({ user }: AdminSidebarProps) {
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           className="p-2 text-gray-400 hover:text-white transition-colors"
-          aria-label="Toggle menu"
+          aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={isMobileMenuOpen}
         >
           {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>

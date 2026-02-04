@@ -106,7 +106,8 @@ export default function AccountSidebar({ user }: AccountSidebarProps) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                  aria-current={isActive ? 'page' : undefined}
+                  className={`flex items-center gap-3 px-3 py-2.5 min-h-[44px] rounded-lg transition-colors ${
                     isActive
                       ? 'bg-red-50 text-red-600'
                       : 'text-gray-700 hover:bg-gray-100'
@@ -120,7 +121,7 @@ export default function AccountSidebar({ user }: AccountSidebarProps) {
 
             <button
               onClick={handleSignOut}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+              className="w-full flex items-center gap-3 px-3 py-2.5 min-h-[44px] rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
             >
               <LogOut className="h-5 w-5" />
               <span>{language === 'vn' ? 'Đăng xuất' : 'Sign Out'}</span>
