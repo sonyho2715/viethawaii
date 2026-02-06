@@ -10,10 +10,10 @@ const protectedRoutes = [
 // Routes that require admin role
 const adminRoutes = ['/admin'];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Skip middleware for static assets and API routes
+  // Skip proxy for static assets and API routes
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
