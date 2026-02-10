@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
-import { Sun, Cloud, CloudRain, DollarSign, TrendingUp, Mail, Loader2, Clock } from 'lucide-react';
+import { Sun, Cloud, CloudRain, CloudSnow, DollarSign, TrendingUp, Mail, Loader2, Clock, Droplets, Wind, CheckCircle, Shield } from 'lucide-react';
 import Link from 'next/link';
 
 const TRENDING_TOPICS = [
@@ -12,17 +12,16 @@ const TRENDING_TOPICS = [
   { tag: '#ViecLam', labelVn: 'Việc làm', labelEn: 'Jobs' },
 ];
 
-// Honolulu coordinates
-const HONOLULU_LAT = 21.3069;
-const HONOLULU_LON = -157.8583;
-
 interface WeatherData {
   temp: number;
   weatherCode: number;
+  humidity: number;
+  windSpeed: number;
 }
 
 interface ExchangeData {
   rate: number;
+  lastUpdated: string;
 }
 
 interface TimeData {
@@ -39,20 +38,17 @@ export default function Widgets() {
   const [loadingWeather, setLoadingWeather] = useState(true);
   const [loadingExchange, setLoadingExchange] = useState(true);
   const [times, setTimes] = useState<TimeData | null>(null);
+  const [weatherFetchedAt, setWeatherFetchedAt] = useState<Date | null>(null);
 
-  // Fetch weather data from Open-Meteo (free, no API key)
+  // Fetch weather from local API proxy
   useEffect(() => {
     const fetchWeather = async () => {
       try {
-        const res = await fetch(
-          `https://api.open-meteo.com/v1/forecast?latitude=${HONOLULU_LAT}&longitude=${HONOLULU_LON}&current=temperature_2m,weather_code&temperature_unit=fahrenheit&timezone=Pacific%2FHonolulu`
-        );
+        const res = await fetch('/api/weather');
         const data = await res.json();
-        if (data.current) {
-          setWeather({
-            temp: Math.round(data.current.temperature_2m),
-            weatherCode: data.current.weather_code,
-          });
+        if (data.success && data.data) {
+          setWeather(data.data);
+          setWeatherFetchedAt(new Date());
         }
       } catch (error) {
         console.error('Weather fetch error:', error);
@@ -63,14 +59,14 @@ export default function Widgets() {
     fetchWeather();
   }, []);
 
-  // Fetch exchange rate from exchangerate-api (free tier, updates daily)
+  // Fetch exchange rate from local API proxy
   useEffect(() => {
     const fetchExchangeRate = async () => {
       try {
-        const res = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+        const res = await fetch('/api/exchange-rate');
         const data = await res.json();
-        if (data.rates?.VND) {
-          setExchangeRate({ rate: Math.round(data.rates.VND) });
+        if (data.success && data.data) {
+          setExchangeRate(data.data);
         }
       } catch (error) {
         console.error('Exchange rate fetch error:', error);
@@ -85,9 +81,7 @@ export default function Widgets() {
   useEffect(() => {
     const updateTimes = () => {
       const now = new Date();
-      // Hawaii time (UTC-10)
       const hawaiiTime = new Date(now.toLocaleString('en-US', { timeZone: 'Pacific/Honolulu' }));
-      // Vietnam time (UTC+7)
       const vietnamTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' }));
       setTimes({ hawaii: hawaiiTime, vietnam: vietnamTime });
     };
@@ -96,7 +90,6 @@ export default function Widgets() {
     return () => clearInterval(interval);
   }, []);
 
-  // Format time as HH:MM:SS AM/PM
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('en-US', {
       hour: '2-digit',
@@ -106,33 +99,62 @@ export default function Widgets() {
     });
   };
 
-  // Format date for Hawaii (English)
   const formatDateEn = (date: Date) => {
     return date.toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
+      weekday: 'short',
+      month: 'short',
       day: 'numeric',
-      year: 'numeric',
     });
   };
 
-  // Format date for Vietnam (Vietnamese)
   const formatDateVn = (date: Date) => {
-    const weekdays = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+    const weekdays = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
     const day = date.getDate();
     const month = date.getMonth() + 1;
-    const year = date.getFullYear();
     const weekday = weekdays[date.getDay()];
-    return `${weekday}, ${day} tháng ${month}, ${year}`;
+    return `${weekday}, ${day}/${month}`;
   };
 
-  // Get weather icon based on WMO weather code
+  // Get "X min ago" for weather freshness
+  const getWeatherAge = () => {
+    if (!weatherFetchedAt) return '';
+    const diffMs = Date.now() - weatherFetchedAt.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    if (diffMins < 1) return language === 'vn' ? 'Vừa cập nhật' : 'Just now';
+    return language === 'vn' ? `${diffMins} phút trước` : `${diffMins}m ago`;
+  };
+
+  // Get weather description text
+  const getWeatherDesc = (code: number) => {
+    if (code === 0) return language === 'vn' ? 'Trời nắng' : 'Clear sky';
+    if (code === 1) return language === 'vn' ? 'Ít mây' : 'Mostly clear';
+    if (code === 2) return language === 'vn' ? 'Có mây' : 'Partly cloudy';
+    if (code === 3) return language === 'vn' ? 'Nhiều mây' : 'Overcast';
+    if (code >= 51 && code <= 55) return language === 'vn' ? 'Mưa phùn' : 'Drizzle';
+    if (code >= 61 && code <= 67) return language === 'vn' ? 'Mưa' : 'Rain';
+    if (code >= 80 && code <= 82) return language === 'vn' ? 'Mưa rào' : 'Showers';
+    return language === 'vn' ? 'Nắng đẹp' : 'Fair';
+  };
+
   const getWeatherIcon = (code: number) => {
-    if (code === 0 || code === 1) return <Sun size={24} className="mb-1" />;
-    if (code >= 2 && code <= 3) return <Cloud size={24} className="mb-1" />;
-    if (code >= 51 && code <= 67) return <CloudRain size={24} className="mb-1" />;
-    if (code >= 80 && code <= 82) return <CloudRain size={24} className="mb-1" />;
-    return <Sun size={24} className="mb-1" />;
+    if (code === 0 || code === 1) return <Sun size={28} className="text-yellow-300" />;
+    if (code >= 2 && code <= 3) return <Cloud size={28} className="text-white/80" />;
+    if (code >= 51 && code <= 67) return <CloudRain size={28} className="text-blue-200" />;
+    if (code >= 80 && code <= 82) return <CloudRain size={28} className="text-blue-200" />;
+    if (code >= 71 && code <= 77) return <CloudSnow size={28} className="text-white" />;
+    return <Sun size={28} className="text-yellow-300" />;
+  };
+
+  // Call-time indicator for timezone widget
+  const getCallIndicator = (hawaiiDate: Date) => {
+    const hour = hawaiiDate.getHours();
+    if (hour >= 8 && hour < 18) {
+      return { text: language === 'vn' ? 'Giờ tốt để gọi' : 'Good time to call', color: 'text-emerald-400' };
+    }
+    if (hour >= 18 && hour < 22) {
+      return { text: language === 'vn' ? 'Giờ tối' : 'Evening', color: 'text-amber-400' };
+    }
+    return { text: language === 'vn' ? 'Đang ngủ' : 'Sleeping hours', color: 'text-red-400' };
   };
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -169,75 +191,134 @@ export default function Widgets() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Weather & Exchange Rate */}
-      <div className="grid grid-cols-2 gap-3">
-        {/* Weather Widget - Live from Open-Meteo */}
-        <div className="bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl p-3 text-white shadow-sm">
-          {loadingWeather ? (
-            <Loader2 size={24} className="mb-1 animate-spin" />
-          ) : weather ? (
-            getWeatherIcon(weather.weatherCode)
-          ) : (
-            <Sun size={24} className="mb-1" />
+    <div className="space-y-5">
+      {/* Weather Widget */}
+      <div className="bg-gradient-to-br from-sky-500 via-blue-500 to-indigo-600 rounded-2xl p-4 text-white shadow-lg overflow-hidden relative">
+        <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full -translate-y-6 translate-x-6" />
+        <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/5 rounded-full translate-y-4 -translate-x-4" />
+        <div className="relative">
+          <div className="flex items-start justify-between mb-3">
+            <div>
+              <p className="text-xs font-medium text-white/70 uppercase tracking-wider">Honolulu, HI</p>
+              {loadingWeather ? (
+                <div className="flex items-center gap-2 mt-1">
+                  <Loader2 size={20} className="animate-spin" />
+                  <span className="text-sm text-white/70">Loading...</span>
+                </div>
+              ) : weather ? (
+                <div className="mt-1">
+                  <span className="text-4xl font-bold tracking-tight">{weather.temp}°F</span>
+                  <p className="text-sm text-white/80 mt-0.5">{getWeatherDesc(weather.weatherCode)}</p>
+                </div>
+              ) : (
+                <span className="text-4xl font-bold">--°F</span>
+              )}
+            </div>
+            <div className="mt-1">
+              {loadingWeather ? (
+                <Loader2 size={28} className="animate-spin text-white/50" />
+              ) : weather ? (
+                getWeatherIcon(weather.weatherCode)
+              ) : (
+                <Sun size={28} className="text-yellow-300" />
+              )}
+            </div>
+          </div>
+          {weather && (
+            <div className="flex items-center gap-4 text-xs text-white/70 border-t border-white/10 pt-2">
+              <span className="flex items-center gap-1">
+                <Droplets size={12} />
+                {weather.humidity}%
+              </span>
+              <span className="flex items-center gap-1">
+                <Wind size={12} />
+                {weather.windSpeed} mph
+              </span>
+              {weatherFetchedAt && (
+                <span className="ml-auto">{getWeatherAge()}</span>
+              )}
+            </div>
           )}
-          <div className="flex flex-col">
-            <span className="text-2xl font-bold">
-              {loadingWeather ? '...' : weather ? `${weather.temp}°F` : '82°F'}
-            </span>
-            <span className="text-xs opacity-90">Honolulu</span>
-          </div>
         </div>
+      </div>
 
-        {/* Exchange Rate Widget - Live from ExchangeRate API */}
-        <div className="bg-gradient-to-br from-green-500 to-teal-600 rounded-xl p-3 text-white shadow-sm">
-          <DollarSign size={24} className="mb-1" />
-          <div className="flex flex-col">
-            <span className="text-sm font-bold">
-              {loadingExchange ? '...' : exchangeRate ? `$1 = ${exchangeRate.rate.toLocaleString()}₫` : '$1 = 25,000₫'}
-            </span>
-            <span className="text-xs opacity-90">
-              {language === 'vn' ? 'Tỷ giá' : 'Live Rate'}
-            </span>
+      {/* Exchange Rate Widget */}
+      <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-4 text-white shadow-lg relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-20 h-20 bg-white/5 rounded-full -translate-y-4 translate-x-4" />
+        <div className="relative">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-8 h-8 bg-white/15 rounded-lg flex items-center justify-center">
+              <DollarSign size={18} />
+            </div>
+            <div>
+              <p className="text-xs font-medium text-white/70 uppercase tracking-wider">USD / VND</p>
+            </div>
           </div>
+          {loadingExchange ? (
+            <div className="flex items-center gap-2">
+              <Loader2 size={16} className="animate-spin" />
+              <span className="text-sm text-white/70">Loading...</span>
+            </div>
+          ) : exchangeRate ? (
+            <div>
+              <p className="text-xl font-bold">
+                $1 = {exchangeRate.rate.toLocaleString()}₫
+              </p>
+              <div className="flex items-center justify-between mt-1">
+                <p className="text-xs text-white/60">
+                  1,000,000₫ = ${(1000000 / exchangeRate.rate).toFixed(2)}
+                </p>
+                <Link
+                  href="/cong-cu/doi-tien"
+                  className="text-xs text-white/80 underline underline-offset-2 hover:text-white"
+                >
+                  {language === 'vn' ? 'Đổi tiền' : 'Convert'}
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <p className="text-xl font-bold">$1 = 25,000₫</p>
+          )}
         </div>
       </div>
 
       {/* Time Zone Widget */}
       <Link href="/cong-cu/gio-viet-nam" className="block">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-shadow">
-          <div className="flex flex-col items-center mb-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center mb-2">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 hover:shadow-md transition-all group">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center shadow-sm">
               <Clock size={20} className="text-white" />
             </div>
-            <h3 className="font-bold text-gray-800">
-              {language === 'vn' ? 'Giờ Việt Nam' : 'Vietnam Time'}
-            </h3>
-            <p className="text-xs text-gray-500">
-              {language === 'vn' ? 'So sánh giờ Hawaii và Việt Nam' : 'Compare Hawaii & Vietnam time'}
-            </p>
+            <div>
+              <h3 className="font-bold text-gray-800 text-sm">
+                {language === 'vn' ? 'Giờ Việt Nam' : 'Vietnam Time'}
+              </h3>
+              {times && (
+                <p className={`text-xs ${getCallIndicator(times.hawaii).color}`}>
+                  {getCallIndicator(times.hawaii).text}
+                </p>
+              )}
+            </div>
           </div>
 
           {times && (
             <div className="grid grid-cols-2 gap-2">
-              {/* Hawaii Time */}
-              <div className="bg-gradient-to-br from-blue-400 to-cyan-500 rounded-lg p-3 text-white">
-                <div className="flex items-center gap-1 mb-1">
-                  <Sun size={12} />
-                  <span className="text-xs font-medium">Hawaii (HST)</span>
+              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-3 border border-blue-100/50">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <span className="text-lg">🌺</span>
+                  <span className="text-[10px] font-semibold text-blue-600 uppercase tracking-wider">Hawaii</span>
                 </div>
-                <div className="text-lg font-bold">{formatTime(times.hawaii)}</div>
-                <div className="text-[10px] opacity-80 truncate">{formatDateEn(times.hawaii)}</div>
+                <div className="text-lg font-bold text-gray-900">{formatTime(times.hawaii)}</div>
+                <div className="text-[10px] text-gray-500">{formatDateEn(times.hawaii)}</div>
               </div>
 
-              {/* Vietnam Time */}
-              <div className="bg-gradient-to-br from-orange-400 to-red-500 rounded-lg p-3 text-white">
-                <div className="flex items-center gap-1 mb-1">
-                  <Sun size={12} />
-                  <span className="text-xs font-medium">Việt Nam (ICT)</span>
+              <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-3 border border-red-100/50">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <span className="text-lg">🇻🇳</span>
+                  <span className="text-[10px] font-semibold text-red-600 uppercase tracking-wider">Việt Nam</span>
                 </div>
-                <div className="text-lg font-bold">{formatTime(times.vietnam)}</div>
-                <div className="text-[10px] opacity-80 truncate">{formatDateVn(times.vietnam)}</div>
+                <div className="text-lg font-bold text-gray-900">{formatTime(times.vietnam)}</div>
+                <div className="text-[10px] text-gray-500">{formatDateVn(times.vietnam)}</div>
               </div>
             </div>
           )}
@@ -245,8 +326,8 @@ export default function Widgets() {
       </Link>
 
       {/* Trending Topics */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-        <h3 className="font-semibold text-gray-800 mb-3 flex items-center">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4">
+        <h3 className="font-semibold text-gray-800 mb-3 flex items-center text-sm">
           <TrendingUp size={16} className="mr-2 text-teal-600" />
           {language === 'vn' ? 'Chủ Đề Hot' : 'Trending Topics'}
         </h3>
@@ -257,7 +338,7 @@ export default function Widgets() {
               onClick={() => {
                 window.location.href = `/tim-kiem?q=${encodeURIComponent(topic.tag)}`;
               }}
-              className="bg-gray-100 text-gray-600 text-xs px-3 py-1.5 rounded-full hover:bg-teal-50 hover:text-teal-600 cursor-pointer transition-colors"
+              className="bg-gray-50 text-gray-600 text-xs px-3 py-1.5 rounded-full hover:bg-teal-50 hover:text-teal-600 cursor-pointer transition-all hover:shadow-sm border border-transparent hover:border-teal-100"
             >
               {topic.tag}
             </button>
@@ -266,34 +347,53 @@ export default function Widgets() {
       </div>
 
       {/* Newsletter Signup */}
-      <div className="bg-gradient-to-br from-teal-600 to-blue-700 rounded-xl shadow-md p-5 text-white">
-        <h3 className="font-bold text-lg mb-2 flex items-center">
-          <Mail size={20} className="mr-2" />
-          {language === 'vn' ? 'Nhận bản tin' : 'Newsletter'}
-        </h3>
-        <p className="text-teal-100 text-sm mb-3">
-          {language === 'vn'
-            ? 'Đăng ký nhận thông tin mới nhất về việc làm và nhà ở.'
-            : 'Subscribe for the latest jobs and housing updates.'}
-        </p>
-        <form onSubmit={handleSubscribe}>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder={language === 'vn' ? 'Nhập email của bạn' : 'Enter your email'}
-            className="w-full px-3 py-2 rounded-lg text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50 mb-2"
-            required
-          />
-          <button
-            type="submit"
-            className="w-full py-2 bg-white text-teal-700 rounded-lg text-sm font-bold hover:bg-teal-50 transition-colors"
-          >
-            {subscribed
-              ? (language === 'vn' ? 'Đã đăng ký!' : 'Subscribed!')
-              : (language === 'vn' ? 'Đăng Ký' : 'Subscribe')}
-          </button>
-        </form>
+      <div className="bg-gradient-to-br from-teal-600 via-teal-700 to-blue-800 rounded-2xl shadow-lg p-5 text-white relative overflow-hidden">
+        <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-white/5 rounded-full" />
+        <div className="relative">
+          <h3 className="font-bold text-lg mb-1 flex items-center">
+            <Mail size={20} className="mr-2" />
+            {language === 'vn' ? 'Nhận bản tin' : 'Newsletter'}
+          </h3>
+          <p className="text-teal-100 text-sm mb-3">
+            {language === 'vn'
+              ? 'Đăng ký nhận thông tin mới nhất về việc làm và nhà ở.'
+              : 'Subscribe for the latest jobs and housing updates.'}
+          </p>
+          {subscribed ? (
+            <div className="flex items-center gap-2 py-3 text-emerald-200 animate-scale-in">
+              <CheckCircle size={20} />
+              <span className="font-medium">
+                {language === 'vn' ? 'Đã đăng ký thành công!' : 'Successfully subscribed!'}
+              </span>
+            </div>
+          ) : (
+            <form onSubmit={handleSubscribe}>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder={language === 'vn' ? 'Nhập email của bạn' : 'Enter your email'}
+                className="w-full px-4 py-2.5 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50 mb-2 text-sm"
+                required
+              />
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full py-2.5 bg-white text-teal-700 rounded-xl text-sm font-bold hover:bg-teal-50 transition-colors disabled:opacity-60"
+              >
+                {isSubmitting ? (
+                  <Loader2 size={16} className="animate-spin mx-auto" />
+                ) : (
+                  language === 'vn' ? 'Đăng Ký' : 'Subscribe'
+                )}
+              </button>
+            </form>
+          )}
+          <p className="text-[10px] text-white/40 mt-2 flex items-center gap-1">
+            <Shield size={10} />
+            {language === 'vn' ? 'Không spam. Hủy bất cứ lúc nào.' : 'No spam. Unsubscribe anytime.'}
+          </p>
+        </div>
       </div>
     </div>
   );

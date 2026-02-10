@@ -3,8 +3,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useLanguage } from '@/context/LanguageContext';
-import { MapPin, ShoppingBag } from 'lucide-react';
-// Serialized types for client components (Decimal → number, Date → string)
+import { MapPin, ShoppingBag, Eye, Bookmark, Sparkles } from 'lucide-react';
+
+// Serialized types for client components (Decimal -> number, Date -> string)
 export interface SerializedNeighborhood {
   id: number;
   slug: string;
@@ -77,24 +78,19 @@ export interface ListingWithRelations {
   _count?: {
     savedBy: number;
   };
-  // Listing type
   listingType?: string;
-  // Job-specific fields
   jobType?: string | null;
   salary?: string | null;
   benefits?: string | null;
-  // Housing-specific fields
   bedrooms?: number | null;
   bathrooms?: number | null;
   sqft?: number | null;
   petFriendly?: boolean | null;
   utilities?: string | null;
   moveInDate?: string | null;
-  // Service-specific fields
   serviceArea?: string | null;
   availability?: string | null;
   experience?: string | null;
-  // Extended relations (optional)
   neighborhood?: {
     id: number;
     nameVn: string;
@@ -117,13 +113,24 @@ interface ListingCardProps {
   variant?: 'default' | 'compact' | 'horizontal';
 }
 
+// Category color map for badges
+const CATEGORY_COLORS: Record<string, string> = {
+  'nha-o': 'bg-blue-500',
+  'viec-lam': 'bg-emerald-500',
+  'cho-troi': 'bg-amber-500',
+  'dich-vu': 'bg-purple-500',
+  'cong-dong': 'bg-pink-500',
+  'xe-co': 'bg-orange-500',
+  'am-thuc': 'bg-red-500',
+};
+
 export default function ListingCard({ listing, variant = 'default' }: ListingCardProps) {
   const { t, language } = useLanguage();
   const primaryImage = listing.images.find(img => img.isPrimary) || listing.images[0];
 
   const formatPrice = (price: number | null, priceType: string) => {
     if (!price) {
-      if (priceType === 'FREE') return language === 'vn' ? 'Miễn phí' : 'Free';
+      if (priceType === 'FREE') return language === 'vn' ? 'Miễn phi' : 'Free';
       if (priceType === 'NEGOTIABLE') return language === 'vn' ? 'Thương lượng' : 'Negotiable';
       return language === 'vn' ? 'Liên hệ' : 'Contact';
     }
@@ -138,7 +145,6 @@ export default function ListingCard({ listing, variant = 'default' }: ListingCar
     return formatted;
   };
 
-  // Date is already serialized as ISO string from server
   const formatDate = (dateStr: string | null) => {
     if (!dateStr) return '';
     const date = new Date(dateStr);
@@ -155,15 +161,23 @@ export default function ListingCard({ listing, variant = 'default' }: ListingCar
     return date.toLocaleDateString(language === 'vn' ? 'vi-VN' : 'en-US');
   };
 
-  // Get category display name
+  // Check if listing is less than 24 hours old
+  const isNew = () => {
+    if (!listing.createdAt) return false;
+    const diffMs = Date.now() - new Date(listing.createdAt).getTime();
+    return diffMs < 86400000; // 24 hours
+  };
+
   const categoryName = language === 'vn'
     ? listing.category.nameVn
     : (listing.category.nameEn || listing.category.nameVn);
 
+  const categoryColor = CATEGORY_COLORS[listing.category.slug] || 'bg-gray-500';
+
   if (variant === 'horizontal') {
     return (
       <Link href={`/rao-vat/chi-tiet/${listing.id}`} className="block">
-        <div className="bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-all group flex">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 group flex">
           <div className="relative w-40 h-32 flex-shrink-0 overflow-hidden">
             {primaryImage ? (
               <Image
@@ -201,7 +215,7 @@ export default function ListingCard({ listing, variant = 'default' }: ListingCar
   if (variant === 'compact') {
     return (
       <Link href={`/rao-vat/chi-tiet/${listing.id}`} className="block">
-        <div className="bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-all group">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group">
           <div className="relative h-32 overflow-hidden">
             {primaryImage ? (
               <Image
@@ -216,8 +230,8 @@ export default function ListingCard({ listing, variant = 'default' }: ListingCar
                 <ShoppingBag className="h-8 w-8 text-gray-300" />
               </div>
             )}
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
-              <p className="text-white font-bold text-sm">
+            <div className="absolute bottom-0 left-0 right-0 bg-white/80 backdrop-blur-sm p-2">
+              <p className="text-teal-700 font-bold text-sm">
                 {formatPrice(listing.price, listing.priceType)}
               </p>
             </div>
@@ -232,10 +246,10 @@ export default function ListingCard({ listing, variant = 'default' }: ListingCar
     );
   }
 
-  // Default variant - matches the new design
+  // Default variant
   return (
     <Link href={`/rao-vat/chi-tiet/${listing.id}`} className="block">
-      <div className="bg-white rounded-lg border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-all group">
+      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group">
         <div className="relative h-40 overflow-hidden">
           {primaryImage ? (
             <Image
@@ -250,17 +264,27 @@ export default function ListingCard({ listing, variant = 'default' }: ListingCar
               <ShoppingBag className="h-10 w-10 text-gray-300" />
             </div>
           )}
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
-            <p className="text-white font-bold text-lg">
+          {/* Frosted glass price overlay */}
+          <div className="absolute bottom-0 left-0 right-0 bg-white/80 backdrop-blur-sm px-3 py-2">
+            <p className="text-teal-700 font-bold text-lg">
               {formatPrice(listing.price, listing.priceType)}
             </p>
           </div>
-          <div className="absolute top-2 right-2 bg-white/90 backdrop-blur text-xs font-bold text-gray-700 px-2 py-1 rounded shadow-sm">
+          {/* Category badge with color */}
+          <div className={`absolute top-2 right-2 ${categoryColor} text-xs font-bold text-white px-2 py-1 rounded-lg shadow-sm`}>
             {categoryName}
           </div>
+          {/* Featured badge */}
           {listing.isFeatured && (
-            <div className="absolute top-2 left-2 bg-yellow-500 text-xs font-bold text-white px-2 py-1 rounded shadow-sm">
+            <div className="absolute top-2 left-2 bg-gradient-to-r from-amber-400 to-yellow-500 text-xs font-bold text-white px-2 py-1 rounded-lg shadow-sm flex items-center gap-1">
+              <Sparkles size={10} />
               {language === 'vn' ? 'Nổi bật' : 'Featured'}
+            </div>
+          )}
+          {/* NEW badge for recent listings */}
+          {!listing.isFeatured && isNew() && (
+            <div className="absolute top-2 left-2 bg-gradient-to-r from-emerald-400 to-green-500 text-xs font-bold text-white px-2 py-1 rounded-lg shadow-sm">
+              {language === 'vn' ? 'MỚI' : 'NEW'}
             </div>
           )}
         </div>
@@ -268,16 +292,22 @@ export default function ListingCard({ listing, variant = 'default' }: ListingCar
           <h4 className="font-medium text-gray-900 text-sm mb-1 line-clamp-2 h-10 group-hover:text-teal-600 transition-colors">
             {language === 'vn' ? listing.title : listing.titleEn || listing.title}
           </h4>
-          <div className="flex items-center text-xs text-gray-500 mb-2">
-            <MapPin size={12} className="mr-1" />
-            {listing.location || 'Hawaii'}
+          <div className="flex items-center text-xs text-gray-500 mb-1">
+            <MapPin size={12} className="mr-1 flex-shrink-0" />
+            <span className="truncate">{listing.location || 'Hawaii'}</span>
           </div>
         </div>
         <div className="px-3 py-2 border-t border-gray-50 flex justify-between items-center bg-gray-50/50">
-          <span className="text-[10px] text-gray-400">{formatDate(listing.createdAt)}</span>
-          <span className="text-teal-600 text-xs font-medium hover:underline">
-            {language === 'vn' ? 'Chi tiết' : 'Details'}
-          </span>
+          <div className="flex items-center gap-3 text-[10px] text-gray-400">
+            <span>{formatDate(listing.createdAt)}</span>
+            {listing.views > 0 && (
+              <span className="flex items-center gap-0.5">
+                <Eye size={10} />
+                {listing.views}
+              </span>
+            )}
+          </div>
+          <Bookmark size={14} className="text-gray-300 group-hover:text-teal-400 transition-colors" />
         </div>
       </div>
     </Link>

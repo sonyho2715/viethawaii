@@ -81,12 +81,21 @@ async function getLatestArticles() {
   return articles;
 }
 
+// Count total active listings for hero stats
+async function getTotalListings() {
+  const count = await db.listing.count({
+    where: { status: 'ACTIVE' },
+  });
+  return count;
+}
+
 export default async function HomePage() {
-  const [categories, featuredListings, latestListings, latestArticles] = await Promise.all([
+  const [categories, featuredListings, latestListings, latestArticles, totalListings] = await Promise.all([
     getCategories(),
     getFeaturedListings(),
     getLatestListings(),
     getLatestArticles(),
+    getTotalListings(),
   ]);
 
   // Serialize data to convert Prisma Decimal/Date types to JSON-safe values
@@ -101,6 +110,7 @@ export default async function HomePage() {
       featuredListings={serializedFeatured}
       latestListings={serializedLatest}
       latestArticles={serializedArticles}
+      totalListings={totalListings}
     />
   );
 }
