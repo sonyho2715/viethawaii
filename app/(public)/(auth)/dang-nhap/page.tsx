@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Mail, Lock } from 'lucide-react';
 import { GoogleSignInButton } from './GoogleSignInButton';
+import { FacebookSignInButton } from './FacebookSignInButton';
 
 interface LoginPageProps {
   searchParams: Promise<{ callbackUrl?: string; error?: string }>;
@@ -22,8 +23,9 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         ? 'Đã xảy ra lỗi. Vui lòng thử lại.'
         : null;
 
-  // Check if Google OAuth is configured
   const hasGoogleOAuth = !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
+  const hasFacebookOAuth = !!(process.env.FACEBOOK_CLIENT_ID && process.env.FACEBOOK_CLIENT_SECRET);
+  const hasOAuth = hasGoogleOAuth || hasFacebookOAuth;
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 px-4">
@@ -41,10 +43,13 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             </div>
           )}
 
-          {/* Google Sign-In Button */}
-          {hasGoogleOAuth && (
+          {/* OAuth Sign-In Buttons */}
+          {hasOAuth && (
             <>
-              <GoogleSignInButton callbackUrl={callbackUrl} />
+              <div className="space-y-3">
+                {hasFacebookOAuth && <FacebookSignInButton callbackUrl={callbackUrl} />}
+                {hasGoogleOAuth && <GoogleSignInButton callbackUrl={callbackUrl} />}
+              </div>
 
               <div className="relative my-6">
                 <div className="absolute inset-0 flex items-center">

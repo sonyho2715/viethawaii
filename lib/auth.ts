@@ -2,6 +2,7 @@ import NextAuth from 'next-auth';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
+import Facebook from 'next-auth/providers/facebook';
 import bcrypt from 'bcryptjs';
 import { db } from './db';
 import type { Role } from '@prisma/client';
@@ -46,7 +47,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      allowDangerousEmailAccountLinking: true, // Allow linking to existing accounts
+      allowDangerousEmailAccountLinking: true,
+    }),
+    // Facebook OAuth provider
+    Facebook({
+      clientId: process.env.FACEBOOK_CLIENT_ID,
+      clientSecret: process.env.FACEBOOK_CLIENT_SECRET,
+      allowDangerousEmailAccountLinking: true,
     }),
     // Email/password credentials provider
     Credentials({
@@ -97,13 +104,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async signIn({ user, account }) {
       // For OAuth sign-ins, update user profile with OAuth data
-      if (account?.provider === 'google' && user.email) {
+      if ((account?.provider === 'google' || account?.provider === 'facebook') && user.email) {
         const existingUser = await db.user.findUnique({
           where: { email: user.email.toLowerCase() },
         });
 
         if (existingUser) {
-          // Update user with Google profile data if missing
           await db.user.update({
             where: { id: existingUser.id },
             data: {
@@ -125,7 +131,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
 
       // Fetch user data from database for OAuth users
-      if (account?.provider === 'google' && token.email) {
+      if ((account?.provider === 'google' || account?.provider === 'facebook') && token.email) {
         const dbUser = await db.user.findUnique({
           where: { email: token.email.toLowerCase() },
           select: { id: true, role: true, preferredLang: true },

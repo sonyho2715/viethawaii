@@ -11,6 +11,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Loader2, User, Mail, Lock, AlertCircle, CheckCircle } from 'lucide-react';
+import { GoogleSignInButton } from '../dang-nhap/GoogleSignInButton';
+import { FacebookSignInButton } from '../dang-nhap/FacebookSignInButton';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -130,6 +132,23 @@ export default function RegisterPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {/* OAuth Sign-Up Buttons */}
+          <div className="space-y-3 mb-4">
+            <FacebookSignInButton callbackUrl="/" />
+            <GoogleSignInButton callbackUrl="/" />
+          </div>
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-gray-300" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-white px-2 text-gray-500">
+                {language === 'vn' ? 'hoặc đăng ký với email' : 'or register with email'}
+              </span>
+            </div>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-4" aria-label="Registration form">
             {/* Honeypot field - hidden from users, bots will fill it */}
             <input
