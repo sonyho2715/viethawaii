@@ -13,7 +13,16 @@ import {
   Image as ImageIcon,
   User,
   ChevronRight,
+  ShieldCheck,
+  Plus,
 } from 'lucide-react';
+import { SAFE_TRADE_POINTS } from '@/lib/data/safe-trade-points';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface ConversationUser {
   id: string;
@@ -447,6 +456,35 @@ export default function MessagesPageClient({
 
       {/* Input */}
       <div className="border-t pt-3">
+        <div className="flex items-center gap-2 mb-2 px-1">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-1 px-2 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[11px] font-bold hover:bg-emerald-100 transition-colors border border-emerald-100 uppercase tracking-tighter">
+                <ShieldCheck size={13} />
+                {language === 'vn' ? 'Gợi ý điểm hẹn' : 'Safe Spot'}
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-64 max-h-60 overflow-y-auto">
+              {SAFE_TRADE_POINTS.map((point) => (
+                <DropdownMenuItem 
+                  key={point.id}
+                  onClick={() => {
+                    const spotText = language === 'vn' 
+                      ? `Tôi đề xuất gặp mặt tại: ${point.nameVn} (${point.address})`
+                      : `I suggest meeting at: ${point.nameEn} (${point.address})`;
+                    setNewMessage(spotText);
+                  }}
+                >
+                  <div className="flex flex-col">
+                    <span className="font-medium text-xs">{language === 'vn' ? point.nameVn : point.nameEn}</span>
+                    <span className="text-[10px] text-gray-400 truncate">{point.address}</span>
+                  </div>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        
         <div className="flex items-end gap-2">
           <textarea
             ref={inputRef}

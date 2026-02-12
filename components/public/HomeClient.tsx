@@ -17,6 +17,7 @@ import {
   Calendar,
   Tag,
   MessageCircle,
+  MapPin,
 } from 'lucide-react';
 import Sidebar from './Sidebar';
 import Widgets from './Widgets';
@@ -85,7 +86,13 @@ export default function HomeClient({
               <Button asChild variant="outline" className="glass border-white/40 text-white hover:bg-white/20 rounded-2xl px-6 py-6 text-base font-semibold transition-all">
                 <Link href="/rao-vat">
                   <Search size={20} className="mr-2" />
-                  {language === 'vn' ? 'Tìm kiếm' : 'Browse listings'}
+                  {language === 'vn' ? 'Tìm kiếm' : 'Browse'}
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="glass border-white/40 text-white hover:bg-white/20 rounded-2xl px-6 py-6 text-base font-semibold transition-all">
+                <Link href="/ban-do">
+                  <MapPin size={20} className="mr-2" />
+                  {language === 'vn' ? 'Bản đồ' : 'Map'}
                 </Link>
               </Button>
             </div>

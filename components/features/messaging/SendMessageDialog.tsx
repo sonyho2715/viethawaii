@@ -9,7 +9,14 @@ import {
   DialogContent,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { MessageCircle, Send, Star } from 'lucide-react';
+import { MessageCircle, Send, Star, ShieldCheck, ChevronDown } from 'lucide-react';
+import { SAFE_TRADE_POINTS } from '@/lib/data/safe-trade-points';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface SendMessageDialogProps {
   recipientId: string;
@@ -124,6 +131,40 @@ export default function SendMessageDialog({
             maxLength={2000}
             autoFocus
           />
+
+          {/* Safe Trade Suggestions */}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
+              {language === 'vn' ? 'Gợi ý địa điểm:' : 'Safe meeting spots:'}
+            </span>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-medium hover:bg-emerald-100 transition-colors border border-emerald-100">
+                  <ShieldCheck size={12} />
+                  {language === 'vn' ? 'Chọn địa điểm an toàn' : 'Suggest safe spot'}
+                  <ChevronDown size={12} />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-64 max-h-60 overflow-y-auto">
+                {SAFE_TRADE_POINTS.map((point) => (
+                  <DropdownMenuItem 
+                    key={point.id}
+                    onClick={() => {
+                      const spotText = language === 'vn' 
+                        ? `\n\nTôi đề xuất gặp mặt tại địa điểm an toàn: ${point.nameVn} (${point.address})`
+                        : `\n\nI suggest meeting at a safe location: ${point.nameEn} (${point.address})`;
+                      setMessage(prev => prev + spotText);
+                    }}
+                  >
+                    <div className="flex flex-col">
+                      <span className="font-medium">{language === 'vn' ? point.nameVn : point.nameEn}</span>
+                      <span className="text-[10px] text-gray-400 truncate">{point.address}</span>
+                    </div>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
 
           {error && (
             <p className="text-sm text-red-600">{error}</p>

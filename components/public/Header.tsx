@@ -23,6 +23,7 @@ import {
   Briefcase,
   ShoppingBag,
   MessageCircle,
+  MapPin,
   User,
   FileText,
   Heart,
@@ -52,6 +53,7 @@ const DESKTOP_NAV = [
   { labelEn: 'Services', labelVn: 'Dịch vụ', href: '/dich-vu', icon: Wrench },
   { labelEn: 'News', labelVn: 'Tin tức', href: '/tin-tuc', icon: Newspaper },
   { labelEn: 'Events', labelVn: 'Sự kiện', href: '/su-kien', icon: Calendar },
+  { labelEn: 'Map', labelVn: 'Bản đồ', href: '/ban-do', icon: MapPin },
   { labelEn: 'Tools', labelVn: 'Công cụ', href: '/cong-cu', icon: Calculator },
 ];
 
@@ -339,6 +341,16 @@ export default function Header() {
                 <Calculator size={16} className="text-gray-500" />
               </div>
               {language === 'vn' ? 'Công cụ' : 'Tools'}
+            </Link>
+            <Link
+              href="/ban-do"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="flex items-center text-base font-medium text-gray-700 py-3 px-3 rounded-xl hover:bg-teal-50 hover:text-teal-600 transition-all"
+            >
+              <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center mr-3">
+                <MapPin size={16} className="text-gray-500" />
+              </div>
+              {language === 'vn' ? 'Bản đồ' : 'Map'}
             </Link>
           </div>
 
