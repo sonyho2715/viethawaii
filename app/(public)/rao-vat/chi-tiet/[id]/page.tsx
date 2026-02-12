@@ -5,6 +5,7 @@ import { serialize, serializeArray } from '@/lib/serialize';
 import ListingDetailClient, { type ListingWithDetails } from './ListingDetailClient';
 import type { ListingWithRelations } from '@/components/public/ListingCard';
 import type { Metadata } from 'next';
+import StructuredData from '@/components/public/StructuredData';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -128,6 +129,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
       listing={serializedListing}
       relatedListings={serializedRelated}
       isOwner={isOwner}
+      currentUserId={session?.user?.id}
     />
   );
 }

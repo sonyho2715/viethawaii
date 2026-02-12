@@ -6,6 +6,7 @@ import type { Metadata } from 'next';
 import { db } from '@/lib/db';
 import ArticleContent from './ArticleContent';
 import ShareButtons from './ShareButtons';
+import StructuredData from '@/components/public/StructuredData';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -108,8 +109,25 @@ export default async function ArticlePage({ params }: PageProps) {
 
   const readingTime = estimateReadingTime(article.contentVn);
 
+  // Prepare Schema.org JSON-LD
+  const articleSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    headline: article.titleVn,
+    image: article.featuredImage ? [article.featuredImage] : [],
+    datePublished: article.publishedAt ? new Date(article.publishedAt).toISOString() : undefined,
+    dateModified: article.updatedAt ? new Date(article.updatedAt).toISOString() : undefined,
+    author: [
+      {
+        '@type': 'Person',
+        name: article.author.name || 'VietHawaii',
+      },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-white">
+      <StructuredData data={articleSchema} />
       {/* Breadcrumb */}
       <div className="border-b border-gray-100">
         <nav className="max-w-[1200px] mx-auto px-4 py-3">

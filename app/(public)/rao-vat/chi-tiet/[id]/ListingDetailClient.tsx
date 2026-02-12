@@ -41,6 +41,7 @@ import {
 } from 'lucide-react';
 import ReportButton from '@/components/public/ReportButton';
 import ShareButtons from '@/components/public/ShareButtons';
+import ReviewSection from '@/components/features/reviews/ReviewSection';
 
 // Serialized types for client component (Date → string, Decimal → number)
 interface SerializedUser {
@@ -92,12 +93,14 @@ interface ListingDetailClientProps {
   listing: ListingWithDetails;
   relatedListings: ListingWithRelations[];
   isOwner?: boolean;
+  currentUserId?: string;
 }
 
 export default function ListingDetailClient({
   listing: initialListing,
   relatedListings,
   isOwner = false,
+  currentUserId,
 }: ListingDetailClientProps) {
   const { t, language } = useLanguage();
   const [listing, setListing] = useState(initialListing);
@@ -700,6 +703,16 @@ export default function ListingDetailClient({
               </CardContent>
             </Card>
           </div>
+        </div>
+
+        {/* Reviews Section */}
+        <div className="mt-8">
+          <ReviewSection
+            sellerId={listing.user.id}
+            sellerName={listing.user.name}
+            listingId={listing.id}
+            currentUserId={currentUserId}
+          />
         </div>
 
         {/* Related Listings */}
