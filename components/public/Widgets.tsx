@@ -265,8 +265,8 @@ export default function Widgets() {
                 $1 = {exchangeRate.rate.toLocaleString()}₫
               </p>
               <div className="flex items-center justify-between mt-1">
-                <p className="text-xs text-white/60">
-                  1,000,000₫ = ${(1000000 / exchangeRate.rate).toFixed(2)}
+                <p className="text-[10px] text-white/50">
+                  {language === 'vn' ? 'Cập nhật:' : 'Updated:'} {new Date(exchangeRate.lastUpdated).toLocaleDateString(language === 'vn' ? 'vi-VN' : 'en-US', { hour: '2-digit', minute: '2-digit' })}
                 </p>
                 <Link
                   href="/cong-cu/doi-tien"

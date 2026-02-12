@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 export async function GET() {
   try {
     const res = await fetch(
-      'https://api.exchangerate-api.com/v4/latest/USD',
+      'https://open.er-api.com/v6/latest/USD',
       { next: { revalidate: 3600 } }
     );
 
@@ -27,9 +27,7 @@ export async function GET() {
       success: true,
       data: {
         rate: Math.round(data.rates.VND),
-        lastUpdated: data.time_last_updated
-          ? new Date(data.time_last_updated * 1000).toISOString()
-          : new Date().toISOString(),
+        lastUpdated: data.time_last_update_utc || new Date().toUTCString(),
       },
     });
 
