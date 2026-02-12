@@ -140,30 +140,35 @@ export default function Header() {
             </div>
 
             {/* Search Bar - Desktop */}
-            <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-lg mx-8 relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search size={18} className="text-gray-400" />
+            <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-lg mx-8 relative group">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <Search size={18} className="text-gray-400 group-focus-within:text-teal-500 transition-colors" />
               </div>
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="block w-full pl-10 pr-3 py-2 border border-gray-200 rounded-full leading-5 bg-gray-50 placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-teal-500 focus:border-transparent transition duration-150 ease-in-out sm:text-sm"
-                placeholder={language === 'vn' ? "Tìm kiếm nhà ở, việc làm, tin tức..." : "Search for housing, jobs, news..."}
+                className="block w-full pl-11 pr-4 py-2.5 border border-gray-200 rounded-2xl leading-5 bg-gray-50/80 placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-4 focus:ring-teal-500/10 focus:border-teal-500/50 transition-all duration-200 sm:text-sm shadow-inner"
+                placeholder={language === 'vn' ? "Tìm nhà ở, việc làm, tin tức..." : "Search housing, jobs, news..."}
               />
+              <div className="absolute inset-y-0 right-0 pr-1.5 flex items-center">
+                <kbd className="hidden lg:inline-flex items-center px-2 py-0.5 rounded border border-gray-200 bg-white text-[10px] font-medium text-gray-400">
+                  ⌘K
+                </kbd>
+              </div>
             </form>
 
             {/* Right Actions */}
-            <div className="flex items-center space-x-2 sm:space-x-3">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <button
                 onClick={toggleLanguage}
-                className="flex items-center px-2.5 py-1.5 text-sm font-medium text-gray-600 bg-gray-100 rounded-lg hover:bg-teal-50 hover:text-teal-600 transition-colors"
+                className="flex items-center px-3 py-2 text-xs font-bold text-gray-600 bg-gray-50 rounded-xl hover:bg-teal-50 hover:text-teal-600 transition-all border border-gray-100 uppercase tracking-widest"
               >
-                <Globe size={15} className="mr-1" />
+                <Globe size={14} className="mr-1.5" />
                 {language === 'vn' ? 'VN' : 'EN'}
               </button>
 
-              <Button asChild className="hidden sm:flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 shadow-md hover:shadow-lg transition-all">
+              <Button asChild className="hidden sm:flex items-center justify-center px-5 py-2.5 border border-transparent text-sm font-bold rounded-2xl text-white bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 shadow-lg shadow-teal-500/20 hover:shadow-teal-500/30 hover:-translate-y-0.5 transition-all">
                 <Link href="/rao-vat/dang-tin">
                   <PlusCircle size={18} className="mr-2" />
                   {language === 'vn' ? 'Đăng Tin' : 'Post Ad'}

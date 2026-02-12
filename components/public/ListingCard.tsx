@@ -248,66 +248,76 @@ export default function ListingCard({ listing, variant = 'default' }: ListingCar
 
   // Default variant
   return (
-    <Link href={`/rao-vat/chi-tiet/${listing.id}`} className="block">
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group">
-        <div className="relative h-40 overflow-hidden">
+    <Link href={`/rao-vat/chi-tiet/${listing.id}`} className="block h-full">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-2xl hover:shadow-teal-900/5 hover:-translate-y-1.5 transition-all duration-300 group flex flex-col h-full ring-1 ring-black/[0.02]">
+        <div className="relative h-44 overflow-hidden">
           {primaryImage ? (
             <Image
               src={primaryImage.imageUrl}
               alt={listing.title}
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
+              className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
             />
           ) : (
-            <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-              <ShoppingBag className="h-10 w-10 text-gray-300" />
+            <div className="w-full h-full bg-gray-50 flex items-center justify-center">
+              <ShoppingBag className="h-10 w-10 text-gray-200" />
             </div>
           )}
+          
           {/* Frosted glass price overlay */}
-          <div className="absolute bottom-0 left-0 right-0 bg-white/80 backdrop-blur-sm px-3 py-2">
-            <p className="text-teal-700 font-bold text-lg">
+          <div className="absolute bottom-0 left-0 right-0 glass px-3 py-2.5">
+            <p className="text-teal-700 font-extrabold text-lg tracking-tight">
               {formatPrice(listing.price, listing.priceType)}
             </p>
           </div>
+          
           {/* Category badge with color */}
-          <div className={`absolute top-2 right-2 ${categoryColor} text-xs font-bold text-white px-2 py-1 rounded-lg shadow-sm`}>
+          <div className={`absolute top-3 right-3 ${categoryColor} text-[10px] font-bold text-white px-2 py-1 rounded-lg shadow-md uppercase tracking-wider`}>
             {categoryName}
           </div>
+          
           {/* Featured badge */}
           {listing.isFeatured && (
-            <div className="absolute top-2 left-2 bg-gradient-to-r from-amber-400 to-yellow-500 text-xs font-bold text-white px-2 py-1 rounded-lg shadow-sm flex items-center gap-1">
-              <Sparkles size={10} />
+            <div className="absolute top-3 left-3 bg-gradient-to-r from-amber-400 to-orange-500 text-[10px] font-bold text-white px-2.5 py-1 rounded-lg shadow-md flex items-center gap-1 uppercase tracking-wider">
+              <Sparkles size={10} className="fill-white" />
               {language === 'vn' ? 'Nổi bật' : 'Featured'}
             </div>
           )}
+          
           {/* NEW badge for recent listings */}
           {!listing.isFeatured && isNew() && (
-            <div className="absolute top-2 left-2 bg-gradient-to-r from-emerald-400 to-green-500 text-xs font-bold text-white px-2 py-1 rounded-lg shadow-sm">
+            <div className="absolute top-3 left-3 bg-gradient-to-r from-emerald-400 to-teal-500 text-[10px] font-bold text-white px-2.5 py-1 rounded-lg shadow-md uppercase tracking-wider">
               {language === 'vn' ? 'MỚI' : 'NEW'}
             </div>
           )}
         </div>
-        <div className="p-3">
-          <h4 className="font-medium text-gray-900 text-sm mb-1 line-clamp-2 h-10 group-hover:text-teal-600 transition-colors">
+        
+        <div className="p-4 flex flex-col flex-1">
+          <h4 className="font-bold text-gray-900 text-sm mb-2 line-clamp-2 h-10 group-hover:text-teal-600 transition-colors leading-snug">
             {language === 'vn' ? listing.title : listing.titleEn || listing.title}
           </h4>
-          <div className="flex items-center text-xs text-gray-500 mb-1">
-            <MapPin size={12} className="mr-1 flex-shrink-0" />
-            <span className="truncate">{listing.location || 'Hawaii'}</span>
+          <div className="flex items-center text-xs text-gray-500 mt-auto">
+            <MapPin size={13} className="mr-1.5 text-teal-500 flex-shrink-0" />
+            <span className="truncate font-medium">{listing.location || 'Hawaii'}</span>
           </div>
         </div>
-        <div className="px-3 py-2 border-t border-gray-50 flex justify-between items-center bg-gray-50/50">
-          <div className="flex items-center gap-3 text-[10px] text-gray-400">
+        
+        <div className="px-4 py-3 border-t border-gray-50 flex justify-between items-center bg-gray-50/30">
+          <div className="flex items-center gap-3 text-[10px] text-gray-400 font-medium uppercase tracking-tighter">
             <span>{formatDate(listing.createdAt)}</span>
             {listing.views > 0 && (
-              <span className="flex items-center gap-0.5">
-                <Eye size={10} />
+              <span className="flex items-center gap-1">
+                <Eye size={12} className="text-gray-300" />
                 {listing.views}
               </span>
             )}
           </div>
-          <Bookmark size={14} className="text-gray-300 group-hover:text-teal-400 transition-colors" />
+          <div className="flex items-center gap-2">
+            <button className="p-1.5 rounded-full hover:bg-teal-50 hover:text-teal-600 transition-colors">
+              <Bookmark size={14} className="text-gray-300 group-hover:text-teal-400" />
+            </button>
+          </div>
         </div>
       </div>
     </Link>

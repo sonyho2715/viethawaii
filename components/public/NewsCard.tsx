@@ -58,50 +58,50 @@ export default function NewsCard({ article }: NewsCardProps) {
   return (
     <Link
       href={`/tin-tuc/${article.slug}`}
-      className="block bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 group cursor-pointer"
+      className="block bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-2xl hover:shadow-teal-900/5 hover:-translate-y-1 transition-all duration-300 group cursor-pointer ring-1 ring-black/[0.02]"
     >
       <div className="md:flex">
-        <div className="md:w-1/3 h-48 md:h-auto relative overflow-hidden bg-gray-100">
+        <div className="md:w-1/3 h-52 md:h-auto relative overflow-hidden bg-gray-50">
           {article.featuredImage ? (
             <Image
               src={article.featuredImage}
               alt={title}
               fill
               sizes="(max-width: 768px) 100vw, 33vw"
-              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center">
-              <Newspaper className="h-12 w-12 text-gray-300" />
+              <Newspaper className="h-12 w-12 text-gray-200" />
             </div>
           )}
           <div
-            className="absolute top-3 left-3 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg uppercase tracking-wider shadow-sm"
+            className="absolute top-4 left-4 text-white text-[10px] font-bold px-3 py-1.5 rounded-lg uppercase tracking-wider shadow-lg backdrop-blur-sm bg-opacity-90"
             style={{ backgroundColor: article.category.color || '#0D9488' }}
           >
             {categoryName}
           </div>
         </div>
-        <div className="p-5 md:w-2/3 flex flex-col justify-between">
+        <div className="p-6 md:w-2/3 flex flex-col justify-between bg-white">
           <div>
-            <h3 className="text-lg font-bold text-gray-900 mb-2 leading-tight group-hover:text-teal-600 transition-colors line-clamp-2">
+            <h3 className="text-xl font-bold text-gray-900 mb-3 leading-tight group-hover:text-teal-600 transition-colors line-clamp-2">
               {title}
             </h3>
             {excerpt && (
-              <p className="text-gray-500 text-sm line-clamp-2 mb-4 leading-relaxed">
+              <p className="text-gray-500 text-sm line-clamp-2 mb-5 leading-relaxed opacity-80">
                 {excerpt}
               </p>
             )}
           </div>
-          <div className="flex items-center justify-between text-xs text-gray-400">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between pt-4 border-t border-gray-50">
+            <div className="flex items-center gap-4 text-[11px] text-gray-400 font-medium uppercase tracking-wider">
               <span>{formatRelativeDate(article.publishedAt)}</span>
-              <span className="flex items-center gap-1">
-                <Eye size={12} />
+              <span className="flex items-center gap-1.5">
+                <Eye size={13} className="text-gray-300" />
                 {article.views.toLocaleString()}
               </span>
             </div>
-            <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
               <button
                 onClick={(e) => {
                   e.preventDefault();
@@ -112,17 +112,19 @@ export default function NewsCard({ article }: NewsCardProps) {
                     });
                   }
                 }}
-                className="p-1.5 rounded-lg hover:bg-gray-100 hover:text-teal-600 transition-colors"
+                className="p-2 rounded-full hover:bg-teal-50 hover:text-teal-600 transition-colors"
+                title="Share"
               >
-                <Share2 size={14} />
+                <Share2 size={15} />
               </button>
               <button
                 onClick={(e) => {
                   e.preventDefault();
                 }}
-                className="p-1.5 rounded-lg hover:bg-gray-100 hover:text-red-500 transition-colors"
+                className="p-2 rounded-full hover:bg-red-50 hover:text-red-500 transition-colors"
+                title="Save"
               >
-                <Bookmark size={14} />
+                <Bookmark size={15} />
               </button>
             </div>
           </div>

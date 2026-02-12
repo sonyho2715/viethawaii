@@ -53,55 +53,56 @@ export default function HomeClient({
     <div className="min-h-screen bg-stone-50">
       {/* Hero Banner */}
       <div className="bg-gradient-to-br from-teal-600 via-teal-700 to-blue-800 text-white relative overflow-hidden">
-        {/* Background decorations */}
-        <div className="absolute inset-0">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/3" />
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/4" />
-          <div className="absolute top-1/2 left-1/2 w-48 h-48 bg-white/3 rounded-full -translate-x-1/2 -translate-y-1/2" />
+        {/* Background decorations - Hawaii inspired */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] bg-white/10 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] bg-teal-400/10 rounded-full blur-3xl" />
+          <div className="absolute top-1/4 left-1/2 w-[300px] h-[300px] bg-blue-400/5 rounded-full blur-2xl" />
+          
+          {/* Subtle tropical pattern overlay */}
+          <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/leaves.png')] mix-blend-overlay" />
         </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 relative">
-          <div className="max-w-2xl">
-            <h2 className="text-2xl md:text-3xl font-bold mb-2 animate-fade-in">
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 relative z-10">
+          <div className="max-w-3xl">
+            <h2 className="text-3xl md:text-5xl font-extrabold mb-4 animate-fade-in tracking-tight text-shadow-md">
               {language === 'vn'
-                ? 'Chào mừng đến VietHawaii'
-                : 'Welcome to VietHawaii'}
+                ? 'Cộng đồng Việt Nam tại Hawaii'
+                : 'Vietnamese Community in Hawaii'}
             </h2>
-            <p className="text-teal-100 text-sm md:text-base mb-5 animate-slide-up leading-relaxed">
+            <p className="text-teal-50 text-base md:text-xl mb-8 animate-slide-up leading-relaxed max-w-2xl text-shadow-sm font-medium opacity-90">
               {language === 'vn'
-                ? 'Nền tảng kết nối cộng đồng Việt Nam tại Hawaii. Tìm nhà ở, việc làm, dịch vụ và tin tức.'
-                : 'The platform connecting the Vietnamese community in Hawaii. Find housing, jobs, services, and news.'}
+                ? 'Nền tảng kết nối người Việt. Tìm kiếm nhà ở, việc làm, dịch vụ và tin tức mới nhất tại đảo thiên đường.'
+                : 'Connecting Vietnamese people in the islands. Find housing, jobs, services, and the latest news in paradise.'}
             </p>
-            <div className="flex flex-wrap items-center gap-3 animate-slide-up">
-              <Button asChild className="bg-white text-teal-700 hover:bg-teal-50 rounded-xl shadow-md font-semibold">
+            <div className="flex flex-wrap items-center gap-4 animate-slide-up">
+              <Button asChild className="bg-white text-teal-700 hover:bg-teal-50 rounded-2xl shadow-xl font-bold px-8 py-6 text-base transition-all hover:scale-105 hover:shadow-white/10">
                 <Link href="/rao-vat/dang-tin">
-                  <PlusCircle size={16} className="mr-2" />
+                  <PlusCircle size={20} className="mr-2" />
                   {language === 'vn' ? 'Đăng tin miễn phí' : 'Post for free'}
                 </Link>
               </Button>
-              <Button asChild variant="outline" className="border-white/30 text-white hover:bg-white/10 rounded-xl">
+              <Button asChild variant="outline" className="glass border-white/40 text-white hover:bg-white/20 rounded-2xl px-6 py-6 text-base font-semibold transition-all">
                 <Link href="/rao-vat">
-                  <Search size={16} className="mr-2" />
+                  <Search size={20} className="mr-2" />
                   {language === 'vn' ? 'Tìm kiếm' : 'Browse listings'}
-                </Link>
-              </Button>
-              <Button asChild variant="outline" className="border-white/30 text-white hover:bg-white/10 rounded-xl">
-                <Link href="/huong-dan">
-                  <BookOpen size={16} className="mr-2" />
-                  {language === 'vn' ? 'Hướng dẫn' : 'Guide'}
                 </Link>
               </Button>
             </div>
           </div>
-          {/* Quick stats */}
+          
+          {/* Quick stats with glass effect */}
           {totalListings && totalListings > 0 && (
-            <div className="mt-6 flex items-center gap-6 text-sm text-teal-200">
-              <div className="flex items-center gap-1.5">
-                <ShoppingBag size={14} />
-                <span>{totalListings.toLocaleString()} {language === 'vn' ? 'tin đăng' : 'listings'}</span>
+            <div className="mt-10 flex flex-wrap items-center gap-6 text-sm">
+              <div className="glass px-4 py-2 rounded-full flex items-center gap-2 text-white/90 shadow-lg">
+                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
+                <span className="font-bold">{totalListings.toLocaleString()}</span>
+                <span className="opacity-80">{language === 'vn' ? 'tin đăng' : 'listings'}</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <Star size={14} />
-                <span>{featuredListings.length} {language === 'vn' ? 'tin nổi bật' : 'featured'}</span>
+              <div className="glass px-4 py-2 rounded-full flex items-center gap-2 text-white/90 shadow-lg">
+                <Star size={14} className="text-amber-400 fill-amber-400" />
+                <span className="font-bold">{featuredListings.length}</span>
+                <span className="opacity-80">{language === 'vn' ? 'tin nổi bật' : 'featured'}</span>
               </div>
             </div>
           )}
@@ -236,27 +237,28 @@ export default function HomeClient({
             )}
 
             {/* CTA Banner */}
-            <section className="bg-gradient-to-r from-teal-600 via-teal-700 to-blue-700 rounded-2xl shadow-lg p-6 md:p-8 text-white text-center relative overflow-hidden">
-              {/* Background pattern */}
-              <div className="absolute inset-0 opacity-10">
-                <div className="absolute top-0 left-0 w-40 h-40 bg-white rounded-full -translate-x-1/2 -translate-y-1/2" />
-                <div className="absolute bottom-0 right-0 w-32 h-32 bg-white rounded-full translate-x-1/3 translate-y-1/3" />
+            <section className="bg-gradient-to-r from-teal-600 via-teal-700 to-blue-700 rounded-3xl shadow-2xl p-8 md:p-12 text-white text-center relative overflow-hidden group">
+              {/* Background pattern - refined */}
+              <div className="absolute inset-0 opacity-10 pointer-events-none">
+                <div className="absolute top-0 left-0 w-64 h-64 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl group-hover:scale-110 transition-transform duration-1000" />
+                <div className="absolute bottom-0 right-0 w-48 h-48 bg-white rounded-full translate-x-1/3 translate-y-1/3 blur-3xl group-hover:scale-110 transition-transform duration-1000" />
               </div>
-              <div className="relative">
-                <h2 className="text-xl md:text-2xl font-bold mb-2">
+              
+              <div className="relative z-10">
+                <h2 className="text-2xl md:text-4xl font-extrabold mb-4 tracking-tight">
                   {language === 'vn'
                     ? 'Đăng tin miễn phí ngay hôm nay!'
                     : 'Post your listing for free today!'}
                 </h2>
-                <p className="text-teal-100 mb-5 text-sm md:text-base">
+                <p className="text-teal-50 mb-8 text-base md:text-lg max-w-xl mx-auto opacity-90 font-medium">
                   {language === 'vn'
-                    ? 'Tiếp cận hàng ngàn người Việt tại Hawaii'
-                    : 'Reach thousands of Vietnamese in Hawaii'}
+                    ? 'Tiếp cận hàng ngàn người Việt đang sinh sống và làm việc tại Hawaii.'
+                    : 'Reach thousands of Vietnamese people living and working in Hawaii.'}
                 </p>
-                <Button asChild className="bg-white text-teal-700 hover:bg-teal-50 rounded-xl shadow-md font-semibold px-6">
+                <Button asChild className="bg-white text-teal-700 hover:bg-teal-50 rounded-2xl shadow-xl font-bold px-10 py-7 text-lg transition-all hover:scale-105">
                   <Link href="/rao-vat/dang-tin">
-                    <PlusCircle size={16} className="mr-2" />
-                    {language === 'vn' ? 'Đăng Tin' : 'Post Ad'}
+                    <PlusCircle size={20} className="mr-2" />
+                    {language === 'vn' ? 'Đăng Tin Ngay' : 'Post Ad Now'}
                   </Link>
                 </Button>
               </div>
