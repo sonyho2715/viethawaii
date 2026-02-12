@@ -83,12 +83,14 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  /* Brand colors */
+
+  /* Brand colors - Tropical Hawaii Palette */
   --brand-teal: oklch(0.55 0.15 180);
   --brand-gold: oklch(0.78 0.14 80);
   --brand-coral: oklch(0.68 0.18 25);
   --brand-ocean: oklch(0.45 0.18 230);
   --brand-hibiscus: oklch(0.6 0.22 15);
+  --brand-sand: oklch(0.94 0.02 85);
 }
 
 @layer utilities {
