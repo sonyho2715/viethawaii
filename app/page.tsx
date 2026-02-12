@@ -3,6 +3,7 @@ import { serializeArray } from '@/lib/serialize';
 import HomeClient from '@/components/public/HomeClient';
 import type { ListingWithRelations, SerializedCategory } from '@/components/public/ListingCard';
 import type { SerializedArticle } from '@/components/public/NewsCard';
+import StructuredData from '@/components/public/StructuredData';
 
 // Revalidate every 60 seconds to show fresh content
 export const revalidate = 60;
@@ -104,13 +105,29 @@ export default async function HomePage() {
   const serializedLatest = serializeArray(latestListings) as unknown as ListingWithRelations[];
   const serializedArticles = serializeArray(latestArticles) as unknown as SerializedArticle[];
 
+  const websiteSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'VietHawaii',
+    url: 'https://viethawaii.com',
+    description: 'Cộng đồng Việt Nam tại Hawaii. Rao vặt, việc làm, nhà thuê, tin tức.',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: 'https://viethawaii.com/tim-kiem?q={search_term_string}',
+      'query-input': 'required name=search_term_string',
+    },
+  };
+
   return (
-    <HomeClient
-      categories={serializedCategories}
-      featuredListings={serializedFeatured}
-      latestListings={serializedLatest}
-      latestArticles={serializedArticles}
-      totalListings={totalListings}
-    />
+    <>
+      <StructuredData data={websiteSchema} />
+      <HomeClient
+        categories={serializedCategories}
+        featuredListings={serializedFeatured}
+        latestListings={serializedLatest}
+        latestArticles={serializedArticles}
+        totalListings={totalListings}
+      />
+    </>
   );
 }

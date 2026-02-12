@@ -137,7 +137,7 @@ export default function HomeClient({
           </aside>
 
           {/* Center Content - Listings + News */}
-          <main className="lg:col-span-6 space-y-8">
+          <div className="lg:col-span-6 space-y-8">
             {/* Latest Listings */}
             <section className="animate-fade-in">
               <div className="flex items-center justify-between mb-4">
@@ -263,7 +263,7 @@ export default function HomeClient({
                 </Button>
               </div>
             </section>
-          </main>
+          </div>
 
           {/* Right Sidebar - Widgets */}
           <aside className="hidden lg:block lg:col-span-3">

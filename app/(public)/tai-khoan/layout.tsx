@@ -18,7 +18,7 @@ export default async function AccountLayout({
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
           <AccountSidebar user={session.user} />
-          <main className="flex-1">{children}</main>
+          <div className="flex-1">{children}</div>
         </div>
       </div>
     </div>
