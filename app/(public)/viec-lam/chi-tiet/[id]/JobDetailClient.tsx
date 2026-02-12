@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import ReviewSection from '@/components/features/reviews/ReviewSection';
+import SendMessageDialog from '@/components/features/messaging/SendMessageDialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   ChevronLeft,
@@ -446,6 +447,14 @@ export default function JobDetailClient({
                       </a>
                     </Button>
                   )}
+
+                  <SendMessageDialog
+                    recipientId={listing.user.id}
+                    recipientName={listing.user.name || (language === 'vn' ? 'Nhà tuyển dụng' : 'Employer')}
+                    listingId={listing.id}
+                    listingTitle={listing.title}
+                    currentUserId={currentUserId}
+                  />
                 </div>
               </CardContent>
             </Card>

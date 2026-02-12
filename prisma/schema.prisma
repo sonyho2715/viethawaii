@@ -44,6 +44,9 @@ model User {
   couponClaims    CouponClaim[]
   notifications   Notification[]  @relation("NotificationRecipient")
   actedNotifications Notification[] @relation("NotificationActor")
+  conversations1  Conversation[]  @relation("ConversationParticipant1")
+  conversations2  Conversation[]  @relation("ConversationParticipant2")
+  sentMessages    Message[]       @relation("MessageSender")
 
   @@index([email])
   @@index([role])
@@ -185,6 +188,7 @@ model Listing {
   reviews         Review[]
   reports         Report[]
   inquiries       Inquiry[]
+  conversations   Conversation[]
   viewHistory     ListingView[]
 
   @@index([userId])
@@ -741,11 +745,48 @@ model Notification {
   @@index([userId, createdAt(sort: Desc)])
 }
 
+// ==================== MESSAGING ====================
+
+model Conversation {
+  id            Int       @id @default(autoincrement())
+  participant1Id String
+  participant2Id String
+  listingId     Int?      // Optional: conversation about a specific listing
+  lastMessageAt DateTime  @default(now())
+  createdAt     DateTime  @default(now())
+
+  participant1  User      @relation("ConversationParticipant1", fields: [participant1Id], references: [id], onDelete: Cascade)
+  participant2  User      @relation("ConversationParticipant2", fields: [participant2Id], references: [id], onDelete: Cascade)
+  listing       Listing?  @relation(fields: [listingId], references: [id], onDelete: SetNull)
+  messages      Message[]
+
+  @@unique([participant1Id, participant2Id, listingId])
+  @@index([participant1Id, lastMessageAt(sort: Desc)])
+  @@index([participant2Id, lastMessageAt(sort: Desc)])
+  @@index([listingId])
+}
+
+model Message {
+  id             Int      @id @default(autoincrement())
+  conversationId Int
+  senderId       String
+  content        String   @db.Text
+  isRead         Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         User         @relation("MessageSender", fields: [senderId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId, createdAt(sort: Desc)])
+  @@index([senderId])
+}
+
 enum NotificationType {
   LISTING_APPROVED      // Your listing was approved
   LISTING_REJECTED      // Your listing was rejected
   LISTING_SAVED         // Someone saved your listing
   LISTING_INQUIRY       // Someone inquired about your listing
+  NEW_MESSAGE           // Someone sent you a new message
   LISTING_EXPIRING      // Your listing is about to expire
   EVENT_APPROVED        // Your event was approved
   EVENT_REMINDER        // Reminder for upcoming event

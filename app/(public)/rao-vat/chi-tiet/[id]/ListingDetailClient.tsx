@@ -42,6 +42,7 @@ import {
 import ReportButton from '@/components/public/ReportButton';
 import ShareButtons from '@/components/public/ShareButtons';
 import ReviewSection from '@/components/features/reviews/ReviewSection';
+import SendMessageDialog from '@/components/features/messaging/SendMessageDialog';
 
 // Serialized types for client component (Date → string, Decimal → number)
 interface SerializedUser {
@@ -640,14 +641,14 @@ export default function ListingDetailClient({
                     </Button>
                   )}
 
-                  <Button
-                    variant={listing.preferredContact === 'message' ? 'default' : 'outline'}
-                    className={`w-full ${listing.preferredContact === 'message' ? 'bg-purple-600 hover:bg-purple-700 ring-2 ring-purple-300' : ''}`}
-                  >
-                    <MessageCircle className="h-4 w-4 mr-2" />
-                    {language === 'vn' ? 'Nhan tin' : 'Message'}
-                    {listing.preferredContact === 'message' && <Star className="h-3 w-3 ml-2 fill-current" />}
-                  </Button>
+                  <SendMessageDialog
+                    recipientId={listing.user.id}
+                    recipientName={listing.user.name || (language === 'vn' ? 'Người bán' : 'Seller')}
+                    listingId={listing.id}
+                    listingTitle={listing.title}
+                    currentUserId={currentUserId}
+                    isPreferred={listing.preferredContact === 'message'}
+                  />
                 </div>
               </CardContent>
             </Card>

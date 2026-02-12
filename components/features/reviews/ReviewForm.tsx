@@ -126,11 +126,11 @@ export default function ReviewForm({
         <label className="block text-sm text-gray-600 mb-1.5">
           {language === 'vn' ? 'Bạn là' : 'You were'}
         </label>
-        <div className="flex gap-2">
+        <div className="grid grid-cols-2 gap-2 sm:flex">
           <button
             type="button"
             onClick={() => setTransactionType(transactionType === 'BUYER' ? '' : 'BUYER')}
-            className={`px-3 py-1.5 text-sm rounded-lg border transition-colors ${
+            className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
               transactionType === 'BUYER'
                 ? 'bg-teal-50 border-teal-300 text-teal-700'
                 : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
@@ -141,7 +141,7 @@ export default function ReviewForm({
           <button
             type="button"
             onClick={() => setTransactionType(transactionType === 'SELLER' ? '' : 'SELLER')}
-            className={`px-3 py-1.5 text-sm rounded-lg border transition-colors ${
+            className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
               transactionType === 'SELLER'
                 ? 'bg-teal-50 border-teal-300 text-teal-700'
                 : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'

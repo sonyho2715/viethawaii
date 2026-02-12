@@ -16,6 +16,7 @@ import {
   Plus,
   Calendar,
   BarChart3,
+  MessageCircle,
 } from 'lucide-react';
 import type { User as NextAuthUser } from 'next-auth';
 
@@ -45,6 +46,12 @@ export default function AccountSidebar({ user }: AccountSidebarProps) {
       icon: Calendar,
       labelVn: 'Sự kiện của tôi',
       labelEn: 'My Events',
+    },
+    {
+      href: '/tai-khoan/tin-nhan',
+      icon: MessageCircle,
+      labelVn: 'Tin nhắn',
+      labelEn: 'Messages',
     },
     {
       href: '/tai-khoan/da-luu',

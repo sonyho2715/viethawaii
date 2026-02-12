@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import ReviewSection from '@/components/features/reviews/ReviewSection';
+import SendMessageDialog from '@/components/features/messaging/SendMessageDialog';
 import ShareButtons from '@/components/public/ShareButtons';
 import type { ListingWithRelations } from '@/components/public/ListingCard';
 import {
@@ -367,6 +368,16 @@ export default function ServiceDetailClient({
                       {language === 'vn' ? 'Gửi email' : 'Send Email'}
                     </a>
                   </Button>
+                )}
+
+                {listing.user && (
+                  <SendMessageDialog
+                    recipientId={listing.user.id}
+                    recipientName={listing.user.name || (language === 'vn' ? 'Nhà cung cấp' : 'Provider')}
+                    listingId={listing.id}
+                    listingTitle={listing.title}
+                    currentUserId={currentUserId}
+                  />
                 )}
 
                 <p className="text-xs text-gray-500 text-center">

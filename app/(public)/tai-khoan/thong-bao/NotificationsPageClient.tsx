@@ -45,6 +45,7 @@ const NOTIFICATION_ICONS: Record<string, React.ComponentType<{ className?: strin
   LISTING_REJECTED: FileX,
   LISTING_SAVED: Heart,
   LISTING_INQUIRY: MessageCircle,
+  NEW_MESSAGE: MessageCircle,
   LISTING_EXPIRING: Bell,
   EVENT_APPROVED: Calendar,
   EVENT_REMINDER: Calendar,
@@ -57,6 +58,7 @@ const NOTIFICATION_COLORS: Record<string, string> = {
   LISTING_REJECTED: 'text-red-600 bg-red-100',
   LISTING_SAVED: 'text-pink-600 bg-pink-100',
   LISTING_INQUIRY: 'text-blue-600 bg-blue-100',
+  NEW_MESSAGE: 'text-indigo-600 bg-indigo-100',
   LISTING_EXPIRING: 'text-orange-600 bg-orange-100',
   EVENT_APPROVED: 'text-purple-600 bg-purple-100',
   EVENT_REMINDER: 'text-purple-600 bg-purple-100',
@@ -71,6 +73,7 @@ const FILTER_OPTIONS = [
   { value: 'LISTING_REJECTED', labelVn: 'Tin bị từ chối', labelEn: 'Rejected' },
   { value: 'LISTING_SAVED', labelVn: 'Tin được lưu', labelEn: 'Saved' },
   { value: 'LISTING_INQUIRY', labelVn: 'Liên hệ', labelEn: 'Inquiries' },
+  { value: 'NEW_MESSAGE', labelVn: 'Tin nhắn', labelEn: 'Messages' },
   { value: 'EVENT_APPROVED', labelVn: 'Sự kiện', labelEn: 'Events' },
   { value: 'SYSTEM', labelVn: 'Hệ thống', labelEn: 'System' },
 ];
