@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import ReviewSection from '@/components/features/reviews/ReviewSection';
 import ShareButtons from '@/components/public/ShareButtons';
 import type { ListingWithRelations } from '@/components/public/ListingCard';
 import {
@@ -38,6 +39,7 @@ interface ServiceDetailClientProps {
   listing: ListingWithRelations;
   relatedListings: ListingWithRelations[];
   isOwner: boolean;
+  currentUserId?: string;
 }
 
 const SERVICE_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -51,6 +53,7 @@ export default function ServiceDetailClient({
   listing,
   relatedListings,
   isOwner,
+  currentUserId,
 }: ServiceDetailClientProps) {
   const { language } = useLanguage();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -405,6 +408,18 @@ export default function ServiceDetailClient({
             )}
           </div>
         </div>
+
+        {/* Reviews Section */}
+        {listing.user && (
+          <div className="mt-8">
+            <ReviewSection
+              sellerId={listing.user.id}
+              sellerName={listing.user.name}
+              listingId={listing.id}
+              currentUserId={currentUserId}
+            />
+          </div>
+        )}
 
         {/* Related Services */}
         {relatedListings.length > 0 && (

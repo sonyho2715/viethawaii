@@ -8,6 +8,7 @@ import ListingCard, { type ListingWithRelations } from '@/components/public/List
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import ReviewSection from '@/components/features/reviews/ReviewSection';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   ChevronLeft,
@@ -85,6 +86,7 @@ interface JobDetailClientProps {
   listing: JobListing;
   relatedJobs: ListingWithRelations[];
   isOwner?: boolean;
+  currentUserId?: string;
 }
 
 const JOB_TYPES: Record<string, { vn: string; en: string }> = {
@@ -98,6 +100,7 @@ export default function JobDetailClient({
   listing: initialListing,
   relatedJobs,
   isOwner = false,
+  currentUserId,
 }: JobDetailClientProps) {
   const { t, language } = useLanguage();
   const [listing, setListing] = useState(initialListing);
@@ -468,6 +471,16 @@ export default function JobDetailClient({
               </Link>
             </Button>
           </div>
+        </div>
+
+        {/* Reviews Section */}
+        <div className="mt-8">
+          <ReviewSection
+            sellerId={listing.user.id}
+            sellerName={listing.user.name}
+            listingId={listing.id}
+            currentUserId={currentUserId}
+          />
         </div>
 
         {/* Related Jobs */}

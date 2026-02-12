@@ -123,6 +123,7 @@ export default async function ServiceDetailPage({ params }: PageProps) {
       listing={serializedListing}
       relatedListings={serializedRelated}
       isOwner={isOwner}
+      currentUserId={session?.user?.id}
     />
   );
 }

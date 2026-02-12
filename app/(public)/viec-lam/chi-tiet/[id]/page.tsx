@@ -123,6 +123,7 @@ export default async function JobDetailPage({ params }: PageProps) {
       listing={serializedListing}
       relatedJobs={serializedRelated}
       isOwner={isOwner}
+      currentUserId={session?.user?.id}
     />
   );
 }

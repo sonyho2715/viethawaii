@@ -73,12 +73,12 @@ export async function POST(req: NextRequest) {
         data: {
           adminId: session.user.id,
           action: `BULK_${validated.action.toUpperCase()}`,
-          targetType: 'LISTING',
-          details: `Bulk ${validated.action} on ${validated.listingIds.length} listings: [${validated.listingIds.join(', ')}]`,
+          itemType: 'LISTING',
+          details: { listingIds: validated.listingIds, count: validated.listingIds.length },
         },
       });
     } catch {
-      // AdminLog might not exist yet, don't block the operation
+      // AdminLog creation failure should not block the bulk operation
     }
 
     return NextResponse.json({

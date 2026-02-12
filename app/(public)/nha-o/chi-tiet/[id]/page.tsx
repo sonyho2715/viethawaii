@@ -128,6 +128,7 @@ export default async function HousingDetailPage({ params }: PageProps) {
       listing={serializedListing}
       relatedListings={serializedRelated}
       isOwner={isOwner}
+      currentUserId={session?.user?.id}
     />
   );
 }

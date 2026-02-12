@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import ReviewSection from '@/components/features/reviews/ReviewSection';
 import ShareButtons from '@/components/public/ShareButtons';
 import type { ListingWithRelations } from '@/components/public/ListingCard';
 import {
@@ -37,12 +38,14 @@ interface HousingDetailClientProps {
   listing: ListingWithRelations;
   relatedListings: ListingWithRelations[];
   isOwner: boolean;
+  currentUserId?: string;
 }
 
 export default function HousingDetailClient({
   listing,
   relatedListings,
   isOwner,
+  currentUserId,
 }: HousingDetailClientProps) {
   const { language } = useLanguage();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -432,6 +435,18 @@ export default function HousingDetailClient({
             )}
           </div>
         </div>
+
+        {/* Reviews Section */}
+        {listing.user && (
+          <div className="mt-8">
+            <ReviewSection
+              sellerId={listing.user.id}
+              sellerName={listing.user.name}
+              listingId={listing.id}
+              currentUserId={currentUserId}
+            />
+          </div>
+        )}
 
         {/* Related Listings */}
         {relatedListings.length > 0 && (
