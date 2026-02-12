@@ -106,7 +106,15 @@ export default function MapPageClient({ initialPoints }: MapPageClientProps) {
   );
 }
 
-function FilterButton({ active, onClick, icon, label, color = "text-gray-600 bg-gray-50" }: any) {
+interface FilterButtonProps {
+  active: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+  label: string;
+  color?: string;
+}
+
+function FilterButton({ active, onClick, icon, label, color = "text-gray-600 bg-gray-50" }: FilterButtonProps) {
   return (
     <button
       onClick={onClick}

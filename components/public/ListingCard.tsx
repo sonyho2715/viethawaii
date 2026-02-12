@@ -249,75 +249,64 @@ export default function ListingCard({ listing, variant = 'default' }: ListingCar
   // Default variant
   return (
     <Link href={`/rao-vat/chi-tiet/${listing.id}`} className="block h-full">
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-2xl hover:shadow-teal-900/5 hover:-translate-y-1.5 transition-all duration-300 group flex flex-col h-full ring-1 ring-black/[0.02]">
-        <div className="relative h-44 overflow-hidden">
+      <div className="bg-white border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 transition-all duration-500 group flex flex-col h-full ring-1 ring-black/[0.02]">
+        <div className="relative h-48 overflow-hidden">
           {primaryImage ? (
             <Image
               src={primaryImage.imageUrl}
               alt={listing.title}
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-              className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
+              className="object-cover group-hover:scale-105 transition-transform duration-1000 ease-out"
             />
           ) : (
-            <div className="w-full h-full bg-gray-50 flex items-center justify-center">
+            <div className="w-full h-full bg-secondary/30 flex items-center justify-center">
               <ShoppingBag className="h-10 w-10 text-gray-200" />
             </div>
           )}
           
-          {/* Frosted glass price overlay */}
-          <div className="absolute bottom-0 left-0 right-0 glass px-3 py-2.5">
-            <p className="text-teal-700 font-extrabold text-lg tracking-tight">
+          {/* Minimal price overlay */}
+          <div className="absolute top-0 right-0 bg-primary px-3 py-1.5 text-white">
+            <p className="font-bold text-sm tracking-tight">
               {formatPrice(listing.price, listing.priceType)}
             </p>
           </div>
           
-          {/* Category badge with color */}
-          <div className={`absolute top-3 right-3 ${categoryColor} text-[10px] font-bold text-white px-2 py-1 rounded-lg shadow-md uppercase tracking-wider`}>
+          {/* Category badge - minimalist */}
+          <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm text-[10px] font-black text-primary px-2 py-1 uppercase tracking-[0.1em] border border-gray-100 shadow-sm">
             {categoryName}
           </div>
           
-          {/* Featured badge */}
+          {/* Featured badge - elegant */}
           {listing.isFeatured && (
-            <div className="absolute top-3 left-3 bg-gradient-to-r from-amber-400 to-orange-500 text-[10px] font-bold text-white px-2.5 py-1 rounded-lg shadow-md flex items-center gap-1 uppercase tracking-wider">
+            <div className="absolute top-3 left-3 bg-accent text-[10px] font-bold text-white px-2 py-1 shadow-md flex items-center gap-1 uppercase tracking-widest">
               <Sparkles size={10} className="fill-white" />
               {language === 'vn' ? 'Nổi bật' : 'Featured'}
             </div>
           )}
-          
-          {/* NEW badge for recent listings */}
-          {!listing.isFeatured && isNew() && (
-            <div className="absolute top-3 left-3 bg-gradient-to-r from-emerald-400 to-teal-500 text-[10px] font-bold text-white px-2.5 py-1 rounded-lg shadow-md uppercase tracking-wider">
-              {language === 'vn' ? 'MỚI' : 'NEW'}
-            </div>
-          )}
         </div>
         
-        <div className="p-4 flex flex-col flex-1">
-          <h4 className="font-bold text-gray-900 text-sm mb-2 line-clamp-2 h-10 group-hover:text-teal-600 transition-colors leading-snug">
+        <div className="p-5 flex flex-col flex-1">
+          <h4 className="font-serif font-bold text-gray-900 text-lg mb-2 line-clamp-2 leading-tight group-hover:text-primary transition-colors">
             {language === 'vn' ? listing.title : listing.titleEn || listing.title}
           </h4>
-          <div className="flex items-center text-xs text-gray-500 mt-auto">
-            <MapPin size={13} className="mr-1.5 text-teal-500 flex-shrink-0" />
-            <span className="truncate font-medium">{listing.location || 'Hawaii'}</span>
+          <div className="flex items-center text-[11px] text-gray-400 mt-auto uppercase tracking-widest font-bold">
+            <MapPin size={12} className="mr-1.5 text-accent flex-shrink-0" />
+            <span className="truncate">{listing.location || 'Hawaii'}</span>
           </div>
         </div>
         
-        <div className="px-4 py-3 border-t border-gray-50 flex justify-between items-center bg-gray-50/30">
-          <div className="flex items-center gap-3 text-[10px] text-gray-400 font-medium uppercase tracking-tighter">
+        <div className="px-5 py-3 border-t border-gray-50 flex justify-between items-center bg-gray-50/20">
+          <div className="flex items-center gap-4 text-[10px] text-gray-400 font-medium uppercase tracking-tighter">
             <span>{formatDate(listing.createdAt)}</span>
             {listing.views > 0 && (
               <span className="flex items-center gap-1">
-                <Eye size={12} className="text-gray-300" />
+                <Eye size={12} className="opacity-50" />
                 {listing.views}
               </span>
             )}
           </div>
-          <div className="flex items-center gap-2">
-            <button className="p-1.5 rounded-full hover:bg-teal-50 hover:text-teal-600 transition-colors">
-              <Bookmark size={14} className="text-gray-300 group-hover:text-teal-400" />
-            </button>
-          </div>
+          <Bookmark size={14} className="text-gray-300 group-hover:text-accent transition-colors" />
         </div>
       </div>
     </Link>

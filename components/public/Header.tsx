@@ -131,11 +131,11 @@ export default function Header() {
               >
                 {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
-              <Link href="/" className="flex flex-col group">
-                <h1 className="text-2xl md:text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-teal-500 via-teal-600 to-blue-700 tracking-tighter transition-all group-hover:scale-105">
+              <Link href="/" className="flex flex-col group py-1">
+                <h1 className="text-2xl md:text-3xl font-serif font-black text-primary tracking-tight transition-all group-hover:opacity-80">
                   VietHawaii
                 </h1>
-                <span className="text-[10px] text-gray-400 uppercase tracking-[0.2em] font-bold hidden sm:block transition-colors group-hover:text-teal-500">
+                <span className="text-[10px] text-gray-400 uppercase tracking-[0.3em] font-bold hidden sm:block transition-colors group-hover:text-accent">
                   {language === 'vn' ? 'Kết nối cộng đồng' : 'Connecting the Community'}
                 </span>
               </Link>

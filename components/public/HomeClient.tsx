@@ -51,65 +51,56 @@ export default function HomeClient({
   const { language, t } = useLanguage();
 
   return (
-    <div className="min-h-screen bg-stone-50">
+    <div className="min-h-screen bg-background paper-texture">
       {/* Hero Banner */}
-      <div className="bg-gradient-to-br from-teal-600 via-teal-700 to-blue-800 text-white relative overflow-hidden">
-        {/* Background decorations - Hawaii inspired */}
+      <div className="bg-primary text-white relative overflow-hidden">
+        {/* Background decorations - High-end Texture */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute top-[-10%] right-[-5%] w-[400px] h-[400px] bg-white/10 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] bg-teal-400/10 rounded-full blur-3xl" />
-          <div className="absolute top-1/4 left-1/2 w-[300px] h-[300px] bg-blue-400/5 rounded-full blur-2xl" />
+          <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-emerald-900/20 rounded-full blur-[120px]" />
+          <div className="absolute bottom-[-30%] left-[-10%] w-[700px] h-[700px] bg-teal-900/30 rounded-full blur-[150px]" />
           
-          {/* Subtle tropical pattern overlay */}
-          <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/leaves.png')] mix-blend-overlay" />
+          {/* Natural texture overlay */}
+          <div className="absolute inset-0 opacity-[0.05] bg-[url('https://www.transparenttextures.com/patterns/natural-paper.png')] mix-blend-overlay" />
         </div>
         
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 relative z-10">
           <div className="max-w-3xl">
-            <h2 className="text-3xl md:text-5xl font-extrabold mb-4 animate-fade-in tracking-tight text-shadow-md">
+            <h2 className="text-4xl md:text-6xl font-serif font-bold mb-6 animate-fade-in tracking-tight text-shadow-md leading-[1.1]">
               {language === 'vn'
-                ? 'Cộng đồng Việt Nam tại Hawaii'
-                : 'Vietnamese Community in Hawaii'}
+                ? 'Cộng đồng Người Việt tại Hải Đảo'
+                : 'The Vietnamese Community in the Islands'}
             </h2>
-            <p className="text-teal-50 text-base md:text-xl mb-8 animate-slide-up leading-relaxed max-w-2xl text-shadow-sm font-medium opacity-90">
+            <p className="text-sand/80 text-lg md:text-2xl mb-10 animate-slide-up leading-relaxed max-w-2xl font-light">
               {language === 'vn'
-                ? 'Nền tảng kết nối người Việt. Tìm kiếm nhà ở, việc làm, dịch vụ và tin tức mới nhất tại đảo thiên đường.'
-                : 'Connecting Vietnamese people in the islands. Find housing, jobs, services, and the latest news in paradise.'}
+                ? 'Nơi kết nối, sẻ chia và gìn giữ bản sắc Việt giữa lòng Thái Bình Dương.'
+                : 'A place to connect, share, and preserve Vietnamese identity in the heart of the Pacific.'}
             </p>
-            <div className="flex flex-wrap items-center gap-4 animate-slide-up">
-              <Button asChild className="bg-white text-teal-700 hover:bg-teal-50 rounded-2xl shadow-xl font-bold px-8 py-6 text-base transition-all hover:scale-105 hover:shadow-white/10">
+            <div className="flex flex-wrap items-center gap-5 animate-slide-up">
+              <Button asChild className="bg-accent text-white hover:opacity-90 rounded-none shadow-2xl font-bold px-10 py-7 text-lg transition-all hover:-translate-y-1">
                 <Link href="/rao-vat/dang-tin">
-                  <PlusCircle size={20} className="mr-2" />
-                  {language === 'vn' ? 'Đăng tin miễn phí' : 'Post for free'}
+                  <PlusCircle size={22} className="mr-2" />
+                  {language === 'vn' ? 'Đăng tin ngay' : 'Post for free'}
                 </Link>
               </Button>
-              <Button asChild variant="outline" className="glass border-white/40 text-white hover:bg-white/20 rounded-2xl px-6 py-6 text-base font-semibold transition-all">
+              <Button asChild variant="outline" className="border-white/20 text-white hover:bg-white/10 rounded-none px-8 py-7 text-lg font-medium transition-all">
                 <Link href="/rao-vat">
-                  <Search size={20} className="mr-2" />
+                  <Search size={22} className="mr-2" />
                   {language === 'vn' ? 'Tìm kiếm' : 'Browse'}
-                </Link>
-              </Button>
-              <Button asChild variant="outline" className="glass border-white/40 text-white hover:bg-white/20 rounded-2xl px-6 py-6 text-base font-semibold transition-all">
-                <Link href="/ban-do">
-                  <MapPin size={20} className="mr-2" />
-                  {language === 'vn' ? 'Bản đồ' : 'Map'}
                 </Link>
               </Button>
             </div>
           </div>
           
-          {/* Quick stats with glass effect */}
+          {/* Stats with minimalist borders instead of glass blobs */}
           {totalListings && totalListings > 0 && (
-            <div className="mt-10 flex flex-wrap items-center gap-6 text-sm">
-              <div className="glass px-4 py-2 rounded-full flex items-center gap-2 text-white/90 shadow-lg">
-                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-                <span className="font-bold">{totalListings.toLocaleString()}</span>
-                <span className="opacity-80">{language === 'vn' ? 'tin đăng' : 'listings'}</span>
+            <div className="mt-16 flex flex-wrap items-center gap-8 text-sm uppercase tracking-widest font-bold">
+              <div className="flex flex-col gap-1 border-l-2 border-accent pl-4">
+                <span className="text-3xl text-white">{totalListings.toLocaleString()}</span>
+                <span className="text-white/40 text-[10px]">{language === 'vn' ? 'tin đăng' : 'listings'}</span>
               </div>
-              <div className="glass px-4 py-2 rounded-full flex items-center gap-2 text-white/90 shadow-lg">
-                <Star size={14} className="text-amber-400 fill-amber-400" />
-                <span className="font-bold">{featuredListings.length}</span>
-                <span className="opacity-80">{language === 'vn' ? 'tin nổi bật' : 'featured'}</span>
+              <div className="flex flex-col gap-1 border-l-2 border-white/10 pl-4">
+                <span className="text-3xl text-white">{featuredListings.length}</span>
+                <span className="text-white/40 text-[10px]">{language === 'vn' ? 'nổi bật' : 'featured'}</span>
               </div>
             </div>
           )}

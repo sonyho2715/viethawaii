@@ -466,6 +466,8 @@ model Business {
   website         String?
   hours           Json?
   photos          Json?
+  lat             Decimal?     @db.Decimal(10, 8)
+  lng             Decimal?     @db.Decimal(11, 8)
   tier            BusinessTier @default(FREE)
   tierExpiresAt   DateTime?
   isVerified      Boolean      @default(false)
