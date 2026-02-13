@@ -48,17 +48,17 @@
 
 :root {
   --radius: 0.5rem;
-  /* Premium "Living" Palette */
-  --background: oklch(0.98 0.01 85); /* Warm Bone/Sand */
-  --foreground: oklch(0.12 0.01 250); /* Deep Ink Black */
+  /* Premium "Living" Palette - Adjusted for Familiarity */
+  --background: oklch(0.99 0.005 85); /* Cleaner White */
+  --foreground: oklch(0.15 0.01 250); /* Darker Text for readability */
   
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.12 0.01 250);
+  --card-foreground: oklch(0.15 0.01 250);
   
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.12 0.01 250);
+  --popover-foreground: oklch(0.15 0.01 250);
   
-  --primary: oklch(0.28 0.05 165); /* Deep Jungle Green */
+  --primary: oklch(0.25 0.04 165); /* Solid Deep Green */
   --primary-foreground: oklch(0.98 0.01 85);
   
   --secondary: oklch(0.94 0.02 85); /* Light Sand */

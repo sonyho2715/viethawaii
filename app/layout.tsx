@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Playfair_Display, Be_Vietnam_Pro } from 'next/font/google';
+import { Inter, Merriweather } from 'next/font/google';
 import Script from 'next/script';
 import './globals.css';
 import Providers from '@/components/Providers';
@@ -7,13 +7,13 @@ import Header from '@/components/public/Header';
 import Footer from '@/components/public/Footer';
 import CookieConsent from '@/components/public/CookieConsent';
 
-const playfair = Playfair_Display({
+const serif = Merriweather({
+  weight: ['300', '400', '700', '900'],
   subsets: ['latin', 'vietnamese'],
   variable: '--font-serif',
 });
 
-const beVietnam = Be_Vietnam_Pro({
-  weight: ['400', '500', '600', '700', '800'],
+const sans = Inter({
   subsets: ['latin', 'vietnamese'],
   variable: '--font-sans',
 });
@@ -104,7 +104,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi" suppressHydrationWarning>
-      <body className={`${beVietnam.variable} ${playfair.variable} font-sans antialiased`}>
+      <body className={`${sans.variable} ${serif.variable} font-sans antialiased`}>
         <Script
           async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2908205543829494"
